@@ -1,0 +1,6 @@
+export {default as Home} from './Home'
+export {default as Products} from './Products'
+export {default as News} from './News'
+export {default as AboutUs} from './AboutUs'
+export {default as Contact} from './Contact'
+export {default as Public} from './Public'
