@@ -6,11 +6,14 @@ const News = () => {
         <div className="w-full px-[10%] pt-8">
             <div className="px-[35px] pb-[30px] bg-white">
                 <div className="w-full py-[35px] border-b border-b-[#eee] flex justify-between gap-[50px]">
-                    <NavLink className="max-w-[200px] inline-block">
+                    <NavLink
+                    to={"/news/detail/:slug"} 
+                    className="max-w-[200px] inline-block">
                         <img src="/img/news/2.jpg" alt="" className="w-full"/>
                     </NavLink>
                     <div className="flex-1 flex flex-col text-left ">
                         <NavLink
+                        to={"/news/detail/:slug"}
                         className="text-[20px] font-[500] text-[#393939] line-clamp-1">
                             Công Nghệ Cảm Ứng Thang Máy Hiện Đại
                         </NavLink>

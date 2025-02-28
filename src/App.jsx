@@ -1,6 +1,6 @@
 import { ToastContainer } from 'react-toastify';
 // import { useSelector, useDispatch } from 'react-redux';
-import {Home, Public, Products, News, AboutUs, Contact} from './containers/public/';
+import {Home, Public, Products, News, AboutUs, Contact, ProductDetail, NewsDetail,Login, Register} from './containers/public/';
 import { Routes, Route } from 'react-router-dom';
 import path from './util/path'
 function App() {
@@ -9,8 +9,15 @@ function App() {
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />}/>
+          <Route path={"/login"} element={<Login/>}/>
+          <Route path={"/register"} element={<Register/>}/>
+
           <Route path={path.PRODUCTS} element={<Products />}/>
+          <Route path={"/products/detail/:slug"} element={<ProductDetail/>}/>
+
           <Route path={path.NEWS} element={<News />}/>
+          <Route path={"/news/detail/:slug"} element={<NewsDetail/>}/>
+
           <Route path={path.ABOUTUS} element={<AboutUs />}/>
           <Route path={path.CONTACT} element={<Contact />}/>
           <Route path={path.STAR} element={<Home />}/>

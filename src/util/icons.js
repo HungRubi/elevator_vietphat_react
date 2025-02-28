@@ -15,9 +15,21 @@ import { FaGem } from "react-icons/fa";
 import { HiUserGroup } from "react-icons/hi2";
 import { FaHeart } from "react-icons/fa";
 import { BsArrowRightSquareFill } from "react-icons/bs";
+import { FiTruck } from "react-icons/fi";
+import { IoShieldCheckmarkOutline } from "react-icons/io5";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { BiSolidLike } from "react-icons/bi";
+import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
 
 const icons = {
+    FaArrowRightFromBracket,
+    FaFacebook,
+    FcGoogle,
     FaMapMarkerAlt,
+    IoShieldCheckmarkOutline,
+    FiTruck,
     FaPhoneAlt,
     MdEmail,
     BsFacebook,
@@ -34,5 +46,7 @@ const icons = {
     HiUserGroup,
     FaHeart,
     BsArrowRightSquareFill,
+    BsThreeDotsVertical,
+    BiSolidLike
 }
 export default icons
