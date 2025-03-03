@@ -1,9 +1,15 @@
 import { ToastContainer } from 'react-toastify';
-// import { useSelector, useDispatch } from 'react-redux';
 import {Home, Public, Products, News, AboutUs, Contact, ProductDetail, NewsDetail,Login, Register} from './containers/public/';
 import { Routes, Route } from 'react-router-dom';
-import path from './util/path'
+import path from './util/path';
+import { useDispatch } from 'react-redux';
+import * as actions from './store/actions'
+import { useEffect } from 'react';
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(actions.getHome())
+  }, [])
   return(
     <>
       <Routes>

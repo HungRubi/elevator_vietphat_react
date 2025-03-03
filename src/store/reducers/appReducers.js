@@ -1,15 +1,20 @@
 import actionType from "../actions/actionTypes";
 
 const initState = {
-    homeData: [],
-    test: 'Helo',
-    name: 'huyhung',
+    article: [],
+    productsCategory: [],
+    banner: []
 }
 
 const appReducer = (state = initState, action) => {
     switch (action.type){
         case actionType.GET_HOME:
-            return state
+            return {
+                ...state,
+                article: action.homeData.data.article || null,
+                productsCategory: action.homeData.data.products || null,
+                banner: action.homeData.data.banner || null 
+            }
         default:
             return state
     }
