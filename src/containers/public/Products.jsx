@@ -2,8 +2,8 @@ import icons from '../../util/icons';
 import {ProductsAll, PageBar} from '../../components/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import * as actions from '../../store/actions'
-import {setCurrentPage} from '../../store/actions/products'
+import * as actions from '../../store/actions';
+import {setCurrentPage} from '../../store/actions/products';
 
 const {IoChevronUpSharp} = icons;
 
