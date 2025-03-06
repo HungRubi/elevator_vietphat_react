@@ -34,9 +34,9 @@ const Home = () => {
                             Công ty TNHH Phụ tùng thang máy Việt Phát là một công ty thương mại
                             đã tham gia tích cực vào ngành thang máy trong nhiều năm. Công ty đặt
                             tại Km8 + 93 đường 5 mới, xã Nam Sơn, huyện An Dương, Hải Phòng, Việt Nam. 
-                            Mục tiêu chính của chúng tôilà cung cấp phụ kiện thang máy chất lượng cao, 
+                            Mục tiêu chính của chúng tôi là cung cấp phụ kiện thang máy chất lượng cao, 
                             cải tạo kết nối điện, phụ kiện thang máy và các sản phẩm liên quan cho khách 
-                            hàng toàn Việt Nam
+                            hàng toàn Việt Nam.
                         </p>
                         <Button>
                             Xem thêm

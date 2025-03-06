@@ -3,7 +3,7 @@ import axios from "../axios";
 export const getArticles = async (page = 1) => {
     try{
         const response = await axios({
-            url: `/articles?${page}`,
+            url: `/articles?page=${page}`,
             method: 'get'
         })
         return response

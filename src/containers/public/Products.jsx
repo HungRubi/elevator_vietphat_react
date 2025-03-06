@@ -26,7 +26,6 @@ const Products = () => {
             if (!productCache[newPage]) {  // Chỉ gọi API nếu trang chưa có trong cache
                 dispatch(actions.getProducts(newPage));
             }
-    
             setTimeout(() => {
                 window.scrollTo({ top: 0, behavior: "smooth" }); // Cuộn lên sau khi Redux đã cập nhật
             }, 100);

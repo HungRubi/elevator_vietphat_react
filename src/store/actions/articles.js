@@ -23,7 +23,7 @@ export const getArticles = (page = 1) => async (dispatch)  => {
         })
     }
 }
-export const setCurrentPage = (page) => ({
-    type: actionType.SET_CURRENT_PAGE,
+export const setCurrentPageArticle = (page) => ({
+    type: actionType.SET_CURRENT_PAGE_ARTICLE,
     payload: page
 })

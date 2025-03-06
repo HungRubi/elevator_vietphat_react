@@ -7,6 +7,8 @@ const initState = {
     products: [],
     productCache: {},
     articleCache: {},
+    productDetail: null,
+    articleDetail: null,
 }
 
 const appReducer = (state = initState, action) => {
@@ -42,8 +44,26 @@ const appReducer = (state = initState, action) => {
                 currentPageArticle: action.articleData?.data?.currentPage || 1,
                 
             }
+        case actionType.GET_PRODUCT_DETAIL:
+            return {
+                ...state,
+                productDetail: action.payload || null,
+                products: action.suggest
+            }
+        
+        case actionType.GET_ARTICLE_DETAIL:
+            return {
+                ...state,
+                articleDetail: action.payload || null,
+            }
 
-        case actionType.SET_CURRENT_PAGE: // Thêm xử lý đổi trang
+        case actionType.SET_CURRENT_PAGE_ARTICLE: 
+            return {
+                ...state,
+                currentPageArticle: action.payload,
+            };
+
+        case actionType.SET_CURRENT_PAGE: 
             return {
                 ...state,
                 currentPage: action.payload,

@@ -128,7 +128,7 @@ const HeaderBar = () => {
                                 <hr className='h-[1px] border-t border-t-[#cbd0dd] w-full my-3'/>
                             </div>
                             <div className="flex items-center justify-center flex-col gap-2.5 pb-2.5 px-3">
-                                <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2.5 rounded-[8px] !text-black border border-[#cbd0dd]">
+                                <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
                                     <NavLink
                                     to={"/login"}
                                     className="flex items-center justify-center gap-2.5">
@@ -136,7 +136,7 @@ const HeaderBar = () => {
                                         Đăng nhập
                                     </NavLink>
                                 </button>
-                                <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2.5 rounded-[8px] !text-black border border-[#cbd0dd]">
+                                <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
                                     <NavLink
                                     to={"/register"}
                                     className="flex items-center justify-center gap-2.5">

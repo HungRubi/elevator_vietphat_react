@@ -1,20 +1,40 @@
-import {LoveButton, QuantityButton, Button,PageBar, Form, ListProduct} from '../../components/index';
+import {LoveButton, QuantityButton, Button,PageBar, Form, ProductsAll} from '../../components/index';
 import icons from '../../util/icons';
-
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as actions from '../../store/actions/'
 const {FaStar, FiTruck, AiOutlineRight, IoShieldCheckmarkOutline, PiShoppingCartBold, MdEmail, BsThreeDotsVertical, BiSolidLike} = icons
 
 const ProductDetail = () => {
+    const dispatch = useDispatch();
+    const {productDetail, products} = useSelector(state => state.app);
+    console.log(products)
+    const slug = window.location.pathname.split('/').pop();
+    let pricePre = 0;
+    if(Number(productDetail?.sale) === 0){
+        pricePre = Number(productDetail?.price);
+    }else{
+        const discount = Number(productDetail?.sale) * Number(productDetail?.price) 
+        pricePre = Number(productDetail?.pice) - discount;
+    }
+
+    useEffect(() => {
+        if(slug){
+            dispatch(actions.getProductDetail(slug))
+        }
+    }, [dispatch, slug])
+    
     return (
         <div>
             <div className="w-full px-[10%] pt-8">
                 <div className="w-full flex justify-between">
                     <div className="w-[47%]">
-                        <img src="/img/products/1.png" alt="" className="w-full"/>
+                    <img src={productDetail?.thumbnail_main} alt={productDetail?.name || "Sản phẩm"} className="w-full"/>
                         <div className="w-full flex items-center justify-baseline mt-4 gap-4">
-                            <img src="/img/products/1.png" alt="" style={{width: "calc(25% - 12px)"}}/>
-                            <img src="/img/products/2.png" alt="" style={{width: "calc(25% - 12px)"}}/>
-                            <img src="/img/products/3.png" alt="" style={{width: "calc(25% - 12px)"}}/>
-                            <img src="/img/products/4.png" alt="" style={{width: "calc(25% - 12px)"}}/>
+                            <img src={productDetail?.thumbnail_main} alt="" style={{width: "calc(25% - 12px)"}}/>
+                            <img src={productDetail?.thumbnail_1} alt="" style={{width: "calc(25% - 12px)"}}/>
+                            <img src={productDetail?.thumbnail_2} alt="" style={{width: "calc(25% - 12px)"}}/>
+                            <img src={productDetail?.thumbnail_3} alt="" style={{width: "calc(25% - 12px)"}}/>
                         </div>
                     </div>
                     <div className="w-1/2">
@@ -23,7 +43,7 @@ const ProductDetail = () => {
                                 <LoveButton/>
                             </span>
                             <h1 className='line-clamp-2 text-[28px] leading-7'>
-                                Hệ thống mở cửa tự đông ADA, 2 chiều, có thể điều chỉnh tốc độ
+                                {productDetail?.name}
                             </h1>
                         </div>
                         <div className="flex items-center justify-start mt-3">
@@ -47,9 +67,9 @@ const ProductDetail = () => {
                             </div>
                         </div>
                         <div className="flex items-center justify-start mt-3 w-full bg-[#fafafa] py-[15px] px-5">
-                            <span className="text-[30px] text-[#2f904b]">₫3.600.000</span>
-                            <span className='text-[#929292] line-through text-[20px] ml-[0.925rem]'>₫3.600.000</span>
-                            <div className="bg-[#e3ffec] text-[12px] px-1 h-4.5 ml-[0.925rem] text-[#2f904b] font-bold rounded-[2px]">0%</div>
+                            <span className="text-[30px] text-[#2f904b]">₫{pricePre}</span>
+                            <span className='text-[#929292] line-through text-[20px] ml-[0.925rem]'>₫{productDetail?.price}</span>
+                            <div className="bg-[#e3ffec] text-[12px] px-1 h-4.5 ml-[0.925rem] text-[#2f904b] font-bold rounded-[2px]">{productDetail?.sale}%</div>
                         </div>
                         <div className="flex items-center justify-start mt-8">
                             <h3 className="text-[#757575] capitalize text-[18px] mr-8 w-[120px] line-clamp-2">Mã giảm giá</h3>
@@ -89,7 +109,7 @@ const ProductDetail = () => {
                             <h3 className="text-[#757575] capitalize text-[20px] mr-8 w-[120px] line-clamp-2">số lượng</h3>
                             <div className="flex">
                                 <QuantityButton/>
-                                <h3 className="text-[#757575] capitalize text-[18px] mr-8 line-clamp-2 ml-5">Số lượng còn lại: 200</h3>
+                                <h3 className="text-[#757575] capitalize text-[18px] mr-8 line-clamp-2 ml-5">Số lượng còn lại: {productDetail?.stock}</h3>
                             </div>
                         </div>
                         <div className="flex items-center mt-[80px] gap-5">
@@ -122,28 +142,20 @@ const ProductDetail = () => {
                         </div>
                         <div className="flex">
                             <div className="w-1/3">
-                                <img src="/img/products/2.png" alt="" />
+                                <img src={productDetail?.thumbnail_1} alt="" />
                             </div>
                             <div className="w-1/3">
-                                <img src="/img/products/3.png" alt="" />
+                                <img src={productDetail?.thumbnail_2} alt="" />
                             </div>
                             <div className="w-1/3">
-                                <img src="/img/products/4.png" alt="" />
+                                <img src={productDetail?.thumbnail_3} alt="" />
                             </div>
                         </div>
                         <p className="py-2 text-[16px] leading-8 text-justify">
-                            Hệ Thống Cửa Swing Tự Động
-                            Cải tiến lối vào với Hệ Thống Cửa Swing Tự Động, mang lại sự tiện lợi và hiện đại cho không gian của bạn. Cửa hoạt động mượt mà, không cần chạm tay, phù hợp cho cả môi trường thương mại và nhà ở.
-                            Tính Năng:
-                            Hoạt động êm ái, không gây ồn
-                            Tiết kiệm năng lượng và bảo vệ môi trường
-                            Dễ dàng cài đặt và điều chỉnh tốc độ, độ nhạy
-                            An toàn tuyệt đối với cảm biến chống va chạm
-                            Lý tưởng cho: trung tâm thương mại, văn phòng, bệnh viện, nhà ở và các không gian công cộng.
-                            Tăng sự tiện lợi và phong cách cho không gian của bạn ngay hôm nay!
+                            {productDetail?.description}
                         </p>
                         <p className="py-2 text-[16px] leading-8 text-justify">
-                            Số lượng tồn kho: 5
+                            Số lượng tồn kho: {productDetail?.stock}
                         </p>
                     </div>
                     <div className="w-[90%] mx-auto wrapper_detail_product py-2.5 mb-[50px]">
@@ -256,7 +268,6 @@ const ProductDetail = () => {
                 </div>
             
             </div>
-
             <div className="text-center text-[50px] text-[#2f904b] capitalize mt-8"
                 style={{ fontFamily: "Impact, sans-serif" }}>
                 contact
@@ -269,7 +280,7 @@ const ProductDetail = () => {
                 suggest products
             </div>
             <div className="w-full px-[10%] pt-5">
-                <ListProduct/>
+                <ProductsAll data={products}/>
             </div>
         </div>
         
