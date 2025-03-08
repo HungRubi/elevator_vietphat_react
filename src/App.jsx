@@ -1,6 +1,7 @@
 import { ToastContainer } from 'react-toastify';
 import {Home, Public, Products, News, AboutUs, Contact, ProductDetail, NewsDetail,Login, Register} from './containers/public/';
 import { Routes, Route } from 'react-router-dom';
+import { Account } from './containers/system'
 import path from './util/path';
 import { useDispatch } from 'react-redux';
 import * as actions from './store/actions'
@@ -23,7 +24,7 @@ function App() {
 
           <Route path={path.NEWS} element={<News />}/>
           <Route path={"/news/detail/:slug"} element={<NewsDetail/>}/>
-
+          <Route path={"/account/*"} element={<Account />}/>
           <Route path={path.ABOUTUS} element={<AboutUs />}/>
           <Route path={path.CONTACT} element={<Contact />}/>
           <Route path={path.STAR} element={<Home />}/>

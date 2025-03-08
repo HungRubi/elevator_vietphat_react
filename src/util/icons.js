@@ -22,8 +22,18 @@ import { BiSolidLike } from "react-icons/bi";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import { CiEdit } from "react-icons/ci";
+import { BsPerson } from "react-icons/bs";
+import { RiBillLine } from "react-icons/ri";
+import { BsTag } from "react-icons/bs";
+import { GoPlus } from "react-icons/go";
 
 const icons = {
+    GoPlus,
+    BsTag,
+    RiBillLine,
+    BsPerson,
+    CiEdit,
     FaArrowRightFromBracket,
     FaFacebook,
     FcGoogle,

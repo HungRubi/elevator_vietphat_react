@@ -1,0 +1,7 @@
+export {default as Account} from './Account'
+export {default as Profile} from './Profile'
+export {default as Banking} from './Banking'
+export {default as Address} from './Address'
+export {default as Password} from './Password'
+export {default as Notification} from './Notification'
+export {default as Order} from './Order'

@@ -38,7 +38,7 @@ const Home = () => {
                             cải tạo kết nối điện, phụ kiện thang máy và các sản phẩm liên quan cho khách 
                             hàng toàn Việt Nam.
                         </p>
-                        <Button>
+                        <Button className="!py-[15px]">
                             Xem thêm
                         </Button>
                         <div className="mb-[150px]"></div>
@@ -85,7 +85,9 @@ const Home = () => {
                             <>
                                 <div className="flex w-1/2 overflow-hidden items-center justify-center">
                                     <div className="transform skew-x-[29deg] px-[15px] pb-[15px] block">
-                                        <NavLink className="frame_skew flex items-center justify-center dis_skew">
+                                        <NavLink
+                                        to={`/news/detail/${item.slug}`} 
+                                        className="frame_skew flex items-center justify-center dis_skew">
                                             <img src={item.thumbnail} alt="" className="h-[300px] w-[300px] transform scale-[0.9] mx-[90px] skew-x-[-29deg]" />
                                         </NavLink>
                                     </div>
@@ -93,7 +95,9 @@ const Home = () => {
                                 <div className="text-left w-1/2">
                                     <h5 className="font-bold text-[25px]">Feb 02, 2025</h5>
                                     <h4 className="underline text-[#2f904b] text-[20px] font-[500] line-clamp-1">
-                                        {item.subject}
+                                        <NavLink to={`/news/detail/${item.slug}`} >
+                                            {item.subject}
+                                        </NavLink>
                                     </h4>
                                     <p className="line-clamp-6 text-[16px] leading-8">
                                         {item.content}
@@ -105,7 +109,9 @@ const Home = () => {
                                 <div className="text-right w-1/2">
                                     <h5 className="font-bold text-[25px]">Feb 02, 2025</h5>
                                     <h4 className="underline text-[#2f904b] text-[20px] font-[500] line-clamp-1">
-                                        {item.subject}
+                                        <NavLink to={`/news/detail/${item.slug}`} >
+                                            {item.subject}
+                                        </NavLink>
                                     </h4>
                                     <p className="line-clamp-6 text-[16px] leading-8">
                                         {item.content}
@@ -113,7 +119,8 @@ const Home = () => {
                                 </div>
                                 <div className="flex w-1/2 overflow-hidden items-center justify-center">
                                     <div className="transform -skew-x-[29deg] px-[15px] pb-[15px] block">
-                                        <NavLink className="frame_skew flex items-center justify-center">
+                                        <NavLink className="frame_skew flex items-center justify-center"
+                                        to={`/news/detail/${item.slug}`}>
                                             <img src={item.thumbnail} alt="" className="h-[300px] w-[300px] transform scale-[0.9] mx-[90px] skew-x-[29deg]" />
                                         </NavLink>
                                     </div>
