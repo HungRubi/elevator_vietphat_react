@@ -27,8 +27,12 @@ import { BsPerson } from "react-icons/bs";
 import { RiBillLine } from "react-icons/ri";
 import { BsTag } from "react-icons/bs";
 import { GoPlus } from "react-icons/go";
+import { FiSearch } from "react-icons/fi";
+import { FaCaretDown } from "react-icons/fa6";
 
 const icons = {
+    FiSearch,
+    FaCaretDown,
     GoPlus,
     BsTag,
     RiBillLine,

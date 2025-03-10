@@ -1,7 +1,7 @@
 
 const Notification = () => {
     return (
-        <>
+        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
             <div className="py-[15px] border-b border-b-[#cbd0dd]">
                 <h5 className='text-[22px] capitalize'>
                     Thông báo của bạn
@@ -37,7 +37,7 @@ const Notification = () => {
                     </div>
                 </li>
             </ul>
-        </>
+        </div>
     );
 };
 

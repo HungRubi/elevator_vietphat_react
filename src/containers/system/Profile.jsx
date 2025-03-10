@@ -2,7 +2,7 @@ import {Button, CircleButton} from '../../components';
 
 const Profile = () => {
     return (
-        <>
+        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
             <div className="py-[15px] border-b border-b-[#cbd0dd]">
                 <h5 className="text-[22px] capitalize">
                     hồ sơ của tôi
@@ -98,7 +98,7 @@ const Profile = () => {
                     </span>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

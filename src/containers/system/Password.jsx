@@ -2,7 +2,7 @@ import {Button} from '../../components';
 
 const Password = () => {    
     return (
-        <>
+        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
             <div className="py-[15px] border-b border-b-[#cbd0dd]">
                 <h5 className='text-[22px] capitalize'>
                     địa chỉ của tôi
@@ -60,7 +60,7 @@ const Password = () => {
                     </table>
                 </form>
             </div>
-        </>
+        </div>
     );
 }
 

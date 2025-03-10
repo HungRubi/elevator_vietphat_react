@@ -3,7 +3,7 @@ import icons from '../../util/icons';
 const {GoPlus} = icons
 const Banking = () => {
     return (
-        <>
+        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
             <div className="py-[15px] border-b border-b-[#cbd0dd] flex items-center justify-between">
                 <h5 className='text-[22px] capitalize'>
                     thẻ tín dụng/ghi nợ
@@ -34,7 +34,7 @@ const Banking = () => {
                     Bạn chưa có tài khoản ngân hàng
                 </p>
             </div>
-        </>
+        </div>
     );
 };
 

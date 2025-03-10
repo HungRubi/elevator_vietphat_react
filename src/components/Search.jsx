@@ -1,4 +1,6 @@
-import { FiSearch } from "react-icons/fi";
+import icons from '../util/icons';
+const {FiSearch} = icons;
+
 const Search = () => {
     return (
         <form action="" method="get" className='relative'>

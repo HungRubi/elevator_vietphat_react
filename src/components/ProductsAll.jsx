@@ -49,7 +49,6 @@ const ProductsAll = ({data}) => {
 
 ProductsAll.propTypes = {
     data: PropTypes.node.isRequired,
-    category: PropTypes.node.isRequired
 };
 
 export default (ProductsAll)

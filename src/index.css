@@ -9,6 +9,9 @@ body{
     line-height: 1.5;
     background: #f3f3f3;
 }
+input{
+    outline: none;
+}
 .btn_contact{
     background-image: linear-gradient(to right, #2f904b 30%, #5fe786 70%, #303030 100%);
     box-shadow: 0 3px 3px rgba(255, 255, 255, 0.15) inset, -1px -1px 3px rgba(0, 0, 0, 0.5) inset;
@@ -144,4 +147,27 @@ body{
 .hover_bg_li:hover{
     background: rgba(136, 136, 136, 0.1019607843);
     transition: .3s linear;
+}
+.order_items:nth-last-of-type(1){
+    border-bottom: none;
+}
+.cart_items:first-of-type{
+    border-top: none;
+}
+.bg_pay{
+    background-image: repeating-linear-gradient(45deg, #6fa6d6, #6fa6d6 33px, transparent 0, transparent 41px, #9cf0aa 0, #16dd16 74px, transparent 0, transparent 82px);
+    background-position-x: -30px;
+    background-size: 116px 3px;
+}
+.border-b-dash{
+    border-bottom: 1px dashed rgba(0, 0, 0, .09);
+}
+.border-r-dash{
+    border-right: 1px dashed rgba(0, 0, 0, .09);
+}
+.border-t-dash{
+    border-top: 1px dashed rgba(0, 0, 0, .09);
+}
+.box_shadow_div{
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.05);
 }
