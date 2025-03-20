@@ -15,7 +15,7 @@ const Home = () => {
     return (
         <div >
             <div className="flex flex-nowrap overflow-x-auto z-20 relative slider_home">
-                {banner.map(item => (
+                {banner?.map(item => (
                     <div key={item._id} className="w-full aspect-[1600/670] flex-none">
                         <img src={item.thumbnail} alt="silder" className="w-full"/>
                     </div>
@@ -51,7 +51,7 @@ const Home = () => {
             <div className="mt-[85px] flex items-center justify-between w-full">
                 <div className="w-[80%] m-auto">
                     <div className="flex gap-5 mb-5">
-                        {tabs.map((tab, index) => (
+                        {tabs?.map((tab, index) => (
                             <div 
                             className={`w-1/4 border text-center text-white uppercase cursor-pointer py-1.5 ${active === index ? "bg-[#2f904b]" : "bg-[black]"}`}
                             onClick={() => setActive(index)}
@@ -60,7 +60,7 @@ const Home = () => {
                             </div>
                         ))}
                     </div>
-                    {tabs.map((tab, index) => (
+                    {tabs?.map((tab, index) => (
                         <div
                             key={index}
                             className={`transition-opacity duration-500 ease-in-out ${
@@ -79,7 +79,7 @@ const Home = () => {
                 style={{ fontFamily: "Impact, sans-serif" }}>
                     Featured Articles
                 </div>
-                {article.map((item, index) => (
+                {article?.map((item, index) => (
                     <div key={item._id} className="flex items-center justify-between mt-6 gap-8">
                         {index === 1 ? (
                             <>

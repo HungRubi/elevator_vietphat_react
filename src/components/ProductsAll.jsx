@@ -6,6 +6,9 @@ import PropTypes from 'prop-types';
 const {FaStar, PiShoppingCartBold} = icons
 
 const ProductsAll = ({data}) => {
+    function format(money) {
+        return money.toLocaleString("vi-VN");
+    }
     return (
         <div className="flex flex-wrap gap-5">
             {data.length > 0 ? (
@@ -30,7 +33,7 @@ const ProductsAll = ({data}) => {
                                     <div className="text-[13px]">Đã bán: 5k2</div>
                                 </div>
                                 <div className=" mt-2.5 flex items-center justify-between">
-                                    <h5 className="text-[25px] text-[#2f904b] flex items-center gap-1"><span className='text-[15px]'>₫</span>{item.price}</h5>
+                                    <h5 className="text-[25px] text-[#2f904b] flex items-center gap-1"><span className='text-[15px]'>₫</span>{format(item.price)}</h5>
                                     <Button className="h-[50px] w-[50px] flex items-center justify-center">
                                         <PiShoppingCartBold className='size-[27px]'/>
                                     </Button>

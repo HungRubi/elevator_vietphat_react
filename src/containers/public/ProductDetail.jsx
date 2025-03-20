@@ -7,8 +7,8 @@ const {FaStar, FiTruck, AiOutlineRight, IoShieldCheckmarkOutline, PiShoppingCart
 
 const ProductDetail = () => {
     const dispatch = useDispatch();
-    const {productDetail, products} = useSelector(state => state.app);
-    console.log(products)
+    const {productDetail, productSuggest} = useSelector(state => state.app);
+    console.log(productSuggest)
     const slug = window.location.pathname.split('/').pop();
     let pricePre = 0;
     if(Number(productDetail?.sale) === 0){
@@ -23,7 +23,9 @@ const ProductDetail = () => {
             dispatch(actions.getProductDetail(slug))
         }
     }, [dispatch, slug])
-    
+    function format(money) {
+        return money.toLocaleString("vi-VN");
+    }
     return (
         <div>
             <div className="w-full px-[10%] pt-8">
@@ -42,7 +44,7 @@ const ProductDetail = () => {
                             <span className='inline-block'>
                                 <LoveButton/>
                             </span>
-                            <h1 className='line-clamp-2 text-[28px] leading-7'>
+                            <h1 className='line-clamp-2 text-[28px] leading-8 capitalize font-medium'>
                                 {productDetail?.name}
                             </h1>
                         </div>
@@ -67,8 +69,8 @@ const ProductDetail = () => {
                             </div>
                         </div>
                         <div className="flex items-center justify-start mt-3 w-full bg-[#fafafa] py-[15px] px-5">
-                            <span className="text-[30px] text-[#2f904b]">₫{pricePre}</span>
-                            <span className='text-[#929292] line-through text-[20px] ml-[0.925rem]'>₫{productDetail?.price}</span>
+                            <span className="text-[30px] text-[#2f904b]">₫{format(pricePre)}</span>
+                            <span className='text-[#929292] line-through text-[20px] ml-[0.925rem]'>₫{format(productDetail?.price)}</span>
                             <div className="bg-[#e3ffec] text-[12px] px-1 h-4.5 ml-[0.925rem] text-[#2f904b] font-bold rounded-[2px]">{productDetail?.sale}%</div>
                         </div>
                         <div className="flex items-center justify-start mt-8">
@@ -280,7 +282,7 @@ const ProductDetail = () => {
                 suggest products
             </div>
             <div className="w-full px-[10%] pt-5">
-                <ProductsAll data={products}/>
+                <ProductsAll data={productSuggest}/>
             </div>
         </div>
         

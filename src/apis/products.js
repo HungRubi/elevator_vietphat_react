@@ -1,9 +1,9 @@
 import axios from "../axios";
 
-export const getProducts = async (page = 1) => {
+export const getProducts = async () => {
     try {
         const response = await axios({
-            url: `/products?page=${page}`,
+            url: `/products`,
             method: 'get',
         });
         return response; 
@@ -12,3 +12,15 @@ export const getProducts = async (page = 1) => {
         throw err; 
     }
 };
+
+export const getProductDetail = async (slug) => {
+    try{
+        const response = await axios({
+            url: `/products/fe/${slug}`,
+            method: 'get'
+        })
+        return response.data
+    }catch(err){
+        console.log(err);
+    }
+}

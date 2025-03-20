@@ -1,37 +1,27 @@
 import icons from '../../util/icons';
 import {ProductsAll, PageBar} from '../../components/index';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as actions from '../../store/actions';
-import {setCurrentPage} from '../../store/actions/products';
 
 const {IoChevronUpSharp} = icons;
 
 
 const Products = () => {
     const dispatch = useDispatch();
-    const { currentPage, totalPage, productCache } = useSelector(state => state.app);
+    const { totalPage, products } = useSelector(state => state.app);
 
-    useEffect(() => {
-        if (!productCache[currentPage]) {  // Kiểm tra nếu trang chưa có dữ liệu, mới gọi API
-            dispatch(actions.getProducts(currentPage));
-        }
-    }, [dispatch, currentPage, productCache]);
-
-    // Hàm thay đổi trang
-    const handlePageChange = (newPage) => {
-        if (newPage >= 1 && newPage <= totalPage) {
-            dispatch(setCurrentPage(newPage)); // Cập nhật Redux trước
     
-            if (!productCache[newPage]) {  // Chỉ gọi API nếu trang chưa có trong cache
-                dispatch(actions.getProducts(newPage));
-            }
-            setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: "smooth" }); // Cuộn lên sau khi Redux đã cập nhật
-            }, 100);
-        }
-    };
+    useEffect(() => {
+        dispatch(actions.getProducts());
+    }, []);
 
+    const [current, setCurrent] = useState(1);
+    const limit = 12;
+    const lastProduct = current * limit;
+    const firstProduct = lastProduct - limit;
+    
+    const currentProduct = products.slice(firstProduct, lastProduct);
 
     return (
         <div className="w-full pt-8">
@@ -62,12 +52,12 @@ const Products = () => {
                 </ul>
             </div>
             <div className="flex-1">
-                <ProductsAll data={productCache[currentPage] || []} />
+                <ProductsAll data={currentProduct} />
             </div>
             
         </div>
-            <PageBar currentPage={currentPage} totalPage={totalPage} onPageChange={handlePageChange} />
+            <PageBar currentPage={current} totalPage={totalPage} onPageChange={setCurrent} />
         </div>
     )
 }
-export default Products
+export default Products                                 

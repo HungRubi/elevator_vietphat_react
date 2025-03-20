@@ -1,14 +1,13 @@
 import actionType from "../actions/actionTypes";
 
 const initState = {
-    article: [],
+    articles: [],
     productsCategory: [],
     banner: [],
     products: [],
-    productCache: {},
-    articleCache: {},
-    productDetail: null,
-    articleDetail: null,
+    productDetail: {},
+    articleDetail: {},
+    productSuggest: []
 }
 
 const appReducer = (state = initState, action) => {
@@ -24,50 +23,31 @@ const appReducer = (state = initState, action) => {
         case actionType.GET_PRODUCTS:
             return {
                 ...state,
-                productCache: {
-                    ...state.productCache, 
-                    [action.productData?.data?.currentPage]: action.productData?.data?.products, 
-                },
+                products: action.productData?.data?.products || [],
                 totalPage: action.productData?.data?.totalPage || 1,
-                currentPage: action.productData?.data?.currentPage || 1,
-                
             }
         
         case actionType.GET_ARTICLES:
             return {
                 ...state,
-                articleCache: {
-                    ...state.articleCache, 
-                    [action.articleData?.data?.currentPage]: action.articleData?.data?.articles, 
-                },
-                totalPageArticle: action.articleData?.data?.totalPage || 1,
-                currentPageArticle: action.articleData?.data?.currentPage || 1,
+                articles: action.articleData?.data?.articles || [],
+                totalPage: action.articleData?.data?.totalPage || 1,
                 
             }
         case actionType.GET_PRODUCT_DETAIL:
+            console.log(action.payload?.data)
             return {
                 ...state,
-                productDetail: action.payload || null,
-                products: action.suggest
+                productDetail: action.payload?.product || {},
+                productSuggest: action.payload?.productSuggest || []
             }
         
         case actionType.GET_ARTICLE_DETAIL:
             return {
                 ...state,
-                articleDetail: action.payload || null,
+                articleDetail: action.payload?.article || {},
             }
 
-        case actionType.SET_CURRENT_PAGE_ARTICLE: 
-            return {
-                ...state,
-                currentPageArticle: action.payload,
-            };
-
-        case actionType.SET_CURRENT_PAGE: 
-            return {
-                ...state,
-                currentPage: action.payload,
-            };
         default:
             return state
     }

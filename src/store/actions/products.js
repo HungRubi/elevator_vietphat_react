@@ -1,9 +1,9 @@
 import actionType from "./actionTypes";
 import * as apis from '../../apis/products'
 
-export const getProducts = (page = 1) => async (dispatch)  => {
+export const getProducts = () => async (dispatch)  => {
     try{
-        const response = await apis.getProducts(page);
+        const response = await apis.getProducts();
         if(response.status === 200) {
             dispatch({
                 type: actionType.GET_PRODUCTS,
@@ -24,7 +24,25 @@ export const getProducts = (page = 1) => async (dispatch)  => {
     }
 }
 
-export const setCurrentPage = (page) => ({
-    type: actionType.SET_CURRENT_PAGE,
-    payload: page
-})
+export const getProductDetail = (slug) => async (dispatch)  => {
+    try{
+        const response = await apis.getProductDetail(slug);
+        if(response) {
+            dispatch({
+                type: actionType.GET_PRODUCT_DETAIL,
+                payload: response.data,
+            })
+        }else{
+            dispatch({
+                type: actionType.GET_PRODUCT_DETAIL,
+                payload: null,
+            })
+        }
+    }catch(err){
+        dispatch({
+            type: actionType.GET_PRODUCT_DETAIL,
+            payload: null,
+            err
+        })
+    }
+}

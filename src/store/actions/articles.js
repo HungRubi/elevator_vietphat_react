@@ -1,9 +1,9 @@
 import actionType from "./actionTypes";
 import * as apis from '../../apis/articles'
 
-export const getArticles = (page = 1) => async (dispatch)  => {
+export const getArticles = () => async (dispatch)  => {
     try{
-        const response = await apis.getArticles(page);
+        const response = await apis.getArticles();
         if(response.status === 200) {
             dispatch({
                 type: actionType.GET_ARTICLES,
@@ -23,7 +23,26 @@ export const getArticles = (page = 1) => async (dispatch)  => {
         })
     }
 }
-export const setCurrentPageArticle = (page) => ({
-    type: actionType.SET_CURRENT_PAGE_ARTICLE,
-    payload: page
-})
+
+export const getArticleDetail = (slug) => async (dispatch)  => {
+    try{
+        const response = await apis.getArticleDetail(slug);
+        if(response) {
+            dispatch({
+                type: actionType.GET_ARTICLE_DETAIL,
+                payload: response.data,
+            })
+        }else{
+            dispatch({
+                type: actionType.GET_ARTICLE_DETAIL,
+                payload: null,
+            })
+        }
+    }catch(err){
+        dispatch({
+            type: actionType.GET_ARTICLE_DETAIL,
+            payload: null,
+            err
+        })
+    }
+}
