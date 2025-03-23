@@ -19,7 +19,7 @@ export const getArticleDetail = async (slug) => {
             url: `/articles/fe/${slug}`,
             method: 'get'
         })
-        return response.data
+        return response;
     }catch(err){
         console.log(err);
     }

@@ -1,10 +1,16 @@
 import { NavLink } from 'react-router-dom';
-import {Button, ListProduct, Form} from '../../components/index'
+import {Button, ListProduct, Form, ListVideo} from '../../components/index'
 import { useState } from 'react';
 import { useSelector } from "react-redux";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/autoplay';
+import "swiper/css/navigation";
+import "swiper/css/effect-fade";
+import { Autoplay, Navigation } from 'swiper/modules';
 
 const Home = () => {
-    const {article, productsCategory, banner} = useSelector(state => state.app);
+    const {article, productsCategory, banner, video} = useSelector(state => state.app);
     const [active, setActive] = useState(0);
     const tabs = [
         { label: "COP/LOP", category: "COP/LOP" },
@@ -14,15 +20,28 @@ const Home = () => {
     ];
     return (
         <div >
-            <div className="flex flex-nowrap overflow-x-auto z-20 relative slider_home">
+            <Swiper
+                modules={[Autoplay, Navigation]}
+                navigation={true}
+                autoplay={{ delay: 4000, disableOnInteraction: false }}
+                loop={true}
+                slidesPerView={1}
+                effect="fade"
+                fadeEffect={{ crossFade: true }}
+                speed={1200} // Làm hiệu ứng mượt hơn
+                className="flex flex-nowrap overflow-x-auto z-20 relative slider_home"
+
+            >
                 {banner?.map(item => (
-                    <div key={item._id} className="w-full aspect-[1600/670] flex-none">
-                        <img src={item.thumbnail} alt="silder" className="w-full"/>
-                    </div>
+                    <SwiperSlide key={item._id}>
+                        <div  className="w-full aspect-[1600/670] flex-none">
+                            <img src={item.thumbnail} alt="silder" className="w-full"/>
+                        </div>
+                    </SwiperSlide>
                 ))}
-            </div>
+            </Swiper>
             <div className="w-full px-[10%] pt-[65px] flex justify-between intro_company relative">
-                <div className="w-[45%]">
+                <div className="w-[45%]" data-aos="fade-right">
                     <h1 className="text-[70px] text-[#2f904b] font-[700] uppercase" style={{fontFamily: "Impact"}}>
                         viet phat
                     </h1>
@@ -44,11 +63,12 @@ const Home = () => {
                         <div className="mb-[150px]"></div>
                     </div>
                 </div>
-                <div className="w-[45%] mt-[90px]">
-                    <img src="/img/slider/1.png" alt="" className='z-10 relative'/>
+                <div className="w-[45%] mt-[90px] !z-50" data-aos="fade-left">
+                    <img src="/img/slider/1.png" alt="" className=' relative'/>
                 </div>
             </div>
-            <div className="mt-[85px] flex items-center justify-between w-full">
+            <div className="mt-[85px] flex items-center justify-between w-full"
+            data-aos="fade-up">
                 <div className="w-[80%] m-auto">
                     <div className="flex gap-5 mb-5">
                         {tabs?.map((tab, index) => (
@@ -62,6 +82,7 @@ const Home = () => {
                     </div>
                     {tabs?.map((tab, index) => (
                         <div
+                            
                             key={index}
                             className={`transition-opacity duration-500 ease-in-out ${
                                 active === index ? "opacity-100 scale-100 block" : "opacity-0 scale-95 hidden"
@@ -73,7 +94,7 @@ const Home = () => {
 
                 </div>
             </div>
-            <div className="w-[80%] m-auto mt-[70px]">
+            <div className="w-[80%] m-auto mt-[70px]" data-aos="fade-up">
                 <div 
                 className="text-center text-[50px] text-[#2f904b]"
                 style={{ fontFamily: "Impact, sans-serif" }}>
@@ -83,12 +104,13 @@ const Home = () => {
                     <div key={item._id} className="flex items-center justify-between mt-6 gap-8">
                         {index === 1 ? (
                             <>
-                                <div className="flex w-1/2 overflow-hidden items-center justify-center">
-                                    <div className="transform skew-x-[29deg] px-[15px] pb-[15px] block">
-                                        <NavLink
+                                <div className="flex w-1/2 overflow-hidden items-center justify-center" title={item.subject}>
+                                    <div className="transform !skew-x-[29deg] px-[15px] pb-[15px] block " data-aos="flip-left">
+                                        <NavLink title={item.subject}
                                         to={`/news/detail/${item.slug}`} 
-                                        className="frame_skew flex items-center justify-center dis_skew">
-                                            <img src={item.thumbnail} alt="" className="h-[300px] w-[300px] transform scale-[0.9] mx-[90px] skew-x-[-29deg]" />
+                                        className="frame_skew flex items-center justify-center dis_skew frame_article overflow-hidden">
+                                            <img src={item.thumbnail} alt={item.subject}
+                                            className="h-[300px] w-[300px] transform scale-[0.9] mx-[90px] skew-x-[-29deg]" />
                                         </NavLink>
                                     </div>
                                 </div>
@@ -118,8 +140,9 @@ const Home = () => {
                                     </p>
                                 </div>
                                 <div className="flex w-1/2 overflow-hidden items-center justify-center">
-                                    <div className="transform -skew-x-[29deg] px-[15px] pb-[15px] block">
-                                        <NavLink className="frame_skew flex items-center justify-center"
+                                    <div className="transform !-skew-x-[29deg] px-[15px] pb-[15px] block" data-aos="flip-right">
+                                        <NavLink title={item.subject}
+                                        className="frame_skew flex items-center justify-center frame_article -frame_article overflow-hidden"
                                         to={`/news/detail/${item.slug}`}>
                                             <img src={item.thumbnail} alt="" className="h-[300px] w-[300px] transform scale-[0.9] mx-[90px] skew-x-[29deg]" />
                                         </NavLink>
@@ -132,13 +155,47 @@ const Home = () => {
 
             </div>
             <div className="w-[80%] m-auto mt-[70px]">
-            <div 
+                <div
+                data-aos="fade-up" 
+                className="text-center text-[50px] text-[#2f904b] capitalize"
+                style={{ fontFamily: "Impact, sans-serif" }}>
+                    Trending Now – Don’t Miss Out!
+                </div>
+            </div>
+            <div className="w-full px-[10%]">
+                <ListVideo data={video}/>
+            </div>
+            <div className="w-[80%] m-auto mt-[70px]">
+                <div
+                data-aos="fade-up" 
                 className="text-center text-[50px] text-[#2f904b] capitalize"
                 style={{ fontFamily: "Impact, sans-serif" }}>
                     contact
                 </div>
             </div>
             <Form/>
+            <div className="w-full mt-10">
+                <div className="w-full relative">
+                    <div className="top-0  bottom-0 w-full h-auto relative">
+                        <img src="/img/slider/5.png" alt="" className='w-full object-contain'/>
+                        <div className="absolute left-[10%] right-[10%] flex justify-between z-20 top-[20%] font-bold items-center">
+                            <div className="text-white max-w-1/2 leading-20">
+                                <h3 className="text-[#6BE455] uppercase">
+                                    luôn hoạt động 24/7
+                                </h3>
+                                <h2 className='line-clamp-2 text-5xl leading-16'>
+                                    Hãy liện hệ ngay cho chúng tôi để được tư vấn
+                                </h2>
+                            </div>
+                            <NavLink to={"tel:0924113113"}>
+                                <Button className={"!px-8 !py-4 font-medium text-lg"}>
+                                    hãy gọi ngay
+                                </Button>   
+                            </NavLink>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

@@ -4,6 +4,7 @@ const actionType = {
     GET_ARTICLES: 'GET_ARTICLES',
     GET_PRODUCT_DETAIL: 'GET_PRODUCT_DETAIL',
     GET_ARTICLE_DETAIL: 'GET_ARTICLE_DETAIL',
+    GET_VIDEO_DETAIL: 'GET_VIDEO_DETAIL',
 }
 
 export default actionType

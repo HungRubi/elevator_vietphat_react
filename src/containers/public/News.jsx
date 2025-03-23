@@ -15,7 +15,7 @@ const News = () => {
     const firstArticle = lastArticle - limit;
     const currentArticle = articles.slice(firstArticle, lastArticle);
     return (
-        <div className="w-full px-[10%] pt-8">
+        <div className="w-full px-[10%] py-8">
             <ListArticle current={current} setCurrent={setCurrent} currentArticle={currentArticle} totalPage={totalPage}/>
         </div>
     )

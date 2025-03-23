@@ -26,7 +26,8 @@ const HeaderBar = () => {
       }, []);
     const location = useLocation();
     return (
-        <div className={`w-full px-[10%] m-auto flex items-center justify-between ${location.pathname === '/' ? "bg-transparent" : "bg-black"}`}>
+        <div className={`w-full px-[10%] m-auto flex items-center justify-between ${location.pathname === '/' ? "bg-transparent" : "bg-black"}`}
+        data-aos="fade-down" data-aos-anchor-placement="top-bottom">
             <div className="w-[90px]">
                 <NavLink
                 className="w-full"

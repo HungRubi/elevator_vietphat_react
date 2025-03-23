@@ -24,7 +24,7 @@ const Products = () => {
     const currentProduct = products.slice(firstProduct, lastProduct);
 
     return (
-        <div className="w-full pt-8">
+        <div className="w-full pt-8 mb-15">
             <div className="w-full px-[10%] flex gap-8">
             <div className="w-[230px] flex-none">
                 <div className="py-1.5 pl-1.5 uppercase text-white bg-[#2f904b] font-[600]">categories</div>

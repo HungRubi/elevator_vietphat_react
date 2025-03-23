@@ -27,6 +27,7 @@ export const getArticles = () => async (dispatch)  => {
 export const getArticleDetail = (slug) => async (dispatch)  => {
     try{
         const response = await apis.getArticleDetail(slug);
+        console.log(response);
         if(response) {
             dispatch({
                 type: actionType.GET_ARTICLE_DETAIL,

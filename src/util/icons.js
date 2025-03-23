@@ -29,8 +29,14 @@ import { BsTag } from "react-icons/bs";
 import { GoPlus } from "react-icons/go";
 import { FiSearch } from "react-icons/fi";
 import { FaCaretDown } from "react-icons/fa6";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { FaRegEye } from "react-icons/fa";
+import { FaCirclePlay } from "react-icons/fa6";
 
 const icons = {
+    FaCirclePlay,
+    FaRegEye,
+    FaRegCalendarAlt,
     FiSearch,
     FaCaretDown,
     GoPlus,

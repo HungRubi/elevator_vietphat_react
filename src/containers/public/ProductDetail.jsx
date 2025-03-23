@@ -3,13 +3,13 @@ import icons from '../../util/icons';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../../store/actions/'
+import { useParams } from 'react-router-dom';
 const {FaStar, FiTruck, AiOutlineRight, IoShieldCheckmarkOutline, PiShoppingCartBold, MdEmail, BsThreeDotsVertical, BiSolidLike} = icons
 
 const ProductDetail = () => {
     const dispatch = useDispatch();
     const {productDetail, productSuggest} = useSelector(state => state.app);
-    console.log(productSuggest)
-    const slug = window.location.pathname.split('/').pop();
+    const {slug} = useParams();
     let pricePre = 0;
     if(Number(productDetail?.sale) === 0){
         pricePre = Number(productDetail?.price);
@@ -24,10 +24,10 @@ const ProductDetail = () => {
         }
     }, [dispatch, slug])
     function format(money) {
-        return money.toLocaleString("vi-VN");
+        return money?.toLocaleString("vi-VN");
     }
     return (
-        <div>
+        <div className='mb-15'>
             <div className="w-full px-[10%] pt-8">
                 <div className="w-full flex justify-between">
                     <div className="w-[47%]">

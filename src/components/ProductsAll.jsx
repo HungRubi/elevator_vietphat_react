@@ -14,14 +14,14 @@ const ProductsAll = ({data}) => {
             {data.length > 0 ? (
                 data.map((item => (
                     <>
-                        <div key={item._id} className="border border-[#cbd0dd] item_product">
+                        <div key={item._id} className="border border-[#cbd0dd] item_product shadow" data-aos="zoom-in">
                             <NavLink className="w-full" to={`/products/detail/${item.slug}`}>
-                                <img src={item.thumbnail_main} alt="ảnh sản phẩm" className="w-full border-b border-b-[#cbd0dd]"/>
+                                <img src={item.thumbnail_main} alt={item.name} className="w-full border-b border-b-[#cbd0dd]"/>
                             </NavLink>
                             <div className="py-2.5 px-3">
                                 <div className="text-4 line-clamp-2">
                                     <LoveButton/>
-                                    <NavLink to={`/products/detail/${item.slug}`}>
+                                    <NavLink to={`/products/detail/${item.slug}`} className={"font-medium text-lg capitalize"}>
                                         {item.name}
                                     </NavLink>
                                 </div>
@@ -33,7 +33,7 @@ const ProductsAll = ({data}) => {
                                     <div className="text-[13px]">Đã bán: 5k2</div>
                                 </div>
                                 <div className=" mt-2.5 flex items-center justify-between">
-                                    <h5 className="text-[25px] text-[#2f904b] flex items-center gap-1"><span className='text-[15px]'>₫</span>{format(item.price)}</h5>
+                                    <h5 className="text-[25px] text-[#2f904b] flex items-center gap-1"><span className='text-lg font-medium'>₫</span>{format(item.price)}</h5>
                                     <Button className="h-[50px] w-[50px] flex items-center justify-center">
                                         <PiShoppingCartBold className='size-[27px]'/>
                                     </Button>

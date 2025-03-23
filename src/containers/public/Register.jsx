@@ -61,7 +61,9 @@ const Register = () => {
                     </div>
                 </form>
             </div>
-            <Footer/>
+            <div className="pt-15">
+                <Footer/>
+            </div>
         </div>
     )
 }

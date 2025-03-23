@@ -7,7 +7,12 @@ const initState = {
     products: [],
     productDetail: {},
     articleDetail: {},
-    productSuggest: []
+    productSuggest: [],
+    articleSuggest: [],
+    productNewLast: [],
+    video: [],
+    videoDetail: {},
+    listVideo: [],
 }
 
 const appReducer = (state = initState, action) => {
@@ -15,9 +20,10 @@ const appReducer = (state = initState, action) => {
         case actionType.GET_HOME:
             return {
                 ...state,
-                article: action.homeData.data.article || null,
-                productsCategory: action.homeData.data.products || null,
-                banner: action.homeData.data.banner || null 
+                article: action.homeData.data.article || [],
+                productsCategory: action.homeData.data.products || [],
+                banner: action.homeData.data.banner || [],
+                video: action.homeData.data.video || [] 
             }
         
         case actionType.GET_PRODUCTS:
@@ -35,17 +41,27 @@ const appReducer = (state = initState, action) => {
                 
             }
         case actionType.GET_PRODUCT_DETAIL:
-            console.log(action.payload?.data)
             return {
                 ...state,
-                productDetail: action.payload?.product || {},
-                productSuggest: action.payload?.productSuggest || []
+                productDetail: action.payload?.data?.product || {},
+                productSuggest: action.payload?.data?.productSuggest || []
             }
         
         case actionType.GET_ARTICLE_DETAIL:
             return {
                 ...state,
                 articleDetail: action.payload?.article || {},
+                articleSuggest: action.payload?.formNewArticles || [],
+                productNewLast: action.payload?.formNewProduct || []
+            }
+
+        case actionType.GET_VIDEO_DETAIL:
+            return {
+                ...state,
+                videoDetail: action.payload?.data?.video || {},
+                listVideo: action.payload?.data?.videos || [],
+                articleSuggest: action.payload?.data?.articleSuggest || [],
+                productNewLast: action.payload?.data?.productSuggest || []
             }
 
         default:

@@ -6,7 +6,7 @@ const {FaGem, HiUserGroup, FaHeart, BsArrowRightSquareFill} = icons
 const AboutUs = () => {
     return (
         <div className="w-full">
-            <div className="px-[10%] bg-white flex justify-between py-[50px]">
+            <div data-aos="fade-down"className="px-[10%] bg-white flex justify-between py-[50px]">
                 <div className="w-1/2">
                     <div className="flex flex-col">
                         <div className="text-left font-[600] text-[28px] text-[#0a0a0a] heading">
@@ -41,10 +41,10 @@ const AboutUs = () => {
                     </div>
                 </div>
                 <div className="w-[45%]">
-                    <img src="/img/about/2.png" alt="" className="object-cover w-full"/>
+                    <img src="/img/about/2.png" alt="" className="object-cover w-full" data-aos="zoom-in-up"/>
                 </div>
             </div>
-            <div className="px-[10%] flex items-center flex-col my-[50px] py-[50px]">
+            <div data-aos="fade-down" className="px-[10%] flex items-center flex-col my-[50px] py-[50px]">
                 <div className="text-left font-[600] text-[28px] text-[#0a0a0a] heading">
                     Tại sao lên chọn chúng tôi?
                 </div>
@@ -59,9 +59,9 @@ const AboutUs = () => {
                     và cam kết bền vững.
                 </p>
             </div>
-            <div className="px-[10%] bg-white flex justify-between py-[50px]">
+            <div data-aos="fade-up" className="px-[10%] bg-white flex justify-between py-[50px]">
                 <div className="w-[45%]">
-                    <img src="/img/about/2.jpg" alt="" className="object-cover w-full"/>
+                    <img src="/img/about/2.jpg" alt="" className="object-cover w-full" data-aos="zoom-in-up"/>
                 </div>
                 <div className="w-1/2">
                     <div className="flex flex-col">
@@ -79,59 +79,59 @@ const AboutUs = () => {
                     </div>
                 </div>
             </div>
-            <div className="px-[10%] py-[50px] flex flex-col items-center">
+            <div data-aos="fade-up" className="px-[10%] py-[50px] flex flex-col items-center">
                 <div className="text-left font-[600] text-[28px] text-[#0a0a0a] heading">
                     Môi trường làm việc
                 </div>
                 <div className="w-[12%] border border-[#2f904b] mt-2.5"></div>
                 <div className="flex items-center gap-5 mt-10">
                     <div className="w-1/4">
-                        <img src="/img/about/3.jpg" alt="" className='w-full object-cover'/>
+                        <img src="/img/about/3.jpg" alt="" className='w-full object-cover' data-aos="zoom-in-up"/>
                     </div>
                     <div className="w-1/4">
-                        <img src="/img/about/4.jpg" alt="" className='w-full object-cover'/>
+                        <img src="/img/about/4.jpg" alt="" className='w-full object-cover' data-aos="zoom-in-up"/>
                     </div>
                     <div className="w-1/4">
-                        <img src="/img/about/5.jpg" alt="" className='w-full object-cover'/>
+                        <img src="/img/about/5.jpg" alt="" className='w-full object-cover' data-aos="zoom-in-up"/>
                     </div>
                     <div className="w-1/4">
-                        <img src="/img/about/6.jpg" alt="" className='w-full object-cover'/>
+                        <img src="/img/about/6.jpg" alt="" className='w-full object-cover' data-aos="zoom-in-up"/>
                     </div>
                 </div>
-                <p className="text-[16px] leading-8 line-clamp-1 text-center mt-2.5">
+                <p className="text-[16px] leading-8 line-clamp-1 text-center mt-10">
                     môi trường làm việc chuyên nghiệp, năng động, khuyến khích sự sáng tạo và phát triển nghề nghiệp cho nhân viên
                 </p>
             </div>
-            <div className="px-[10%] py-[50px] flex flex-col items-center bg-white">
+            <div data-aos="fade-up" className="px-[10%] py-[50px] flex flex-col items-center bg-white">
                 <div className="text-left font-[600] text-[28px] text-[#0a0a0a] heading">
                     Sản phẩm nổi bật
                 </div>
                 <div className="w-[12%] border border-[#2f904b] mt-2.5"></div>
                 <div className="flex items-center gap-5 mt-10">
                     <div className="w-1/4">
-                        <img src="/img/about/1.jpg" alt="" className='w-full object-cover'/>
+                        <img src="/img/about/1.jpg" alt="" className='w-full object-cover' data-aos="zoom-in-up"/>
                     </div>
                     <div className="w-1/4">
-                        <img src="/img/about/9.png" alt="" className='w-full object-cover'/>
+                        <img src="/img/about/9.png" alt="" className='w-full object-cover' data-aos="zoom-in-up"/>
                     </div>
                     <div className="w-1/4">
-                        <img src="/img/about/9.jpg" alt="" className='w-full object-cover'/>
+                        <img src="/img/about/9.jpg" alt="" className='w-full object-cover' data-aos="zoom-in-up"/>
                     </div>
                     <div className="w-1/4">
-                        <img src="/img/about/10.jpg" alt="" className='w-full object-cover'/>
+                        <img src="/img/about/10.jpg" alt="" className='w-full object-cover' data-aos="zoom-in-up"/>
                     </div>
                 </div>
-                <p className="text-[16px] leading-8 line-clamp-1 text-center mt-2.5">
+                <p className="text-[16px] leading-8 line-clamp-1 text-center mt-10">
                     Với tư cách là một công ty, chúng tôi đã tăng trưởng đều đặn về quy mô và doanh thu. 
                     Với mục tiêu bao phủ toàn Việt Nam và có thể mở rộng xuất khẩu trong tương lai gần
                 </p>
             </div>
-            <div className="px-[10%] flex items-center flex-col my-[50px] py-[50px]">
+            <div data-aos="fade-up" className="px-[10%] flex items-center flex-col my-[50px] py-[50px]">
                 <div className="text-left font-[600] text-[28px] text-[#0a0a0a] heading">
                     Chào mừng hợp tác
                 </div>
                 <div className="w-[15%] border border-[#2f904b] mt-2.5"></div>
-                <p className="text-center leading-8 line-clamp-4 text-[16px] mt-[15px] line-clamp-4">
+                <p className="text-center leading-8 text-[16px] mt-[15px] line-clamp-4">
                     Chào mừng Quý đối tác đến với Thang Máy Việt Phát! Chúng tôi rất vinh hạnh khi được trở thành 
                     người bạn đồng hành đáng tin cậy trên hành trình phát triển của Quý vị.Với sự cam kết về chất 
                     lượng, sáng tạo và dịch vụ tận tâm, Việt Phát luôn nỗ lực mang đến những giá trị vượt ngoài 

@@ -9,7 +9,7 @@ const Public = () => {
             <div className={` top-0 left-0 right-0 z-[1000] ${location.pathname !== '/' ? "relative" : "absolute"}`}>
                 <HeaderBar />
             </div>
-            <div className="w-full relative mb-12">
+            <div className="w-full relative">
                 <Outlet />
             </div>
             <div className="w-full">

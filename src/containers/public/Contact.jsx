@@ -5,8 +5,8 @@ const {FaMapMarkerAlt, MdEmail, FaPhoneAlt} = icons
 
 const Contact = () => {
     return (
-        <div className="mt-[75px] w-full">
-            <div className="w-[80%] px-[10%]">
+        <div className="mt-[75px] w-full mb-15">
+            <div className="w-[80%] px-[10%]" data-aos="fade-up">
                 <h1
                 style={{fontFamily: "Poppins, sans-serif"}} 
                 className="text-[24px] text-[#2f904b] font-[600] line-clamp-1">
@@ -19,7 +19,7 @@ const Contact = () => {
                 </h2>
             </div>
             <Form className="!w-full"/>
-            <div className="w-full px-[10%] mt-2.5">
+            <div className="w-full px-[10%] mt-2.5" data-aos="fade-up">
                 <p className="text-center line-clamp-3 py-[4px] leading-8">
                     Chúng tôi sẽ phấn đấu phát triển bằng uy tín, tồn tại bằng chất lượng,hướng 
                     tới sự hài lòng của khách hàng và lấy sự tự giác làm kim chỉ nam để cung cấp 

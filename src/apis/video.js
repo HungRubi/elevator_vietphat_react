@@ -1,12 +1,12 @@
 import axios from "../axios";
 
-export const getHome = async () => {
+export const getVideoDetail = async (slug) => {
     try{
         const response = await axios({
-            url: 'home',
+            url: `/category/video/${slug}`,
             method: 'get'
         })
-        return response
+        return response;
     }catch(err){
         console.log(err);
     }
