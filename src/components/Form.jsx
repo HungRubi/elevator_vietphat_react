@@ -1,10 +1,49 @@
+import { useEffect, useRef } from "react";
+import { useState } from "react"
+import emailjs from "@emailjs/browser";
+import { toast } from "react-toastify";
+
 const Form = () => {
+    const [status, setStatus] = useState("");
+    const form = useRef();
+    const sendEmail = (e) => {
+        e.preventDefault();
+        emailjs.sendForm(
+            import.meta.env.VITE_SERVICE_KEY,
+            import.meta.env.VITE_TEMPLATE_KEY,
+            form.current,
+            import.meta.env.VITE_USER_PUBLIC_KEY,
+        )
+        .then((result) => {
+                console.log(result)
+                setStatus("1");
+                form.current.reset();
+            }
+        ).catch((err) => {
+            console.log(err)
+            setStatus("2");
+        })
+    }
+    useEffect(() => {
+        if(status === "1"){
+            toast.success("Chúng tôi đã nhận được lời nhắn của bạn ^^")
+        }
+        if(status === "2"){
+            toast.error("Có lỗi gì rồi vui lòng kiểm tra lại thông tin!")
+        }
+        const timer = setTimeout(() => {
+            setStatus("");
+        }, 3000);
+    
+        return () => clearTimeout(timer);
+    }, [status])
+     
     return (
         <div className="w-[80%] m-auto mt-8" data-aos="fade-up">
             <div className="w-full bg-[#2f904b] h-10 leading-10 text-[16px] px-5 text-white">
                 Để lại lời nhắn của bạn ở đây
             </div>
-            <form action="" className="w-full bg-white">
+            <form ref={form} className="w-full bg-white" onSubmit={sendEmail}>
                 <ul className="px-5 pt-5 pb-[5px] w-full">
                     <li className="w-full leading-8 flex mb-[14px]">
                         <input 

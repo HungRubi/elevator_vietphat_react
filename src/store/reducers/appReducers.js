@@ -13,10 +13,41 @@ const initState = {
     video: [],
     videoDetail: {},
     listVideo: [],
+    currentUser: null,
 }
 
 const appReducer = (state = initState, action) => {
     switch (action.type){
+
+        /** === LOGIN === */
+        case actionType.LOGIN:
+            return {
+                ...state,
+                currentUser: action.payload?.user || null,
+                message: action.payload?.message || null,
+                loginError: null
+            }
+        case actionType.LOGIN_FAIL:
+            return {
+                ...state,
+                message: null,
+                loginError: action.payload || null,
+            }
+
+        case actionType.REGISTER:
+            return {
+                ...state,
+                messageRegister: action.payload?.message || null,
+                registerError: null,
+
+            }
+        case actionType.REGISTER_FAIL:
+            return {
+                ...state,
+                messageRegister: null,
+                registerError: action.payload || null,
+            }
+
         case actionType.GET_HOME:
             return {
                 ...state,

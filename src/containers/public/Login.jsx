@@ -1,10 +1,39 @@
-import { NavLink } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import {Footer} from "../../components/index"
 import icons from '../../util/icons';
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import * as actions from '../../store/actions'
+import { toast } from "react-toastify";
 
 const {FcGoogle, FaFacebook} = icons;
 
 const Login = () => {
+    const dispatch = useDispatch();
+    const { message, loginError } = useSelector(state => state.app);
+    console.log(message);
+    console.log(loginError);
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        account: '',
+        password: ''
+    })
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        })
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        dispatch(actions.login(formData));
+    }
+    useEffect(() => {
+        if(message){
+            toast.success(typeof message === 'string' ? message : JSON.stringify(message));
+            navigate("/");
+        }
+    }, [message, navigate])
     return (
         <div className="fixed w-full bg-[#f3f3f3] top-0 z-[9999] h-screen overflow-y-auto">
             <div className="w-full h-1/7 flex items-center justify-between px-[10%]">
@@ -21,7 +50,8 @@ const Login = () => {
             </div>
             <div className="w-full relative mb-8">
                 <img src="/img/slider/background_login.png" alt="" className=""/>
-                <form className="w-[500px] bg-white rounded-[4px] login_form absolute">
+                <form onSubmit={handleSubmit}
+                className="w-[500px] bg-white rounded-[4px] login_form absolute">
                     <div className="px-[30px] py-[1.375rem] w-full">
                         <div className="text-[1.8rem] text-center capitalize text-[#2f904b]">
                             đăng nhập
@@ -29,16 +59,23 @@ const Login = () => {
                     </div>
                     <div className="px-[30px] pb-[30px]">
                         <div className="mt-5">
-                            <input type="text" placeholder="Nhập tài khoản của bạn" name="account" 
+                            <input type="text" placeholder="Nhập tài khoản của bạn" name="account" onChange={handleChange} 
                             className="flex-1 outline-none px-[0.75rem] py-[0.75rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-full" />
                         </div>
                         <div className="mt-8">
-                            <input type="password" placeholder="Mật khẩu" name="password"
+                            <input type="password" placeholder="Mật khẩu" name="password" onChange={handleChange}
                             className="flex-1 outline-none px-[0.75rem] py-[0.75rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-full" />
                         </div>
-                        <div className="mt-8">
-                            <input type="submit" name="submit" value="đăng nhập" disabled
-                            className="flex-1 outline-none px-[0.75rem] py-[0.75rem] leading-1 cursor-progress uppercase border-none bg-[#2f904b] rounded-[2px] h-[2.5rem] w-full text-white opacity-70" />
+                        <div className="mt-4">
+                            <p className="text-red-600 text-sm">
+                                {loginError ? "Tài khoản mật khẩu không chính xác" : ""}
+                            </p>
+                        </div>
+                        <div className={`${loginError ? "mt-4" : "mt-8"}`}>
+                            <button type="submit"
+                            className="flex-1 outline-none px-[0.75rem] py-[0.75rem] leading-1 uppercase border-none bg-[#2f904b] rounded-[2px] h-[2.5rem] w-full text-white opacity-70" >
+                                đăng nhập
+                            </button>
                         </div>
                         <div className="w-full mt-2">
                             <NavLink className="text-blue-600 text-[12px]">
