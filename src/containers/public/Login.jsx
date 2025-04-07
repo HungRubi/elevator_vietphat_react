@@ -59,7 +59,7 @@ const Login = () => {
                     </div>
                     <div className="px-[30px] pb-[30px]">
                         <div className="mt-5">
-                            <input type="text" placeholder="Nhập tài khoản của bạn" name="account" onChange={handleChange} 
+                            <input type="text" placeholder="Nhập tài khoản của bạn" name="account" onChange={handleChange}
                             className="flex-1 outline-none px-[0.75rem] py-[0.75rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-full" />
                         </div>
                         <div className="mt-8">

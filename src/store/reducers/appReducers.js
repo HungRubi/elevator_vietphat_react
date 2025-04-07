@@ -14,6 +14,8 @@ const initState = {
     videoDetail: {},
     listVideo: [],
     currentUser: null,
+    productCart: [],
+    cartUser: [],
 }
 
 const appReducer = (state = initState, action) => {
@@ -25,6 +27,8 @@ const appReducer = (state = initState, action) => {
                 ...state,
                 currentUser: action.payload?.user || null,
                 message: action.payload?.message || null,
+                cartUser: action.payload?.cart || [],
+                productCart: action.payload?.product || [],
                 loginError: null
             }
         case actionType.LOGIN_FAIL:
@@ -58,6 +62,7 @@ const appReducer = (state = initState, action) => {
             }
         
         case actionType.GET_PRODUCTS:
+            
             return {
                 ...state,
                 products: action.productData?.data?.products || [],

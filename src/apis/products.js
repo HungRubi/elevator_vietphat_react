@@ -3,8 +3,8 @@ import axios from "../axios";
 export const getProducts = async () => {
     try {
         const response = await axios({
-            url: `/products`,
-            method: 'get',
+            url: `/products`, 
+            method: 'get', 
         });
         return response; 
     } catch (err) {

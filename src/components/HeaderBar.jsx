@@ -93,42 +93,15 @@ const HeaderBar = () => {
                     <PiShoppingCartBold className='size-[22px] font-bold text-[#ffffffb4]'/>
                 </NavLink>
                 <div className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative btn_togglo" onClick={() => toggleMenu("account")}>
-                    <img src='/img/default.png' alt="" className='rounded-[50%]'/>
+                    <img src={currentUser ? `${currentUser?.avatar}` : "/img/default.png"} alt="" className='rounded-[50%]'/>
                     {openMenu === "account" && (
-                        // <div className="absolute bg-white w-[250px] top-[140%] right-0 rounded-[3px] menu pb-2.5 menu_togglo ">
-                        //     <div className="flex flex-col items-center py-[15px] justify-center">
-                        //         <img src="/img/default.png" alt="" className='w-[40px] h-[40px] rounded-[50%] '/>
-                        //         <h5 className="text-[15px] mt-2.5">
-                        //             Chưa đăng nhập
-                        //         </h5>
-                        //         <hr className='h-[1px] border-t border-t-[#cbd0dd] w-full my-3'/>
-                        //     </div>
-                        //     <div className="flex items-center justify-center flex-col gap-2.5 pb-2.5 px-3">
-                        //         <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
-                        //             <NavLink
-                        //             to={"/login"}
-                        //             className="flex items-center justify-center gap-2.5">
-                        //                 <FaArrowRightFromBracket className='text-[18px] -mt-1'/>
-                        //                 Đăng nhập
-                        //             </NavLink>
-                        //         </button>
-                        //         <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
-                        //             <NavLink
-                        //             to={"/register"}
-                        //             className="flex items-center justify-center gap-2.5">
-                        //                 <FaArrowRightFromBracket className='text-[18px] -mt-1'/>
-                        //                 Đăng ký
-                        //             </NavLink>
-                        //         </button>
-                        //     </div>
-                        // </div>
                         <div className="absolute bg-white w-[250px] top-[140%] right-0 rounded-[3px] menu pb-2.5 menu_togglo ">
                             {currentUser ? (
                                 <>
                                     <div className="flex flex-col items-center pt-[15px] justify-center">
-                                        <img src="/img/default.png" alt="" className='w-[40px] h-[40px] rounded-[50%] '/>
+                                        <img src={currentUser?.avatar} alt="" className='w-[40px] h-[40px] rounded-[50%] '/>
                                         <h5 className="text-[15px] mt-2.5">
-                                            Nguyễn Huy Hùng
+                                            {currentUser?.name}
                                         </h5>
                                         <hr className='h-[1px] border-t border-t-[#cbd0dd] w-full my-3'/>
                                     </div>
