@@ -1,6 +1,20 @@
 import {Button, CircleButton} from '../../components';
-
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 const Profile = () => {
+    const {currentUser} = useSelector(state => state.app);
+    const [formData, setFormData] = useState({
+        account: currentUser?.account,
+        name: currentUser?.name,
+        email: currentUser?.email,
+        phone: currentUser?.phone,
+        birth: currentUser?.birth,
+    });
+    const handleChange = (e) => {
+        setFormData({
+            ...formData, [e.target.name]: e.target.value
+        });
+    }
     return (
         <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
             <div className="py-[15px] border-b border-b-[#cbd0dd]">
@@ -22,9 +36,14 @@ const Profile = () => {
                                     tên đăng nhập
                                 </td>
                                 <td>
-                                    <input type="text" name="account" disabled
-                                    className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
-                                    style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}/>
+                                    <input 
+                                        type="text" 
+                                        name="account" disabled 
+                                        onChange={handleChange} 
+                                        value={formData.account}
+                                        className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px] text-gray-500"
+                                        style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}
+                                    />
                                 </td>
                             </tr>
                             <tr className='h-[65px]'>
@@ -32,9 +51,15 @@ const Profile = () => {
                                     họ tên
                                 </td>
                                 <td>
-                                    <input type="text" name='name' placeholder="Nhập họ tên của bạn"
-                                    className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
-                                    style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}/>
+                                    <input 
+                                        type="text" 
+                                        name='name' 
+                                        placeholder="Nhập họ tên của bạn"
+                                        className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
+                                        style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                    />
                                 </td>
                             </tr>
                             <tr className='h-[65px]'>
@@ -42,9 +67,15 @@ const Profile = () => {
                                     email
                                 </td>
                                 <td>
-                                    <input type="text" name='email' placeholder="Nhập email của bạn"
-                                    className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
-                                    style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}/>
+                                    <input 
+                                        type="text" 
+                                        name='email' 
+                                        placeholder="Nhập email của bạn"
+                                        className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
+                                        style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                    />
                                 </td>
                             </tr>
                             <tr className='h-[65px]'>
@@ -52,9 +83,15 @@ const Profile = () => {
                                     phone
                                 </td>
                                 <td>
-                                    <input type="text" name='phone' placeholder="Nhập số điện thoại của bạn"
-                                    className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
-                                    style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}/>
+                                    <input 
+                                        type="text" 
+                                        name='phone' 
+                                        placeholder="Nhập số điện thoại của bạn"
+                                        className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}
+                                    />
                                 </td>
                             </tr>
                             <tr className='h-[65px]'>
@@ -62,9 +99,14 @@ const Profile = () => {
                                     Ngày sinh
                                 </td>
                                 <td>
-                                    <input type="date" name='birth'
-                                    className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
-                                    style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}/>
+                                    <input 
+                                        type="date" 
+                                        name='birth'
+                                        value={formData.birth}
+                                        onChange={handleChange}
+                                        className="w-full py-[6px] px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
+                                        style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}
+                                    />
                                 </td>
                             </tr>
                             <tr className='h-[65px]'>

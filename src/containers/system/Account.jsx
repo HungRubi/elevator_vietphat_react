@@ -3,11 +3,12 @@ import {CircleButton} from '../../components';
 import icons  from '../../util/icons';
 import { Route, Routes } from 'react-router-dom';
 import {Profile, Banking, Address, Password, Notification, Order} from './index'
-
+import { useSelector } from 'react-redux';
 const {CiEdit, FaRegBell, BsPerson, RiBillLine} = icons;
 const active = '!text-[#2f904b] capitalize flex items-center';
 const notActive = 'text-[#000] capitalize flex items-center';
 const Account = () => {
+    const {currentUser} = useSelector(state => state.app);
     const account = [
         {
             label: 'Thông báo', 
@@ -50,13 +51,13 @@ const Account = () => {
                 <div className="flex w-full items-center">
                     <CircleButton
                     className="mr-3">
-                        <img src="/img/default.png" 
+                        <img src={currentUser?.avatar}
                         alt="avatar" 
                         className='rounded-[50%]'/>
                     </CircleButton>
                     <div className="cursor-default text-[15px]">
                     <div className="font-[600]">
-                        account
+                        {currentUser?.account}
                     </div>
                     <div className="flex text-[#888] cursor-pointer gap-2 mt-[2px]">
                         <CiEdit className='text-[20px]'/>
