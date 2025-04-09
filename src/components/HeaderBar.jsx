@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { menuBar } from '../util/menu';
-import { Search } from './index';
+import { CircleButton, Search } from './index';
 import icons from '../util/icons';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -9,23 +9,34 @@ import { useSelector } from 'react-redux';
 const {FaRegBell, PiShoppingCartBold, FaArrowRightFromBracket, BsPerson, FiTruck, BsTag} = icons
 const active = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-center item_nav relative z-10 bg-[#2f904b]';
 const notActive = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-center item_nav relative z-10 hover:bg-[#2f904b] transition duration-300 ease-linear';
+
 const HeaderBar = () => {
-    const { currentUser } = useSelector(state => state.app)
+    const { currentUser, productCart } = useSelector(state => state.user)
     const [openMenu, setOpenMenu] = useState(null);
-    const toggleMenu = (menu) => {
-        setOpenMenu(openMenu === menu ? null : menu);
+
+    const handleToggleMenu = (menu) => {
+        setOpenMenu(menu);
     }
+
     useEffect(() => {
         const handleClickOutside = (event) => {
-          if (!event.target.closest(".btn_togglo, .menu_togglo")) {
-            setOpenMenu(null);
-          }
+            const notificationMenu = document.querySelector('.notification-menu');
+            const accountMenu = document.querySelector('.account-menu');
+            
+            if (openMenu === "notification" && notificationMenu && !notificationMenu.contains(event.target)) {
+                setOpenMenu(null);
+            }
+            if (openMenu === "account" && accountMenu && !accountMenu.contains(event.target)) {
+                setOpenMenu(null);
+            }
         };
-        document.addEventListener("click", handleClickOutside);
+
+        document.addEventListener('mousedown', handleClickOutside);
         return () => {
-          document.removeEventListener("click", handleClickOutside);
+            document.removeEventListener('mousedown', handleClickOutside);
         };
-      }, []);
+    }, [openMenu]);
+
     const location = useLocation();
     return (
         <div className={`w-full px-[10%] m-auto flex items-center justify-between ${location.pathname === '/' ? "bg-transparent" : "bg-black"}`}
@@ -55,47 +66,52 @@ const HeaderBar = () => {
             </div>
             <div className="flex items-center justify-end gap-4">
                 <Search/>
-                <div className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative btn_togglo" onClick={() => toggleMenu("notification")}>
+                <div 
+                    className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative" 
+                    onClick={() => handleToggleMenu("notification")}
+                >
                     <FaRegBell className='size-[20px] text-[#ffffffb4]'/>
                     {openMenu === "notification" && (
-                        <div className="absolute bg-white w-[250px] top-[140%] right-0 rounded-[3px] menu pb-2.5 menu_togglo">
-                            <div className="flex flex-col items-center py-[15px] justify-center">
-                                <img src="/img/default.png" alt="" className='w-[40px] h-[40px] rounded-[50%] '/>
-                                <h5 className="text-[15px] mt-2.5">
-                                    Chưa đăng nhập
-                                </h5>
-                                <hr className='h-[1px] border-t border-t-[#cbd0dd] w-full my-3'/>
+                        <div className="notification-menu menu absolute bg-white w-[350px] top-[140%] right-0 rounded-[3px] pb-2.5">
+                            <div className="flex items-center justify-between border-b border-[#cbd0dd] px-2.5">
+                                <h5 className="text-[15px]">Notification</h5>
+                                <h6>
+                                    <span className='text-[15px] text-blue-500 leading-8'>Đọc tất cả</span>
+                                </h6>
                             </div>
-                            <div className="flex items-center justify-center flex-col gap-2.5 pb-2.5 px-3">
-                                <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2.5 rounded-[8px] !text-black border border-[#cbd0dd]">
-                                    <NavLink
-                                    to={"/login"}
-                                    className="flex items-center justify-center gap-2.5">
-                                        <FaArrowRightFromBracket className='text-[18px] -mt-1'/>
-                                        Đăng nhập
-                                    </NavLink>
-                                </button>
-                                <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2.5 rounded-[8px] !text-black border border-[#cbd0dd]">
-                                    <NavLink
-                                    to={"/register"}
-                                    className="flex items-center justify-center gap-2.5">
-                                        <FaArrowRightFromBracket className='text-[18px] -mt-1'/>
-                                        Đăng ký
-                                    </NavLink>
-                                </button>
+                            <div className="w-full flex flex-col">
+                                <div className="w-full flex items-center justify-between p-2.5 border-b border-b-[#cbd0dd]">
+                                    <div className="flex items-center gap-2.5">
+                                        <input type="checkbox" name="" id="" className='border-gray-500'/>
+                                        <div className="w-10 h-10 border border-[#cbd0dd] flex-none">
+                                            <img src="/img/logo.png" alt="" className=''/>
+                                        </div>
+                                        <h5 className="text-[12px] capitalize line-clamp-2">Đơn hàng của bạn đã được xác nhận</h5>
+                                        <span className='text-[12px] text-[#888] whitespace-nowrap'>10 phút trước</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}
                 </div>
+
                 <NavLink
                 to={'/cart'} 
                 className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative">
                     <PiShoppingCartBold className='size-[22px] font-bold text-[#ffffffb4]'/>
+                    <CircleButton className={"absolute -top-[10px] -right-[10px] bg-red-500 text-white !h-6 !w-6 flex-none text-[12px]"}>
+                        {productCart.length}
+                    </CircleButton>
                 </NavLink>
-                <div className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative btn_togglo" onClick={() => toggleMenu("account")}>
+                    
+                {/* Menu User */}
+                <div 
+                    className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative" 
+                    onClick={() => handleToggleMenu("account")}
+                >
                     <img src={currentUser ? `${currentUser?.avatar}` : "/img/default.png"} alt="" className='rounded-[50%]'/>
                     {openMenu === "account" && (
-                        <div className="absolute bg-white w-[250px] top-[140%] right-0 rounded-[3px] menu pb-2.5 menu_togglo ">
+                        <div className="account-menu menu absolute bg-white w-[250px] top-[140%] right-0 rounded-[3px] pb-2.5">
                             {currentUser ? (
                                 <>
                                     <div className="flex flex-col items-center pt-[15px] justify-center">
@@ -130,7 +146,7 @@ const HeaderBar = () => {
                                             </li>
                                         </ul>
                                         <div className="px-[1rem] w-full">
-                                            <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
+                                            <button className="text-[18px] cursor-pointer bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
                                                 <NavLink
                                                 to={"/login"}
                                                 className="flex items-center justify-center gap-2.5 capitalize">
@@ -150,7 +166,7 @@ const HeaderBar = () => {
                                         <hr className='h-[1px] border-t border-t-[#cbd0dd] w-full my-3'/>
                                     </div>
                                     <div className="px-[1rem] w-full">
-                                        <button className="text-[18px] cursor-pointer   bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
+                                        <button className="text-[18px] cursor-pointer bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
                                             <NavLink
                                             to={"/login"}
                                             className="flex items-center justify-center gap-2.5 capitalize">
@@ -161,7 +177,6 @@ const HeaderBar = () => {
                                     </div>
                                 </>
                             )}
-                            
                         </div>
                     )}
                 </div>

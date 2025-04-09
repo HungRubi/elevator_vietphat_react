@@ -8,7 +8,7 @@ const {CiEdit, FaRegBell, BsPerson, RiBillLine} = icons;
 const active = '!text-[#2f904b] capitalize flex items-center';
 const notActive = 'text-[#000] capitalize flex items-center';
 const Account = () => {
-    const {currentUser} = useSelector(state => state.app);
+    const {currentUser} = useSelector(state => state.user);
     const account = [
         {
             label: 'Thông báo', 

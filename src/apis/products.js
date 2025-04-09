@@ -24,3 +24,16 @@ export const getProductDetail = async (slug) => {
         console.log(err);
     }
 }
+
+export const setSelectedProducts = async (data) => {
+    try{
+        const response = await axios({
+            url: `/products/selected`,
+            method: 'post',
+            data: data
+        })
+        return response;
+    }catch(error){
+        console.log(error);
+    }
+}

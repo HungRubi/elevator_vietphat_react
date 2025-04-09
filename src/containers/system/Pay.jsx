@@ -1,10 +1,21 @@
 import { NavLink } from 'react-router-dom';
-import {HeaderNav, LoveButton, Button} from '../../components'
+import {HeaderNav, LoveButton, Button, ModalAddress} from '../../components'
 import icons from '../../util/icons';
-
+import { useSelector } from 'react-redux';
 const {FaMapMarkerAlt, BsTag} = icons;
+import { formatMoney } from '../../util/formatMoney';
+import { useState, useEffect } from 'react';
 
 const Pay = () => {
+    const {selectedProducts, currentUser} = useSelector(state => state.user);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [totalQuantity, setTotalQuantity] = useState(0);
+    useEffect(() => {
+        const totalPrice = selectedProducts?.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+        const totalQuantity = selectedProducts?.reduce((acc, item) => acc + item.quantity, 0);
+        setTotalPrice(totalPrice);
+        setTotalQuantity(totalQuantity);
+    }, [selectedProducts]);
     return (
         <>
             <div className="w-full bg-white py-2.5"
@@ -26,15 +37,13 @@ const Pay = () => {
                         </div>
                         <div className="w-full flex items-center">
                             <h5 className='text-[18px] line-clamp-1 max-w-[700px]'>
-                                <span className='font-[600] mr-2.5 line-clamp-'>Huy Hùng (+84) 974226659</span>
-                                thôn Kênh Trạch, xã Hưng Nhân, huyện Vĩnh Bảo, Hải Phòng
+                                <span className='font-[600] mr-2.5 line-clamp-'>{currentUser?.name} (+84) {currentUser?.phone}</span>
+                                {currentUser?.address}
                             </h5>
                             <div className="ml-[1.5rem] border border-[#2f904b] py-[2px] px-[5px] uppercase text-[10px] text-[#2f904b]">
                                 mặc định
                             </div>
-                            <div className="ml-[2.5rem] capitalize text-blue-600 cursor-pointer">
-                                thay đổi
-                            </div>
+                            <ModalAddress/>
                         </div>
                     </div>
                 </div>
@@ -55,25 +64,27 @@ const Pay = () => {
                         <h3 className='text-[17px] font-[600] ml-1'>Thang máy Việt Phát</h3>
                     </div>
                     <ul className="w-full pb-8">
-                        <li className="w-full py-2.5 flex items-center">
-                            <div className="w-2/3 flex items-center">
-                                <NavLink to={'/products/:slug'}>
-                                    <img src="/img/products/1.png" alt="ảnh sản phẩm" 
-                                    className='w-[80px] h-[80px] border border-[#cbd0dd]'/>
-                                </NavLink>
-                                <h5 className='mr-4 text-[17px] text-[#222] line-clamp-1 ml-2.5 max-w-[400px]'>
-                                    Hệ thống mở cửa tự động ADA dành cho cử thang máy, cửa kính
-                                </h5>
-                                <h5 className='text-[17px] text-[#888] line-clamp-1'>
-                                    Loại: Linh kiện điện
-                                </h5>
-                            </div>
-                            <div className="w-1/3 text-[18px] flex text-[#888]">
-                                <div className="w-1/3 text-center">₫3.600.000</div>
-                                <div className="w-1/3 text-center">1</div>
-                                <div className="w-1/3 text-center">₫3.600.000</div>
-                            </div>
-                        </li>
+                        {selectedProducts.map((item) => (
+                            <li key={item.product.  _id} className="w-full py-2.5 flex items-center">
+                                <div className="w-2/3 flex items-center">
+                                    <NavLink to={`/products/${item.product._id}`}>
+                                        <img src={item.product.thumbnail_main} alt="ảnh sản phẩm" 
+                                        className='w-[80px] h-[80px] border border-[#cbd0dd]'/>
+                                    </NavLink>
+                                    <h5 className='mr-4 text-[17px] text-[#222] line-clamp-1 ml-2.5 max-w-[400px]'>
+                                        {item.product.name}
+                                    </h5>
+                                    <h5 className='text-[17px] text-[#888] line-clamp-1'>
+                                        Loại: Linh kiện điện
+                                    </h5>
+                                </div>
+                                <div className="w-1/3 text-[18px] flex text-[#888]">
+                                    <div className="w-1/3 text-center">₫{formatMoney(item.product.price)}</div>
+                                    <div className="w-1/3 text-center">{item.quantity}</div>
+                                    <div className="w-1/3 text-center">₫{formatMoney(item.product.price * item.quantity)}</div>
+                                </div>
+                            </li>
+                        ))}
                     </ul>
                 </div>
                 <div className="w-full bg-[#fafdff] px-[30px] border-b-dash">
@@ -104,8 +115,8 @@ const Pay = () => {
                     </div>
                 </div>
                 <div className="w-full bg-[#fafdff] px-[30px] border-b-dash flex justify-end py-6 items-center">
-                    Tổng số tiền(1 sản phẩm):
-                    <span className='ml-10 text-[25px] text-[#2f904b]'>₫3.600.000</span> 
+                    Tổng số tiền({totalQuantity} sản phẩm):
+                    <span className='ml-10 text-[25px] text-[#2f904b]'>₫{formatMoney(totalPrice)}</span> 
                 </div>
                 <div className="w-full bg-white box_shadow_div mt-8">
                     <div className="px-[30px] flex items-center h-[100px] w-full text-[23px] border-b-dash">
@@ -116,7 +127,7 @@ const Pay = () => {
                             <div className="text-[#888] text-[18px] min-w-[300px]">
                                 <div className="w-full flex text-left justify-between mt-4">
                                     Tổng tiền hàng
-                                    <h5>₫3.600.000</h5>
+                                    <h5>₫{formatMoney(totalPrice)}</h5>
                                 </div>
                                 <div className="w-full flex text-left justify-between mt-4">
                                     Tổng vận chuyển

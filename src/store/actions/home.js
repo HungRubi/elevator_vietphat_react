@@ -23,3 +23,10 @@ export const getHome = () => async (dispatch)  => {
         })
     }
 }
+
+export const resetMessage = (message) => {
+    return {
+        type: actionType.RESET_MESSAGE,
+        message
+    }
+}

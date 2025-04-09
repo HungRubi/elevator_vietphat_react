@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 const {GoPlus} = icons;
 
 const Address = () => {
-    const {currentUser} = useSelector(state => state.app);
+    const {currentUser} = useSelector(state => state.user);
     return (
         <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
             <div className="py-[15px] border-b border-b-[#cbd0dd] flex items-center justify-between">

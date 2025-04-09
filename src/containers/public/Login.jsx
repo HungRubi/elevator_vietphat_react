@@ -11,8 +11,6 @@ const {FcGoogle, FaFacebook} = icons;
 const Login = () => {
     const dispatch = useDispatch();
     const { message, loginError } = useSelector(state => state.app);
-    console.log(message);
-    console.log(loginError);
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         account: '',

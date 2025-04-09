@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 const ProtectedRoute = ({ children }) => {
     const { currentUser } = useSelector(state => state.user);
-    console.log(currentUser);
     if (!currentUser) {
         return <Navigate to={path.PAGE404} replace />;
     }

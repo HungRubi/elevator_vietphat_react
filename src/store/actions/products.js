@@ -46,3 +46,5 @@ export const getProductDetail = (slug) => async (dispatch)  => {
         })
     }
 }
+
+

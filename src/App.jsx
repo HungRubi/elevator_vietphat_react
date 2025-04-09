@@ -13,11 +13,18 @@ import * as actions from './store/actions'
 import { useEffect } from 'react';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
-
+import { toast } from 'react-toastify';
 
 
 function App() {
-  const {currentUser, cartUser, productCart} = useSelector(state => state.app);
+  const dispatch = useDispatch();
+  const {currentUser, cartUser, productCart, message} = useSelector(state => state.app);
+  useEffect(() => {
+    if(message) {
+      toast.success(message);
+      dispatch(actions.resetMessage(message));
+    }
+  }, [message, dispatch]);
   useEffect(() => {
     Aos.init({
       duration: 1000,
@@ -36,10 +43,11 @@ function App() {
         window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(actions.getHome())
-    dispatch(actions.setCurrentUser(currentUser, cartUser, productCart))
+    if(currentUser) {
+      dispatch(actions.setCurrentUser(currentUser, cartUser, productCart))
+    }
   }, [dispatch, currentUser, cartUser, productCart])
 
   return(

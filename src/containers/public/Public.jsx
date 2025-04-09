@@ -6,7 +6,7 @@ const Public = () => {
     const location = useLocation();
     return (
         <div className="w-full">
-            <div className={` top-0 left-0 right-0 z-[1000] ${location.pathname !== '/' ? "relative" : "absolute"}`}>
+            <div className={` top-0 left-0 right-0 z-90 ${location.pathname !== '/' ? "relative" : "absolute"}`}>
                 <HeaderBar />
             </div>
             <div className="w-full relative">

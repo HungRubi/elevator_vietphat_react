@@ -2,7 +2,7 @@ import {Button, CircleButton} from '../../components';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 const Profile = () => {
-    const {currentUser} = useSelector(state => state.app);
+    const {currentUser} = useSelector(state => state.user);
     const [formData, setFormData] = useState({
         account: currentUser?.account,
         name: currentUser?.name,

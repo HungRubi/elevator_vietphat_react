@@ -16,7 +16,8 @@ const userConfig = {
     whitelist: [
         'currentUser', 
         'cart', 
-        'productCart'
+        'productCart',
+        'selectedProducts',
     ],
 }
 

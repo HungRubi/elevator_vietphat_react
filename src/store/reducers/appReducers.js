@@ -16,6 +16,7 @@ const initState = {
     currentUser: null,
     productCart: [],
     cartUser: [],
+    message: null,
 }
 
 const appReducer = (state = initState, action) => {
@@ -99,7 +100,12 @@ const appReducer = (state = initState, action) => {
                 articleSuggest: action.payload?.data?.articleSuggest || [],
                 productNewLast: action.payload?.data?.productSuggest || []
             }
-
+        
+        case actionType.RESET_MESSAGE:
+            return {
+                ...state,
+                message: null,
+            }
         default:
             return state
     }
