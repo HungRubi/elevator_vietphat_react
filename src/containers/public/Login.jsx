@@ -4,7 +4,6 @@ import icons from '../../util/icons';
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import * as actions from '../../store/actions'
-import { toast } from "react-toastify";
 
 const {FcGoogle, FaFacebook} = icons;
 
@@ -27,8 +26,7 @@ const Login = () => {
         dispatch(actions.login(formData));
     }
     useEffect(() => {
-        if(message){
-            toast.success(typeof message === 'string' ? message : JSON.stringify(message));
+        if(message === "Login successful") {
             navigate("/");
         }
     }, [message, navigate])

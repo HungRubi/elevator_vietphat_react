@@ -75,7 +75,7 @@ const Cart = () => {
     const handleBuyNow = () => {
         const selectedProductsWithQuantity = selectedProducts.map(productId => {
             const product = productCart.find(item => item._id === productId);
-            const cartItem = cart[0].items.find(cartItem => cartItem.productId === productId);
+            const cartItem = cart[0]?.items.find(cartItem => cartItem.productId === productId);
             const initialQuantity = cartItem ? cartItem.quantity : 1;
             return {
                 product,
@@ -132,7 +132,7 @@ const Cart = () => {
                 </div>
                 <div className="w-full mt-5">
                     {productCart && productCart.length > 0 ? productCart.map((item) => {
-                        const cartItem = cart[0].items.find(cartItem => cartItem.productId === item._id);
+                        const cartItem = cart[0]?.items.find(cartItem => cartItem.productId === item._id);
                         const initialQuantity = cartItem ? cartItem.quantity : 1;
                         
                         return (
@@ -205,9 +205,15 @@ const Cart = () => {
                                 </div>
                             </div>
                         );
-                    }) 
-                    : 
-                    "Chưa có sản phẩm nào trong giỏ hàng"}
+                    }) : 
+                        <div className='w-full flex flex-col items-center justify-center py-10 gap-5'>
+                            <img src="/gif/empty-product.gif" alt="" className='w-[200px] h-[200px]'/>
+                            <p className='text-sm text-gray-500'>chưa có sản phẩm trong giỏ hàng</p>
+                            <Button className={"rounded-3xl"}>
+                                <NavLink to={"/products"} className="w-full h-full flex items-center justify-center">Tiếp tục mua sắm</NavLink>
+                            </Button>
+                        </div>
+                    }
                     
                 </div>
                 <div 

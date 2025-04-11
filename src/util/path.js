@@ -11,6 +11,7 @@ const path = {
     NEWS: '/news',
     ABOUTUS: '/about-us',
     CONTACT: '/contact',
+    VIDEO: '/video/:slug',
     LOGIN: '/login',
     REGISTER: '/register',
     STAR: '*'

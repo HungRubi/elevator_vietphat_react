@@ -32,8 +32,10 @@ import { FaCaretDown } from "react-icons/fa6";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 import { FaCirclePlay } from "react-icons/fa6";
+import { AiOutlineQuestionCircle } from "react-icons/ai";
 
 const icons = {
+    AiOutlineQuestionCircle,
     FaCirclePlay,
     FaRegEye,
     FaRegCalendarAlt,

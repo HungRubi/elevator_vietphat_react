@@ -3,6 +3,8 @@ import {Button, LoveButton} from '../components/index'
 import { NavLink } from 'react-router-dom';
 import { useMemo, memo } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import * as actions from '../store/actions'
 
 const {FaStar, PiShoppingCartBold, GoPlus} = icons
 
@@ -13,6 +15,16 @@ const ListProduct = ({data, category}) => {
     function format(money) {
         return money.toLocaleString("vi-VN");
     }
+    const {currentUser} = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const handleAddToCart = (product,userId) => {
+        const cartData = {
+            productId: product._id,
+            quantity: 1,
+        };
+        dispatch(actions.updateCart(cartData, userId));
+    }
+
     return (
         <div className="flex flex-wrap gap-5">
             {filteredProducts.length > 0 ? (
@@ -42,7 +54,8 @@ const ListProduct = ({data, category}) => {
                             </div>
                             <div className=" mt-2.5 flex items-center justify-between">
                                 <h5 className="text-[25px] text-[#2f904b] flex items-center gap-1"><span className='text-[15px]'>₫</span>{format(item.price)}</h5>
-                                <Button className="h-[50px] w-[50px] flex items-center justify-center">
+                                <Button onClick={() => handleAddToCart(item, currentUser?._id)}
+                                className="h-[50px] w-[50px] flex items-center justify-center">
                                     <PiShoppingCartBold className='size-[27px]'/>
                                 </Button>
                             </div>

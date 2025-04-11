@@ -7,7 +7,6 @@ export const login = async (data) => {
             method: "post",
             data: data,
         });
-        console.log(response)
         return response;
     } catch (err) {
         console.log(err);

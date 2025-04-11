@@ -17,6 +17,7 @@ const initState = {
     productCart: [],
     cartUser: [],
     message: null,
+    discount: [],
 }
 
 const appReducer = (state = initState, action) => {
@@ -35,21 +36,20 @@ const appReducer = (state = initState, action) => {
         case actionType.LOGIN_FAIL:
             return {
                 ...state,
-                message: null,
+                message: action.payload || null,
                 loginError: action.payload || null,
             }
 
         case actionType.REGISTER:
             return {
                 ...state,
-                messageRegister: action.payload?.message || null,
+                message: action.payload?.message || null,
                 registerError: null,
-
             }
         case actionType.REGISTER_FAIL:
             return {
                 ...state,
-                messageRegister: null,
+                message: action.payload || null,
                 registerError: action.payload || null,
             }
 
@@ -105,6 +105,14 @@ const appReducer = (state = initState, action) => {
             return {
                 ...state,
                 message: null,
+                loginError: null,
+                registerError: null,
+            }
+        case actionType.GET_DISCOUNT:
+            console.log(action.payload?.data?.formatDiscount)
+            return {
+                ...state,
+                discount: action.payload?.data?.formatDiscount || [],
             }
         default:
             return state

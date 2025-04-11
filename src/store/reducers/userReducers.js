@@ -6,6 +6,7 @@ const initialState = {
     productCart: [],
     selectedProducts: [],
     quantities: [],
+    messageUser: null,
 }
 
 const userReducer = (state = initialState, action) => {
@@ -32,8 +33,23 @@ const userReducer = (state = initialState, action) => {
                     ...state.currentUser,
                     ...action.payload?.updatedUser
                 },
-                message: action.payload?.message || null,
+                messageUser: action.payload?.message || null,
             }
+
+        case actionType.UPDATE_CART:
+            return {
+                ...state,
+                cart: action.payload?.cart || state.cart,
+                productCart: action.payload?.product || state.productCart,
+                messageUser: action.payload?.message || null,
+            }
+
+        case actionType.RESET_MESSAGE_USER:
+            return {
+                ...state,
+                messageUser: null,
+            }
+
         default:
             return state;
     }

@@ -8,6 +8,7 @@ const {FaStar, FiTruck, AiOutlineRight, IoShieldCheckmarkOutline, PiShoppingCart
 
 const ProductDetail = () => {
     const dispatch = useDispatch();
+    const {currentUser} = useSelector(state => state.user);
     const {productDetail, productSuggest} = useSelector(state => state.app);
     const {slug} = useParams();
     let pricePre = 0;
@@ -25,6 +26,13 @@ const ProductDetail = () => {
     }, [dispatch, slug])
     function format(money) {
         return money?.toLocaleString("vi-VN");
+    }
+    const handleAddToCart = (product,userId) => {
+        const cartData = {
+            productId: product._id,
+            quantity: 1,
+        };
+        dispatch(actions.updateCart(cartData, userId));
     }
     return (
         <div className='mb-15'>
@@ -110,12 +118,12 @@ const ProductDetail = () => {
                         <div className="flex items-center justify-start mt-8">
                             <h3 className="text-[#757575] capitalize text-[20px] mr-8 w-[120px] line-clamp-2">số lượng</h3>
                             <div className="flex">
-                                <QuantityButton/>
+                                <QuantityButton quantity={1}/>
                                 <h3 className="text-[#757575] capitalize text-[18px] mr-8 line-clamp-2 ml-5">Số lượng còn lại: {productDetail?.stock}</h3>
                             </div>
                         </div>
                         <div className="flex items-center mt-[80px] gap-5">
-                            <Button
+                            <Button onClick={() => handleAddToCart(productDetail, currentUser?._id)}
                             className="!bg-[#e3ffec] !text-[#2f904b] flex items-center gap-2 border border-[#2f904b]">
                                 <PiShoppingCartBold className='text-[20px]'/> 
                                 thêm vào giỏ hàng

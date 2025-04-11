@@ -19,12 +19,21 @@ import { toast } from 'react-toastify';
 function App() {
   const dispatch = useDispatch();
   const {currentUser, cartUser, productCart, message} = useSelector(state => state.app);
+  const {messageUser} = useSelector(state => state.user);
+
+  // Handle all messages in one useEffect
   useEffect(() => {
-    if(message) {
+    if (message) {
       toast.success(message);
-      dispatch(actions.resetMessage(message));
+      dispatch(actions.resetMessage());
     }
-  }, [message, dispatch]);
+    if (messageUser) {
+      toast.success(messageUser);
+      dispatch(actions.resetMessageUser());
+    }
+  }, [message, messageUser, dispatch]);
+
+  // Initialize AOS
   useEffect(() => {
     Aos.init({
       duration: 1000,
@@ -34,15 +43,17 @@ function App() {
     });
 
     const handleScroll = () => {
-        Aos.refresh(); // Cập nhật lại hiệu ứng khi cuộn
+      Aos.refresh();
     };
 
     window.addEventListener('scroll', handleScroll);
     
     return () => {
-        window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // Initialize user data
   useEffect(() => {
     dispatch(actions.getHome())
     if(currentUser) {
@@ -84,7 +95,7 @@ function App() {
         </Route>
       </Routes>
       <ToastContainer
-        position="top-right"
+        position="bottom-left"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}

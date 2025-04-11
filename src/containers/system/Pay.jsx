@@ -1,10 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import {HeaderNav, LoveButton, Button, ModalAddress} from '../../components'
+import {HeaderNav, LoveButton, Button, ModalAddress, ModalDiscount} from '../../components'
 import icons from '../../util/icons';
 import { useSelector } from 'react-redux';
 const {FaMapMarkerAlt, BsTag} = icons;
 import { formatMoney } from '../../util/formatMoney';
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import * as actions from '../../store/actions';
 
 const Pay = () => {
     const {selectedProducts, currentUser} = useSelector(state => state.user);
@@ -16,6 +18,10 @@ const Pay = () => {
         setTotalPrice(totalPrice);
         setTotalQuantity(totalQuantity);
     }, [selectedProducts]);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(actions.getDiscounts())
+    }, [dispatch])
     return (
         <>
             <div className="w-full bg-white py-2.5"
@@ -67,7 +73,7 @@ const Pay = () => {
                         {selectedProducts.map((item) => (
                             <li key={item.product.  _id} className="w-full py-2.5 flex items-center">
                                 <div className="w-2/3 flex items-center">
-                                    <NavLink to={`/products/${item.product._id}`}>
+                                    <NavLink to={`/products/detail/${item.product.slug}`}>
                                         <img src={item.product.thumbnail_main} alt="ảnh sản phẩm" 
                                         className='w-[80px] h-[80px] border border-[#cbd0dd]'/>
                                     </NavLink>
@@ -109,7 +115,7 @@ const Pay = () => {
                                     <BsTag className='text-[23px] text-[#2f904b]'/>
                                     Voucher của Shop
                                 </div>
-                                <span className='ml-15 capitalize cursor-pointer text-[18px] text-blue-600'>Chọn Voucher</span>
+                                <ModalDiscount/>
                             </div>
                         </div>
                     </div>

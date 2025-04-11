@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-
 const QuantityButton = ({ quantity, setQuantity, price, onQuantityChange }) => {
     const handleDecrease = () => {
         if (quantity > 1) {
@@ -33,7 +32,7 @@ const QuantityButton = ({ quantity, setQuantity, price, onQuantityChange }) => {
             </button>
             <input 
                 type="text" 
-                value={quantity} 
+                value={quantity || 1} 
                 onChange={handleInputChange}
                 className='text-center h-[30px] w-[50px] border-t bg-white border-t-[#cbd0dd] border-b border-b-[#cbd0dd] outline-0'
             />
