@@ -1,14 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import icons from '../util/icons';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from './Button';
 import { VoucherEmpty } from '../util/iconSgv';
+import * as actions from '../store/actions';
+
 const { AiOutlineQuestionCircle } = icons;
 
 const ModalDiscount = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [validDiscounts, setValidDiscounts] = useState([]);
+    const [selectedVoucher, setSelectedVoucher] = useState(null);
     const modalRef = useRef(null);
+    const dispatch = useDispatch();
     const {discount} = useSelector(state => state.app);
     
     useEffect(() => {
@@ -36,11 +40,9 @@ const ModalDiscount = () => {
                 if (!item.endDate) return false;
                 
                 try {
-                    // Parse the date string to a Date object
                     const [day, month, year] = item.endDate.split('/');
                     const endDate = new Date(year, month - 1, day);
                     
-                    // Check if the date is valid
                     if (isNaN(endDate.getTime())) return false;
                     
                     endDate.setHours(0, 0, 0, 0);
@@ -52,10 +54,28 @@ const ModalDiscount = () => {
             });
             
             setValidDiscounts(filteredDiscounts);
+            // Tự động chọn voucher đầu tiên nếu có
+            if (filteredDiscounts.length > 0 && !selectedVoucher) {
+                setSelectedVoucher(filteredDiscounts[0]);
+            }
         } else {
             setValidDiscounts([]);
+            setSelectedVoucher(null);
         }
     }, [discount]);
+
+    const handleApplyVoucher = () => {
+        if (selectedVoucher) {
+            dispatch(actions.selectVoucher(selectedVoucher));
+            setIsOpen(false);
+        } else {
+            console.log('No voucher selected');
+        }
+    };
+
+    const handleVoucherSelect = (voucher) => {
+        setSelectedVoucher(voucher);
+    };
     
     return (
         <>
@@ -96,6 +116,8 @@ const ModalDiscount = () => {
                                         type="radio" 
                                         name="discount" 
                                         className='form-radio text-blue-600 w-4 h-4 rounded-full border-2 border-gray-300 mx-5'
+                                        checked={selectedVoucher?.id === item.id}
+                                        onChange={() => handleVoucherSelect(item)}
                                     />
                                     <img 
                                         src="/img/voucher.png" alt="" 
@@ -120,7 +142,7 @@ const ModalDiscount = () => {
                             className={"bg-transparent !text-gray-600"}>
                                 trở lại
                             </Button>
-                            <Button>
+                            <Button onClick={handleApplyVoucher}>
                                 áp dụng
                             </Button>
                         </div>

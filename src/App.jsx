@@ -2,7 +2,9 @@ import { ToastContainer } from 'react-toastify';
 import {
     Home, Public, Products, News, AboutUs, 
     Contact, ProductDetail, NewsDetail,Login, 
-    Register, VideoDetail, Page404
+    Register, VideoDetail, Page404,
+    TuyenDung,
+    TimKiem
 } from './containers/public/';
 import { ProtectedRoute } from './components';
 import { Routes, Route } from 'react-router-dom';
@@ -89,8 +91,10 @@ function App() {
             </ProtectedRoute>
           }/>
           <Route path={path.ABOUTUS} element={<AboutUs />}/>
+          <Route path={path.TIMKIEM} element={<TimKiem />}/>
+          <Route path={path.TUYENDUNG} element={<TuyenDung />}/>
           <Route path={path.CONTACT} element={<Contact />}/>
-          <Route path={path.PAGE404} element={<Page404/>}/>
+          <Route path={path.PAGE404} element={<Page404 />}/>
           <Route path={path.STAR} element={<Home />}/>
         </Route>
       </Routes>

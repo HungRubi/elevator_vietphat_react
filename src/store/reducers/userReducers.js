@@ -7,6 +7,7 @@ const initialState = {
     selectedProducts: [],
     quantities: [],
     messageUser: null,
+    selectedVoucher: null,
 }
 
 const userReducer = (state = initialState, action) => {
@@ -42,6 +43,13 @@ const userReducer = (state = initialState, action) => {
                 cart: action.payload?.cart || state.cart,
                 productCart: action.payload?.product || state.productCart,
                 messageUser: action.payload?.message || null,
+            }
+
+        case actionType.SELECT_VOUCHER:
+            return {
+                ...state,
+                selectedVoucher: action.payload,
+                messageUser: "Đã áp dụng voucher thành công",
             }
 
         case actionType.RESET_MESSAGE_USER:

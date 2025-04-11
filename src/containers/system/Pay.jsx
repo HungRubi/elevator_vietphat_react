@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import * as actions from '../../store/actions';
 
 const Pay = () => {
-    const {selectedProducts, currentUser} = useSelector(state => state.user);
+    const {selectedProducts, currentUser, selectedVoucher} = useSelector(state => state.user);
     const [totalPrice, setTotalPrice] = useState(0);
     const [totalQuantity, setTotalQuantity] = useState(0);
     useEffect(() => {
@@ -141,11 +141,11 @@ const Pay = () => {
                                 </div>
                                 <div className="w-full flex text-left justify-between mt-4">
                                     Tổng giảm giá
-                                    <h5>₫0</h5>
+                                    <h5> ₫{formatMoney(selectedVoucher?.value_discount || 0)}</h5>
                                 </div>
                                 <div className="w-full flex text-left justify-between mt-4 items-center">
                                     Tổng tiền hàng
-                                    <h5 className='text-[26px] text-[#2f904b]'>₫3.700.000</h5>
+                                    <h5 className='text-[26px] text-[#2f904b]'>₫{formatMoney(totalPrice + 100000 - (selectedVoucher?.value_discount || 0))}</h5>
                                 </div>
                             </div>
                         </div>
@@ -155,9 +155,14 @@ const Pay = () => {
                                     Điều Khoản Việt Phát
                                 </NavLink>
                             </h5>
-                            <Button>
-                                đặt hàng
-                            </Button>
+                            <div className="flex items-center gap-5">
+                                <Button className={"bg-inherit !text-[#2f904b]"}>
+                                    xuất hóa đơn
+                                </Button>
+                                <Button>
+                                    đặt hàng
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>

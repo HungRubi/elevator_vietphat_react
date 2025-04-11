@@ -3,7 +3,7 @@ import { menuBar } from '../util/menu';
 import { CircleButton, Search } from './index';
 import icons from '../util/icons';
 import { useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 const {FaRegBell, PiShoppingCartBold, FaArrowRightFromBracket, BsPerson, FiTruck, BsTag} = icons
@@ -13,9 +13,24 @@ const notActive = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text
 const HeaderBar = () => {
     const { currentUser, productCart } = useSelector(state => state.user)
     const [openMenu, setOpenMenu] = useState(null);
+    const [hoveredMenu, setHoveredMenu] = useState(null);
+    const timeoutRef = useRef(null);
 
     const handleToggleMenu = (menu) => {
         setOpenMenu(menu);
+    }
+
+    const handleMenuHover = (menu) => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        setHoveredMenu(menu);
+    }
+
+    const handleMenuLeave = () => {
+        timeoutRef.current = setTimeout(() => {
+            setHoveredMenu(null);
+        }, 200); // 200ms delay
     }
 
     useEffect(() => {
@@ -34,6 +49,9 @@ const HeaderBar = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
         };
     }, [openMenu]);
 
@@ -56,10 +74,34 @@ const HeaderBar = () => {
                             className={({isActive}) => isActive ? active : notActive}
                             style={{ transform: "skew(-28deg) translateZ(0)" }}
                             to={item.path}
+                            onMouseEnter={() => handleMenuHover(item.text)}
+                            onMouseLeave={handleMenuLeave}
                         >
                             <div className='transform skew-x-[28deg]'>
                                 {item.text}
                             </div>
+                            {(item.text === "products" || item.text === "news") && hoveredMenu === item.text && (
+                                <div 
+                                    className="w-[250px] absolute bg-[#2f904b] flex flex-col top-16 left-12 transform skew-x-[28deg] z-50"
+                                    onMouseEnter={() => handleMenuHover(item.text)}
+                                    onMouseLeave={handleMenuLeave}
+                                >
+                                    {item.subMenu.map(subItem => (
+                                        <NavLink
+                                            key={subItem.path}
+                                            className={"leading-[2.5] !flex group items-center gap-2 py-[5px] transform skew-x-[-28deg] px-2 text-white uppercase text-left z-10 "}
+                                            to={subItem.path}
+                                        >   
+                                            <div className="w-2 h-2 bg-transparent group-hover:bg-white">
+
+                                            </div>
+                                            <div className='transform skew-x-[28deg] text-[11px]'>
+                                                {subItem.text}
+                                            </div>
+                                        </NavLink>
+                                    ))}
+                                </div>
+                            )}
                         </NavLink>
                     ))}
                 </ul>

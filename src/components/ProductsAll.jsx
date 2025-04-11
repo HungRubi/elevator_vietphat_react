@@ -56,7 +56,10 @@ const ProductsAll = ({data}) => {
                     </div>
                 )))
             ) : (
-                <p className="text-gray-500 col-span-3">Không có sản phẩm nào.</p>
+                <div className="w-full flex items-center justify-center flex-col gap-5">
+                    <img src="/img/products_empty.png" alt="" className='opacity-60 w-[400px]'/>
+                    <p className='text-gray-400'>không có sản phẩm nào ở đây cả ^^</p>
+                </div>
             )}
             
         </div>

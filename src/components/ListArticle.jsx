@@ -2,11 +2,11 @@ import { NavLink } from "react-router-dom"
 import { Button, PageBar } from './index'
 import PropTypes from "prop-types"
 
-const ListArticle = ({current, totalPage, setCurrent, currentArticle}) => {
+const   ListArticle = ({current, totalPage, setCurrent, currentArticle, className, isPageBar}) => {
     return (
-        <div className="px-[35px] pb-[30px] bg-white">
-                {currentArticle.length > 0 ? (
-                    currentArticle.map(article => (
+        <div className={`px-[35px] pb-[30px] bg-white ${className}`}>
+                {currentArticle?.length > 0 ? (
+                    currentArticle?.map(article => (
                         <div key={article._id} className="w-full py-[35px] border-b border-b-[#eee] flex justify-between gap-[50px]"
                         data-aos="fade-up">
                             <NavLink 
@@ -20,7 +20,7 @@ const ListArticle = ({current, totalPage, setCurrent, currentArticle}) => {
                                 className="text-[20px] font-[500] text-[#393939] line-clamp-1">
                                     {article.subject}
                                 </NavLink>
-                                <div className="block text-[14px] text-[#ccc] my-2">
+                                <div className="block text-[14px] text-gray-500 my-2">
                                     by {article.author} on {article.dateFormat}
                                 </div>
                                 <div className="text-[15px] line-clamp-2 leading-6">
@@ -35,18 +35,23 @@ const ListArticle = ({current, totalPage, setCurrent, currentArticle}) => {
                         </div>
                     ))
                 ) : (
-                    <p className="text-center text-gray-500">Không có bài viết nào.</p>
+                    <div className="w-full flex items-center justify-center gap-5 flex-col">
+                        <img src="/img/empty_article.png" alt="" />
+                        <p className="text-gray-400">Không có bài viết nào ở đây</p>
+                    </div>
                 )}
-                <PageBar currentPage={current} totalPage={totalPage} onPageChange={setCurrent}/>
+                <PageBar className={`${isPageBar}`} currentPage={current} totalPage={totalPage} onPageChange={setCurrent}/>
             </div>
     )
 }
 
 ListArticle.protoTypes = {
-    current: PropTypes.number.isRequired,
-    totalPage: PropTypes.number.isRequired,
-    setCurrent: PropTypes.func.isRequired,
-    currentArticle: PropTypes.array.isRequired,
+    isPageBar: PropTypes.string,
+    current: PropTypes.number,
+    className: PropTypes.node,
+    totalPage: PropTypes.number,
+    setCurrent: PropTypes.func,
+    currentArticle: PropTypes.array,
 
 }
 

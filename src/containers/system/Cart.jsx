@@ -30,6 +30,18 @@ const Cart = () => {
             ...prev,
             [productId]: newQuantity
         }));
+
+        // Cập nhật số lượng trong Redux store
+        const updatedCart = cart.map(cartItem => {
+            if (cartItem.productId === productId) {
+                return {
+                    ...cartItem,
+                    quantity: newQuantity
+                };
+            }
+            return cartItem;
+        });
+        dispatch(actions.updateCart(updatedCart));
     };
 
     const handleProductSelect = (productId) => {
@@ -75,11 +87,9 @@ const Cart = () => {
     const handleBuyNow = () => {
         const selectedProductsWithQuantity = selectedProducts.map(productId => {
             const product = productCart.find(item => item._id === productId);
-            const cartItem = cart[0]?.items.find(cartItem => cartItem.productId === productId);
-            const initialQuantity = cartItem ? cartItem.quantity : 1;
             return {
                 product,
-                quantity: initialQuantity,
+                quantity: quantities[productId] || 1
             };
         });
         

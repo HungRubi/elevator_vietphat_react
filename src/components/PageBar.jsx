@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 
 const {AiOutlineLeft, AiOutlineRight} = icons
 
-const PageBar = ({ currentPage, totalPage, onPageChange }) => {
+const PageBar = ({ currentPage, totalPage, onPageChange, className }) => {
     return (
-        <div className="flex items-center justify-center mt-7">
+        <div className={`flex items-center justify-center mt-7 ${className}`}>
             <Button className="bg-transparent" disabled={currentPage === 1}>
                 <NavLink
                 onClick={() => onPageChange(currentPage - 1)} 
@@ -44,6 +44,7 @@ const PageBar = ({ currentPage, totalPage, onPageChange }) => {
 }
 
 PageBar.propTypes = {
+    className: PropTypes.node,
     currentPage: PropTypes.node.isRequired,
     totalPage: PropTypes.node.isRequired,
     onPageChange: PropTypes.node.isRequired,

@@ -40,6 +40,13 @@ export const updateAddress =  (data, id) => async (dispatch) => {
     }
 }
 
+export const selectVoucher = (voucher) => {
+    return {
+        type: actionTypes.SELECT_VOUCHER,
+        payload: voucher
+    }
+}
+
 export const resetMessageUser = () => {
     return {
         type: actionTypes.RESET_MESSAGE_USER

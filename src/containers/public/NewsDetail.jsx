@@ -81,7 +81,7 @@ const NewsDetail = () => {
                         {productNewLast?.map(item => (
                             <li key={item._id}
                             className="px-2 py-4 flex gap-2.5 order_items border-b border-gray-200">
-                                <NavLink to={`/news/detail/${item.slug}`}
+                                <NavLink to={`/products/detail/${item.slug}`}
                                 className={"w-[100px] flex-none"}>
                                     <img src={item.thumbnail_main} alt={item.name} 
                                     className="w-full object-cover"/>

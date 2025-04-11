@@ -18,6 +18,9 @@ const initState = {
     cartUser: [],
     message: null,
     discount: [],
+    productSearch: [],
+    articleSearch: [],
+    videoSearch: [],
 }
 
 const appReducer = (state = initState, action) => {
@@ -109,10 +112,17 @@ const appReducer = (state = initState, action) => {
                 registerError: null,
             }
         case actionType.GET_DISCOUNT:
-            console.log(action.payload?.data?.formatDiscount)
             return {
                 ...state,
                 discount: action.payload?.data?.formatDiscount || [],
+            }
+
+        case actionType.QUERY_SEARCH: 
+            return {
+                ...state,
+                productSearch: action.payload?.product || [],
+                articleSearch: action.payload?.article || [],
+                videoSearch: action.payload?.video || [],
             }
         default:
             return state

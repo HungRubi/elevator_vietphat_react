@@ -41,8 +41,9 @@ const ListVideo = ({data}) => {
                         </li>
                     ))
                     ) : (
-                        <div>
-                            ádasda
+                        <div className="w-full flex flex-col gap-5 items-center justify-center">
+                            <img src="/img/empty_video.png" alt="" className="w-[300px] opacity-50"/>
+                            <p className="text-gray-400">Không có video nào ở đây?</p>
                         </div>
                     )
                 }
