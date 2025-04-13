@@ -82,6 +82,7 @@ const ModalAddress = () => {
                             <input 
                                 onChange={handleChange}
                                 value={formData.specificAddress}
+                                name="specificAddress"
                                 type="text" 
                                 placeholder="Địa chỉ cụ thể"
                                 className="w-full py-2 px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"

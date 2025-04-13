@@ -3,7 +3,7 @@ import icons from '../util/icons'
 const {FaMapMarkerAlt, FaPhoneAlt, MdEmail, BsFacebook, FaYoutube} = icons
 const Footer = () => {
     return (
-        <div className="w-full" data-aos="fade-up">
+        <div className="w-full">
             <div className="w-full">
                 <div className="h-[400px] bg-cover bg-center bg-fixed flex justify-center" 
                     style={{ backgroundImage: "url('/img/partner/partner.jpg')" }}>

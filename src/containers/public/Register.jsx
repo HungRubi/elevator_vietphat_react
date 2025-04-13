@@ -36,11 +36,11 @@ const Register = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(actions.register(formData));
+        navigate("/login");
     }
     useEffect(() => {
         if(messageRegister){
             toast.success(messageRegister);
-            navigate("/login");
         }
     }, [messageRegister, navigate])
     return (
@@ -203,7 +203,7 @@ const Register = () => {
                     </div>
                 </form>
             </div>
-            <div className="pt-15">
+            <div className="z-100">
                 <Footer/>
             </div>
         </div>

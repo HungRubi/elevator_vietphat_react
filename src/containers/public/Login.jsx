@@ -104,7 +104,7 @@ const Login = () => {
                     </div>
                 </form>
             </div>
-            <div className="pt-15">
+            <div className="">
                 <Footer/>
             </div>
         </div>

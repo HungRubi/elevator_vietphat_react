@@ -21,6 +21,7 @@ const initState = {
     productSearch: [],
     articleSearch: [],
     videoSearch: [],
+    order: [],
 }
 
 const appReducer = (state = initState, action) => {
@@ -34,6 +35,7 @@ const appReducer = (state = initState, action) => {
                 message: action.payload?.message || null,
                 cartUser: action.payload?.cart || [],
                 productCart: action.payload?.product || [],
+                orders: action.payload?.orders || [],
                 loginError: null
             }
         case actionType.LOGIN_FAIL:

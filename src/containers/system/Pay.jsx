@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {HeaderNav, LoveButton, Button, ModalAddress, ModalDiscount} from '../../components'
 import icons from '../../util/icons';
 import { useSelector } from 'react-redux';
@@ -7,21 +7,157 @@ import { formatMoney } from '../../util/formatMoney';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import * as actions from '../../store/actions';
+import Docxtemplater from 'docxtemplater';
+import PizZip from 'pizzip';
+import { saveAs } from 'file-saver';
+import { loadFile } from '../../util/loadFile';
 
 const Pay = () => {
     const {selectedProducts, currentUser, selectedVoucher} = useSelector(state => state.user);
     const [totalPrice, setTotalPrice] = useState(0);
     const [totalQuantity, setTotalQuantity] = useState(0);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     useEffect(() => {
         const totalPrice = selectedProducts?.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
         const totalQuantity = selectedProducts?.reduce((acc, item) => acc + item.quantity, 0);
         setTotalPrice(totalPrice);
         setTotalQuantity(totalQuantity);
     }, [selectedProducts]);
-    const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(actions.getDiscounts())
-    }, [dispatch])
+    }, [dispatch]);
+
+    const handleExportInvoice = async () => {
+        try {
+            // Load template file
+            const template = await loadFile('/template_order.docx');
+            
+            // Create PizZip instance
+            const zip = new PizZip(template);
+            
+            // Create docxtemplater instance
+            const doc = new Docxtemplater(zip, {
+                paragraphLoop: true,
+                linebreaks: true,
+            });
+
+            // Format date
+            const today = new Date();
+
+            // Prepare data for template
+            const data = {
+                name: currentUser?.name || '',
+                phone: currentUser?.phone || '',
+                address: currentUser?.address || '',
+                products: selectedProducts.map((item, index) => ({
+                    no: index + 1,
+                    productName: item.product.name || '',
+                    quantity: item.quantity || 0,
+                    price: formatMoney(item.product.price) || '0đ',
+                    purchers: formatMoney(item.product.price * item.quantity) || '0đ'
+                })),
+                totalPrice: formatMoney(totalPrice + 100000 - (selectedVoucher?.value_discount || 0)) || '0đ',
+                stringPrice: convertToWords(totalPrice + 100000 - (selectedVoucher?.value_discount || 0)) || 'không đồng',
+                date: today.getDate(),
+                month: today.getMonth() + 1
+            };
+
+            // Render document
+            doc.render(data);
+
+            // Generate output
+            const out = doc.getZip().generate({
+                type: 'blob',
+                mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            });
+
+            // Save file
+            saveAs(out, `HoaDon_${Date.now()}.docx`);
+        } catch (error) {
+            console.error('Error generating invoice:', error);
+            alert('Có lỗi xảy ra khi tạo hóa đơn. Vui lòng thử lại!');
+        }
+    };
+
+    // Helper function to convert number to words
+    const convertToWords = (num) => {
+        if (!num || num === 0) return 'không đồng';
+        
+        const ones = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+        const tens = ['', 'mười', 'hai mươi', 'ba mươi', 'bốn mươi', 'năm mươi', 'sáu mươi', 'bảy mươi', 'tám mươi', 'chín mươi'];
+        const hundreds = ['', 'một trăm', 'hai trăm', 'ba trăm', 'bốn trăm', 'năm trăm', 'sáu trăm', 'bảy trăm', 'tám trăm', 'chín trăm'];
+        
+        const convertThreeDigits = (n) => {
+            if (n === 0) return '';
+            const h = Math.floor(n / 100);
+            const t = Math.floor((n % 100) / 10);
+            const o = n % 10;
+            
+            let result = hundreds[h];
+            if (t > 0) {
+                result += ' ' + tens[t];
+            }
+            if (o > 0) {
+                result += ' ' + ones[o];
+            }
+            return result.trim();
+        };
+        
+        let result = '';
+        const billion = Math.floor(num / 1000000000);
+        const million = Math.floor((num % 1000000000) / 1000000);
+        const thousand = Math.floor((num % 1000000) / 1000);
+        const rest = num % 1000;
+        
+        if (billion > 0) {
+            result += convertThreeDigits(billion) + ' tỷ ';
+        }
+        if (million > 0) {
+            result += convertThreeDigits(million) + ' triệu ';
+        }
+        if (thousand > 0) {
+            result += convertThreeDigits(thousand) + ' nghìn ';
+        }
+        if (rest > 0) {
+            result += convertThreeDigits(rest);
+        }
+        
+        return result.trim() + ' đồng';
+    };
+    const totalShipingCost = selectedProducts?.reduce((acc, item) => {
+        return acc + item.product.shipping_cost
+    }, 0);
+    const handleAddOrder = () => {
+        const orderData = {
+            user_id: currentUser?._id,
+            total_price: totalPrice + totalShipingCost - (selectedVoucher?.value_discount || 0),
+            shipping_address: {
+                name: currentUser?.name,
+                phone: currentUser?.phone,
+                address: currentUser?.address,
+            },
+            payment_method: 'Thanh toán khi nhận hàng',
+            items: selectedProducts?.map(item => ({
+                product_id: item.product._id,
+                quantity: item.quantity,
+                total_price: item.product.price * item.quantity,
+            })),
+            status: 'Đang xử lý',
+            discount_id: selectedVoucher?._id,
+        };
+        
+        const orderedProductIds = selectedProducts.map(item => item.product._id);
+        
+        dispatch(actions.addOrder(orderData));
+        
+        dispatch(actions.clearCart(orderedProductIds));
+        
+        
+        navigate('/account/order');
+    }
+    
     return (
         <>
             <div className="w-full bg-white py-2.5"
@@ -137,7 +273,7 @@ const Pay = () => {
                                 </div>
                                 <div className="w-full flex text-left justify-between mt-4">
                                     Tổng vận chuyển
-                                    <h5>₫100.000</h5>
+                                    <h5>₫{formatMoney(totalShipingCost)}</h5>
                                 </div>
                                 <div className="w-full flex text-left justify-between mt-4">
                                     Tổng giảm giá
@@ -145,7 +281,7 @@ const Pay = () => {
                                 </div>
                                 <div className="w-full flex text-left justify-between mt-4 items-center">
                                     Tổng tiền hàng
-                                    <h5 className='text-[26px] text-[#2f904b]'>₫{formatMoney(totalPrice + 100000 - (selectedVoucher?.value_discount || 0))}</h5>
+                                    <h5 className='text-[26px] text-[#2f904b]'>₫{formatMoney(totalPrice + totalShipingCost - (selectedVoucher?.value_discount || 0))}</h5>
                                 </div>
                             </div>
                         </div>
@@ -156,10 +292,13 @@ const Pay = () => {
                                 </NavLink>
                             </h5>
                             <div className="flex items-center gap-5">
-                                <Button className={"bg-inherit !text-[#2f904b]"}>
+                                <Button 
+                                    className={"bg-inherit !text-[#2f904b]"}
+                                    onClick={handleExportInvoice}
+                                >
                                     xuất hóa đơn
                                 </Button>
-                                <Button>
+                                <Button onClick={handleAddOrder}>
                                     đặt hàng
                                 </Button>
                             </div>

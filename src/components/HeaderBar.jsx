@@ -1,11 +1,11 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { menuBar } from '../util/menu';
 import { CircleButton, Search } from './index';
 import icons from '../util/icons';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import * as actions from '../store/actions'
 const {FaRegBell, PiShoppingCartBold, FaArrowRightFromBracket, BsPerson, FiTruck, BsTag} = icons
 const active = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-center item_nav relative z-10 bg-[#2f904b]';
 const notActive = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-center item_nav relative z-10 hover:bg-[#2f904b] transition duration-300 ease-linear';
@@ -56,6 +56,12 @@ const HeaderBar = () => {
     }, [openMenu]);
 
     const location = useLocation();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const hanleLogout = () => {
+        dispatch(actions.logout());
+        navigate('/login')
+    }
     return (
         <div className={`w-full px-[10%] m-auto flex items-center justify-between ${location.pathname === '/' ? "bg-transparent" : "bg-black"}`}
         data-aos="fade-down" data-aos-anchor-placement="top-bottom">
@@ -188,13 +194,12 @@ const HeaderBar = () => {
                                             </li>
                                         </ul>
                                         <div className="px-[1rem] w-full">
-                                            <button className="text-[18px] cursor-pointer bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
-                                                <NavLink
-                                                to={"/login"}
-                                                className="flex items-center justify-center gap-2.5 capitalize">
+                                            <button onClick={hanleLogout}
+                                            className="text-[18px] cursor-pointer bg-[rgba(121,119,119,0.1215686275)] w-full py-2 rounded-[8px] !text-black border border-[#cbd0dd]">
+                                                <div className="flex items-center justify-center gap-2.5 capitalize">
                                                     <FaArrowRightFromBracket className='text-[18px] -mt-[2px]'/>
                                                     đăng xuất
-                                                </NavLink>
+                                                </div>
                                             </button>
                                         </div>
                                     </div>

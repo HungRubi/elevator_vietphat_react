@@ -8,6 +8,7 @@ const initialState = {
     quantities: [],
     messageUser: null,
     selectedVoucher: null,
+    orders: [],
 }
 
 const userReducer = (state = initialState, action) => {
@@ -18,8 +19,21 @@ const userReducer = (state = initialState, action) => {
                 currentUser: action.user,
                 cart: action.cart,
                 productCart: action.productCart,
+                orders: action.orders,
             }
-
+        
+        case actionType.LOGOUT:
+            return {
+                ...state,
+                currentUser: null,
+                cart: [],
+                productCart: [],
+                selectedProducts: [],
+                selectedVoucher: null,
+                orders: [],
+                messageUser: null
+            }
+        
         case actionType.SET_SELECTED_PRODUCTS:
             return {
                 ...state,
@@ -56,6 +70,28 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 messageUser: null,
+            }
+
+        case actionType.ADD_ORDER:
+            return {
+                ...state,
+                messageUser: action.payload?.message || null,
+                orders: (action.payload?.orders?.length > 0) ? action.payload.orders : state.orders,
+            }
+
+        case actionType.CLEAR_CART:
+            return {
+                ...state,
+                selectedProducts: action.payload.length > 0 
+                    ? state.selectedProducts.filter(item => !action.payload.includes(item.product._id))
+                    : [],
+                cart: action.payload.length > 0
+                    ? state.cart.filter(item => !action.payload.includes(item.product_id))
+                    : [],
+                productCart: action.payload.length > 0
+                    ? state.productCart.filter(item => !action.payload.includes(item._id))
+                    : [],
+                selectedVoucher: null
             }
 
         default:

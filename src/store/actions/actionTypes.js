@@ -1,5 +1,9 @@
 const actionType = {
     REGISTER: 'REGISTER',
+    LOGOUT: 'LOGOUT',
+    ADD_ORDER: 'ADD_ORDER',
+    GET_ORDER: 'GET_ORDER',
+    GET_ORDER_DETAIL: 'GET_ORDER_DETAIL',
     GET_DISCOUNT: 'GET_DISCOUNT',
     REGISTER_FAIL: 'REGISTER_FAIL',
     LOGIN: "LOGIN",
@@ -18,6 +22,7 @@ const actionType = {
     RESET_MESSAGE: 'RESET_MESSAGE',
     SELECT_VOUCHER: 'SELECT_VOUCHER',
     QUERY_SEARCH: 'QUERY_SEARCH',
+    CLEAR_CART: 'CLEAR_CART',
 }
 
 export default actionType

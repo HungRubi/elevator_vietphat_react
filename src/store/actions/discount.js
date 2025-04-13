@@ -4,7 +4,6 @@ import * as apis from '../../apis/discount'
 export const getDiscounts = () => async (dispatch)  => {
     try{
         const response = await apis.getDiscounts();
-        console.log(response)
         if(response.status === 200) {
             dispatch({
                 type: actionType.GET_DISCOUNT,

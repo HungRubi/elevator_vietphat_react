@@ -1,12 +1,13 @@
 import actionTypes from './actionTypes';
 import * as apis from '../../apis/user';
 
-export const setCurrentUser = (user, cart, productCart) => {
+export const setCurrentUser = (user, cart, productCart, orders) => {
     return {
         type: actionTypes.SET_CURRENT_USER,
         user,
         cart,
         productCart,
+        orders,
     }
 }
 
@@ -50,5 +51,18 @@ export const selectVoucher = (voucher) => {
 export const resetMessageUser = () => {
     return {
         type: actionTypes.RESET_MESSAGE_USER
+    }
+}
+
+export const clearCart = (productIds = []) => {
+    return {
+        type: actionTypes.CLEAR_CART,
+        payload: productIds
+    }
+}
+
+export const logout = () => {
+    return {
+        type: actionTypes.LOGOUT,
     }
 }

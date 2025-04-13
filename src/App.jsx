@@ -20,7 +20,7 @@ import { toast } from 'react-toastify';
 
 function App() {
   const dispatch = useDispatch();
-  const {currentUser, cartUser, productCart, message} = useSelector(state => state.app);
+  const {currentUser, cartUser, productCart, orders, message} = useSelector(state => state.app);
   const {messageUser} = useSelector(state => state.user);
 
   // Handle all messages in one useEffect
@@ -35,7 +35,6 @@ function App() {
     }
   }, [message, messageUser, dispatch]);
 
-  // Initialize AOS
   useEffect(() => {
     Aos.init({
       duration: 1000,
@@ -55,13 +54,12 @@ function App() {
     };
   }, []);
 
-  // Initialize user data
   useEffect(() => {
     dispatch(actions.getHome())
     if(currentUser) {
-      dispatch(actions.setCurrentUser(currentUser, cartUser, productCart))
+      dispatch(actions.setCurrentUser(currentUser, cartUser, productCart, orders))
     }
-  }, [dispatch, currentUser, cartUser, productCart])
+  }, [dispatch, currentUser, cartUser, productCart, orders]);
 
   return(
     <>
