@@ -8,40 +8,46 @@ const {FiTruck} = icons;
 const Order = () => {
     const { orders } = useSelector(state => state.user);
     const [active, setActive] = useState(0);
-    const tab = [
-        {
-            title: 'Tất cả',
-        },
-        {
-            title: 'Chờ xử lý',
-        },
-        {
-            title: 'Đang giao hàng',
-        },
-        {
-            title: 'Đã giao hàng',
-        },
-        {
-            title: 'Đã hủy',
-        },
-        {
-            title: 'Trả hàng',
-        },
-    ]
     const orderHanle = orders?.filter(item => item.status === 'Đang xử lý')
     const orderDelivery = orders?.filter(item => item.status === 'Đang giao hàng')
     const orderSuccess = orders?.filter(item => item.status === 'Thành công')
     const orderFail = orders?.filter(item => item.status === 'Thất bại')
+    const tab = [
+        {
+            title: 'Tất cả',
+            length: orders.length
+        },
+        {
+            title: 'Chờ xử lý',
+            length: orderHanle.length
+        },
+        {
+            title: 'Đang giao hàng',
+            length: orderDelivery.length
+        },
+        {
+            title: 'Đã giao hàng',
+            length: orderSuccess.length
+        },
+        {
+            title: 'Đã hủy',
+            length: orderFail.length
+        },
+        {
+            title: 'Trả hàng',
+            length: 0
+        },
+    ]
+    
     return (
         <div className="ml-8 flex-1">
             <div className="flex items-center justify-between bg-white w-full">
                 {tab.map((item, index) => (
                     <div key={index} 
-                    className={`text-center py-2.5 px-[25px] border-b-[2px] border-transparent cursor-pointer hover:border-[#2f904b] transition duration-300 ease-linear ${active === index ? "!border-b-[#2f904b] text-[#2f904b]" : "text-[#888]"}`}
+                    className={`text-center py-2.5 px-[25px] flex whitespace-nowrap border-b-[2px] border-transparent cursor-pointer hover:border-[#2f904b] transition duration-300 ease-linear ${active === index ? "!border-b-[#2f904b] text-[#2f904b]" : "text-[#888]"}`}
                     onClick={() => setActive(index)}>
                         {item.title}
-                        {index === 0 && <span className='text-[#2f904b] ml-1'>({orders.length})</span>}
-
+                        <span className='ml-1'>({item.length})</span>
                     </div>
                 ))}
             </div>

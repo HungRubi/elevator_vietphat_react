@@ -73,6 +73,7 @@ const userReducer = (state = initialState, action) => {
             }
 
         case actionType.ADD_ORDER:
+            console.log(action.payload.orders)
             return {
                 ...state,
                 messageUser: action.payload?.message || null,
