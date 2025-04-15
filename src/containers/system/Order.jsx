@@ -1,17 +1,19 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {LoveButton, Button, SearchProperty} from '../../components';
 import icons from '../../util/icons';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {formatMoney} from '../../util/formatMoney'
 import { NavLink } from 'react-router-dom';
+import * as actions from '../../store/actions';
 const {FiTruck} = icons;
 const Order = () => {
-    const { orders } = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const { orders, currentUser } = useSelector(state => state.user);
     const [active, setActive] = useState(0);
-    const orderHanle = orders?.filter(item => item.status === 'Đang xử lý')
-    const orderDelivery = orders?.filter(item => item.status === 'Đang giao hàng')
-    const orderSuccess = orders?.filter(item => item.status === 'Thành công')
-    const orderFail = orders?.filter(item => item.status === 'Thất bại')
+    let orderHanle = orders?.filter(item => item.status === 'Đang xử lý')
+    let orderDelivery = orders?.filter(item => item.status === 'Đang giao hàng')
+    let orderSuccess = orders?.filter(item => item.status === 'Thành công')
+    let orderFail = orders?.filter(item => item.status === 'Thất bại')
     const tab = [
         {
             title: 'Tất cả',
@@ -38,7 +40,15 @@ const Order = () => {
             length: 0
         },
     ]
-    
+    const hanleCanCelOrder = useCallback((orderId) => {
+        return () => {
+            const data = {
+                status: 'Thất bại',
+                userId: currentUser?._id
+            };
+            dispatch(actions.updateOrder(orderId, data));
+        };
+    }, [dispatch, currentUser]);
     return (
         <div className="ml-8 flex-1">
             <div className="flex items-center justify-between bg-white w-full">
@@ -128,10 +138,16 @@ const Order = () => {
                                             <Button>
                                                 liên hệ ngay
                                             </Button>
-                                            <Button
-                                            className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
-                                                hủy đơn
-                                            </Button>
+                                            {item.status === 'Đang xử lý' ? (
+                                                <Button onClick={hanleCanCelOrder(item._id)}
+                                                className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
+                                                    hủy đơn
+                                                </Button>
+                                            ) : (
+                                                <Button>
+                                                    mua lại
+                                                </Button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -232,7 +248,7 @@ const Order = () => {
                                             <Button>
                                                 liên hệ ngay
                                             </Button>
-                                            <Button
+                                            <Button onClick={hanleCanCelOrder(item._id)}
                                             className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                                                 hủy đơn
                                             </Button>
@@ -336,10 +352,6 @@ const Order = () => {
                                             <Button>
                                                 liên hệ ngay
                                             </Button>
-                                            <Button
-                                            className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
-                                                hủy đơn
-                                            </Button>
                                         </div>
                                     </div>
                                 </div>
@@ -438,11 +450,11 @@ const Order = () => {
                                         </div>
                                         <div className="w-1/2 flex items-center justify-end gap-2.5">
                                             <Button>
-                                                liên hệ ngay
+                                                đánh giá
                                             </Button>
                                             <Button
                                             className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
-                                                hủy đơn
+                                                Trả hàng
                                             </Button>
                                         </div>
                                     </div>
@@ -544,9 +556,8 @@ const Order = () => {
                                             <Button>
                                                 liên hệ ngay
                                             </Button>
-                                            <Button
-                                            className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
-                                                hủy đơn
+                                            <Button>
+                                                mua lại
                                             </Button>
                                         </div>
                                     </div>

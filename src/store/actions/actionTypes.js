@@ -1,5 +1,6 @@
 const actionType = {
     REGISTER: 'REGISTER',
+    UPDATE_ORDER: 'UPDATE_ORDER',
     LOGOUT: 'LOGOUT',
     ADD_ORDER: 'ADD_ORDER',
     GET_ORDER: 'GET_ORDER',

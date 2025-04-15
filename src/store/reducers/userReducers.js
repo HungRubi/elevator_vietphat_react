@@ -73,7 +73,6 @@ const userReducer = (state = initialState, action) => {
             }
 
         case actionType.ADD_ORDER:
-            console.log(action.payload.orders)
             return {
                 ...state,
                 messageUser: action.payload?.message || null,
@@ -93,6 +92,13 @@ const userReducer = (state = initialState, action) => {
                     ? state.productCart.filter(item => !action.payload.includes(item._id))
                     : [],
                 selectedVoucher: null
+            }
+
+        case actionType.UPDATE_ORDER:
+            return {
+                ...state,
+                messageUser: action.payload?.message || null,
+                orders: (action.payload?.orders?.length > 0) ? action.payload.orders : state.orders,
             }
 
         default:

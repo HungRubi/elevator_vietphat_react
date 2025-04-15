@@ -7,9 +7,24 @@ export const addOrder = async (data) => {
             url: 'order/store',
             data: data,
         })
-        console.log(response.data);
         return response;
     }catch(error){
-        console.log(error);
+        return error.response;
+    }
+}
+
+export const updateOrder = async (id, data) => {
+    try{
+        const response = await axios({
+            method: 'PUT',
+            url: `order/${id}`,
+            data: {
+                status: data.status,
+                userId: data.userId
+            }
+        })
+        return response;
+    }catch(error){
+        return error.response;
     }
 }
