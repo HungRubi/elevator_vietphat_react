@@ -152,8 +152,11 @@ const Pay = () => {
         
         dispatch(actions.addOrder(orderData));
         
-        dispatch(actions.clearCart(orderedProductIds));
-        
+        // Xóa sản phẩm đã mua khỏi giỏ hàng
+        const data = {
+            productId: orderedProductIds
+        };
+        dispatch(actions.deleteCartItem(data, currentUser?._id));
         
         navigate('/account/order');
     }

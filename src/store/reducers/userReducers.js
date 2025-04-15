@@ -101,6 +101,14 @@ const userReducer = (state = initialState, action) => {
                 orders: (action.payload?.orders?.length > 0) ? action.payload.orders : state.orders,
             }
 
+        case actionType.DELETE_CART_ITEM:
+            return {
+                ...state,
+                messageUser: action.payload?.message || null,
+                cart: (action.payload?.cart?.length > 0) ? action.payload.cart : state.cart,
+                productCart: (action.payload?.product?.length > 0) ? action.payload.product : state.product,
+            }
+
         default:
             return state;
     }

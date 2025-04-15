@@ -3,12 +3,13 @@ import {SearchProperty, QuantityButton, Button,HeaderNav} from '../../components
 import icons from '../../util/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import {formatMoney} from '../../util/formatMoney';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as actions from '../../store/actions';
 const { FiSearch, FaCaretDown, BsTag, FiTruck, PiShoppingCartBold} = icons;
 
 const Cart = () => {
-    const { productCart, cart } = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const { productCart, cart, currentUser } = useSelector(state => state.user);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [quantities, setQuantities] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
@@ -83,7 +84,7 @@ const Cart = () => {
     useEffect(() => {
         updateTotal();
     }, [selectedProducts, quantities]);
-    const dispatch = useDispatch();
+
     const handleBuyNow = () => {
         const selectedProductsWithQuantity = selectedProducts.map(productId => {
             const product = productCart.find(item => item._id === productId);
@@ -96,6 +97,16 @@ const Cart = () => {
         dispatch(actions.setSelectedProducts(selectedProductsWithQuantity));
     };
 
+    const handleDeleteSelected = useCallback(() => {
+        if (selectedProducts.length > 0) {
+            const data = {
+                productId: selectedProducts
+            };
+            dispatch(actions.deleteCartItem(data, currentUser?._id));
+            setSelectedProducts([]);
+        }
+    }, [dispatch, selectedProducts, currentUser]);
+
     return (
         <>
             <div className="w-full bg-white py-2.5">
@@ -103,10 +114,11 @@ const Cart = () => {
                     <HeaderNav icon={<PiShoppingCartBold className='text-[30px] text-[#2f904b]'/>}>
                         giỏ hàng
                     </HeaderNav>
-                    <div className="max-w-1/2 w-full">
+                    <div className="max-w-1/2 w-full flex items-center justify-between">
                         <SearchProperty>
                             <FiSearch className='text-[20px]'/>
                         </SearchProperty>
+                        
                     </div>
                 </div>
             </div>
@@ -119,11 +131,18 @@ const Cart = () => {
                             <input 
                                 type="checkbox" 
                                 className='scale-[1.3]'
-                                checked={selectedProducts.length === productCart.length}
+                                checked={selectedProducts?.length === productCart?.length}
                                 onChange={handleSelectAll}
                             />
                         </div>
                         <h5>Sản phẩm</h5>
+                        {selectedProducts.length > 0 && (
+                            <Button 
+                                onClick={handleDeleteSelected}
+                                className="hover:bg-red-600 text-white ml-5 !py-1">
+                                Xóa ({selectedProducts.length})
+                            </Button>
+                        )}
                     </div>
                     <div className="w-1/2 flex items-center justify-between">
                         <div className="w-1/4 text-center">
@@ -234,7 +253,7 @@ const Cart = () => {
                             <input 
                                 type="checkbox" 
                                 className='scale-[1.3]'
-                                checked={selectedProducts.length === productCart.length}
+                                checked={selectedProducts?.length === productCart?.length}
                                 onChange={handleSelectAll}
                             />
                         </div>

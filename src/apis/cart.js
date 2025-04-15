@@ -13,3 +13,17 @@ export const updateCart = async (data, id) => {
         throw error;
     }
 }
+
+export const deleteCartItem = async (data, id) => {
+    try{
+        const respronse = await axios({
+            method: 'PUT',
+            url: `/cart/delete/${id}`,
+            data: data
+        })
+        return respronse;
+    }catch(error){
+        console.error('Error deleting cart:', error);
+        throw error;
+    }
+}

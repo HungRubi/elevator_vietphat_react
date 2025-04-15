@@ -23,6 +23,7 @@ export const updateOrder = async (id, data) => {
                 userId: data.userId
             }
         })
+        console.log(response)
         return response;
     }catch(error){
         return error.response;

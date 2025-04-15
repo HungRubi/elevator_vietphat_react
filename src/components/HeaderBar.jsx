@@ -148,7 +148,7 @@ const HeaderBar = () => {
                 className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative">
                     <PiShoppingCartBold className='size-[22px] font-bold text-[#ffffffb4]'/>
                     <CircleButton className={"absolute -top-[10px] -right-[10px] bg-red-500 text-white !h-6 !w-6 flex-none text-[12px]"}>
-                        {productCart.length}
+                        {productCart?.length}
                     </CircleButton>
                 </NavLink>
                     

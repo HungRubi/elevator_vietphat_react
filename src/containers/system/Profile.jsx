@@ -8,7 +8,7 @@ const Profile = () => {
         name: currentUser?.name,
         email: currentUser?.email,
         phone: currentUser?.phone,
-        birth: currentUser?.birth,
+        birth: currentUser?.format,
     });
     const handleChange = (e) => {
         setFormData({
@@ -124,7 +124,7 @@ const Profile = () => {
                 </form>
                 <div className="flex-none flex flex-col items-center justify-center w-1/3">
                     <div className="w-[150px] h-[150px] relative">
-                        <img src="/img/default.png" 
+                        <img src={currentUser?.avatar} 
                         alt="avatar" 
                         className='rounded-[50%]'/>
                         <div className="absolute bottom-0 right-0">

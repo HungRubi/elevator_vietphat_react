@@ -1,39 +1,55 @@
 import { useDispatch, useSelector } from 'react-redux';
 import {LoveButton, Button, SearchProperty} from '../../components';
 import icons from '../../util/icons';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {formatMoney} from '../../util/formatMoney'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import * as actions from '../../store/actions';
 const {FiTruck} = icons;
 const Order = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { orders, currentUser } = useSelector(state => state.user);
     const [active, setActive] = useState(0);
-    let orderHanle = orders?.filter(item => item.status === 'Đang xử lý')
-    let orderDelivery = orders?.filter(item => item.status === 'Đang giao hàng')
-    let orderSuccess = orders?.filter(item => item.status === 'Thành công')
-    let orderFail = orders?.filter(item => item.status === 'Thất bại')
+    const [orderHanle, setOrderHanle] = useState([]);
+    const [orderDelivery, setOrderDelivery] = useState([]);
+    const [orderSuccess, setOrderSuccess] = useState([]);
+    const [orderFail, setOrderFail] = useState([]);
+    
+    useEffect(() => {
+        if (orders) {
+            const handleOrders = orders.filter(item => item.status === 'Đang xử lý');
+            const deliveryOrders = orders.filter(item => item.status === 'Đang giao hàng');
+            const successOrders = orders.filter(item => item.status === 'Thành công');
+            const failOrders = orders.filter(item => item.status === 'Thất bại');
+
+            setOrderHanle(handleOrders);
+            setOrderDelivery(deliveryOrders);
+            setOrderSuccess(successOrders);
+            setOrderFail(failOrders);
+        }
+    }, [orders]);
+
     const tab = [
         {
             title: 'Tất cả',
-            length: orders.length
+            length: orders?.length || 0
         },
         {
             title: 'Chờ xử lý',
-            length: orderHanle.length
+            length: orderHanle?.length || 0
         },
         {
             title: 'Đang giao hàng',
-            length: orderDelivery.length
+            length: orderDelivery?.length || 0
         },
         {
             title: 'Đã giao hàng',
-            length: orderSuccess.length
+            length: orderSuccess?.length || 0
         },
         {
             title: 'Đã hủy',
-            length: orderFail.length
+            length: orderFail?.length || 0
         },
         {
             title: 'Trả hàng',
@@ -49,6 +65,16 @@ const Order = () => {
             dispatch(actions.updateOrder(orderId, data));
         };
     }, [dispatch, currentUser]);
+
+    const handleBuyAgain = useCallback((order) => {
+        const products = order.orderDetails.map(item => ({
+            product: item.product,
+            quantity: item.quantity
+        }));
+        dispatch(actions.setSelectedProducts(products));
+        navigate('/pay');
+    }, [dispatch, navigate]);
+
     return (
         <div className="ml-8 flex-1">
             <div className="flex items-center justify-between bg-white w-full">
@@ -144,7 +170,8 @@ const Order = () => {
                                                     hủy đơn
                                                 </Button>
                                             ) : (
-                                                <Button>
+                                                <Button onClick={() => handleBuyAgain(item)}
+                                                className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                                                     mua lại
                                                 </Button>
                                             )}
@@ -556,7 +583,8 @@ const Order = () => {
                                             <Button>
                                                 liên hệ ngay
                                             </Button>
-                                            <Button>
+                                            <Button onClick={() => handleBuyAgain(item)}
+                                            className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                                                 mua lại
                                             </Button>
                                         </div>
@@ -659,7 +687,7 @@ const Order = () => {
                                             <Button>
                                                 liên hệ ngay
                                             </Button>
-                                            <Button
+                                            <Button onClick={() => handleBuyAgain(item)}
                                             className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                                                 hủy đơn
                                             </Button>
