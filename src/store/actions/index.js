@@ -7,3 +7,4 @@ export * from './user';
 export * from './cart';
 export * from './discount';
 export * from './order';
+export * from './comment';

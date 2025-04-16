@@ -103,8 +103,8 @@ const ModalDiscount = () => {
                                 <AiOutlineQuestionCircle className='text-[23px] text-gray-500'/>
                             </div>
                         </div>
-                        <div className="w-full mt-2 flex flex-col overflow-y-scroll 
-                            [&::-webkit-scrollbar]:w-2 max-h-[450px] px-5 gap-4
+                        <div className="w-full mt-2 flex flex-col overflow-y-scroll max-h-[450px] px-5 gap-4
+                            [&::-webkit-scrollbar]:w-2 
                             [&::-webkit-scrollbar-track]:bg-transparent 
                             [&::-webkit-scrollbar-thumb]:bg-[#0000001a] 
                             [&::-webkit-scrollbar-thumb]:rounded-full 

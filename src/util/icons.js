@@ -1,4 +1,6 @@
 import { FaMapMarkerAlt } from "react-icons/fa";
+import { FaCamera } from "react-icons/fa";
+import { FaRegStar } from "react-icons/fa";
 import { FaPhoneAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { BsFacebook } from "react-icons/bs";
@@ -33,8 +35,12 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 import { FaCirclePlay } from "react-icons/fa6";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
+import { FaVideo } from "react-icons/fa6";
 
 const icons = {
+    FaVideo,
+    FaCamera,
+    FaRegStar,
     AiOutlineQuestionCircle,
     FaCirclePlay,
     FaRegEye,

@@ -1,6 +1,6 @@
 import {LoveButton, QuantityButton, Button,PageBar, Form, ProductsAll} from '../../components/index';
 import icons from '../../util/icons';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../../store/actions/'
 import { useParams } from 'react-router-dom';
@@ -9,7 +9,54 @@ const {FaStar, FiTruck, AiOutlineRight, IoShieldCheckmarkOutline, PiShoppingCart
 const ProductDetail = () => {
     const dispatch = useDispatch();
     const {currentUser} = useSelector(state => state.user);
-    const {productDetail, productSuggest} = useSelector(state => state.app);
+    const {productDetail, productSuggest, comments} = useSelector(state => state.app);
+    const [oneStar, setOneStar] = useState([]);
+    const [twoStar, setTwoStar] = useState([]);
+    const [threeStar, setThreeStar] = useState([]);
+    const [fourStar, setFourStar] = useState([]);
+    const [fiveStar, setFiveStar] = useState([]);
+
+    useEffect(() => {
+        if(comments){
+            const one = comments?.filter(item => item.star === 1);
+            const two = comments?.filter(item => item.star === 2);
+            const three = comments?.filter(item => item.star === 3);
+            const four = comments?.filter(item => item.star === 4);
+            const five = comments?.filter(item => item.star === 5);
+
+            setOneStar(one);
+            setTwoStar(two);
+            setThreeStar(three);
+            setFourStar(four);
+            setFiveStar(five);
+        }
+    }, [comments])
+    const typeComment = [
+        {
+            title: 'tất cả',
+            length: comments?.length || 0,
+        },
+        {
+            title: '5 sao',
+            length: fiveStar?.length || 0,
+        },
+        {
+            title: '4 sao',
+            length: fourStar?.length || 0,
+        },
+        {
+            title: '3 sao',
+            length: threeStar?.length || 0,
+        },
+        {
+            title: '2 sao',
+            length: twoStar?.length || 0,
+        },
+        {
+            title: '1 sao',
+            length: oneStar?.length || 0,
+        },
+    ]
     const {slug} = useParams();
     let pricePre = 0;
     if(Number(productDetail?.sale) === 0){
@@ -67,7 +114,7 @@ const ProductDetail = () => {
                             </div>
                             <div className="h-[30px] w-[1px] border-l border-l-[#cbd0dd] mx-[15px]"></div>
                             <div className='flex gap-1 items-end text-[28px]'>
-                                4k6
+                                {comments?.length}
                                 <span className='text-[#807f7f] capitalize text-[15px] leading-8 ml-1.5'>đánh giá</span>
                             </div>
                             <div className="h-[30px] w-[1px] border-l border-l-[#cbd0dd] mx-[14px] "></div>
@@ -197,82 +244,70 @@ const ProductDetail = () => {
                             </div>
                         </div>
                         <div className="ml-[25px] w-full flex flex-wrap items-center gap-4">
-                        <Button className="!capitalize !py-[5px] font-[400] !bg-transparent border border-[#2f904b] !text-[#2f904b]">
-                                tất cả
-                            </Button> 
-                            <Button className="!capitalize !py-[5px] font-[400] !bg-transparent border border-[#2f904b] !text-[#2f904b]">
-                                5 sao (10,7k)
-                            </Button> 
-                            <Button className="!capitalize !py-[5px] font-[400] !bg-transparent border border-[#2f904b] !text-[#2f904b]">
-                                4 sao (10,7k)
-                            </Button>  
-                            <Button className="!capitalize !py-[5px] font-[400] !bg-transparent border border-[#2f904b] !text-[#2f904b]">
-                                3 sao (10,7k)
-                            </Button>  
-                            <Button className="!capitalize !py-[5px] font-[400] !bg-transparent border border-[#2f904b] !text-[#2f904b]">
-                                2 sao (10,7k)
-                            </Button>
-                            <Button className="!capitalize !py-[5px] font-[400] !bg-transparent border border-[#2f904b] !text-[#2f904b]">
-                                1 sao (10,7k)
-                            </Button>
-                            <Button className="!capitalize !py-[5px] font-[400] !bg-transparent border border-[#2f904b] !text-[#2f904b]">
-                                có bình luận (10,7k)
-                            </Button> 
-                            <Button className="!capitalize !py-[5px] font-[400] !bg-transparent border border-[#2f904b] !text-[#2f904b]">
-                                có hình ảnh (10,7k)
-                            </Button>      
+                            {typeComment.map((item, idx) => (
+                                <Button key={idx}
+                                className="!capitalize !py-[5px] font-[400] 
+                                !bg-transparent border border-[#2f904b] !text-[#2f904b]
+                                hover:!bg-[#2f904b] hover:!text-white transition duration-300">
+                                    {item.title} ({item.length} đánh giá)
+                                </Button> 
+                            ))}
+                              
                         </div>
                     </div>
                     <ul className="w-[90%] mx-auto mt-5">
-                        <li className="flex border-b border-b-[#2e2a2a17] py-[1rem] pl-[1.25rem]">
-                            <div className="w-[40px] h-[40px] rounded-[50%] flex items-center justify-center overflow-hidden">
-                                <img src="/img/default.png" alt="" />
-                            </div>
-                            <div className="ml-[15px] w-full">
-                                <h4>huyhung</h4>
-                                <div className="flex items-center mt-1.5 gap-1">
-                                    <FaStar className='text-[13px] text-[#2f904b]'/>
-                                    <FaStar className='text-[13px] text-[#2f904b]'/>
-                                    <FaStar className='text-[13px] text-[#2f904b]'/>
-                                    <FaStar className='text-[13px] text-[#2f904b]'/>
-                                    <FaStar className='text-[13px] text-[#2f904b]'/>
+                        {comments?.map(item => (
+                            <li key={item._id}
+                            className="flex border-b border-b-[#2e2a2a17] py-[1rem] pl-[1.25rem]">
+                                <div className="w-[40px] h-[40px] rounded-[50%] flex items-center justify-center overflow-hidden">
+                                    <img src={item.user_id.avatar} alt="" />
                                 </div>
-                                <div className="text-[17px] text-[#0e0c0c] mt-1">
-                                    <span className='text-[#0e0c0c63] text-[0.75rem] mb-[0.9375rem]'>
-                                        12/3/2025 | 12:34 | Phân loại: Linh kiện điện
-                                    </span>
-                                    <br />
-                                    Chất lượng sản phẩm: tốt 
-                                    <br />
-                                    Đúng với mô tả: đúng
-                                </div>
-                                <div className="my-[15px] text-[17px] line-clamp-2">
-                                    Shop giao hàng nhanh, đóng gói cẩn thận, hàng đúng mô tả
-                                </div>
-                                <div className="w-full flex items-center gap-4 flex-wrap">
-                                    <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
-                                    <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
-                                    <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
-                                    <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
-                                </div>
-                                <div className="w-full bg-[rgba(83,82,82,0.0823529412)] py-2.5 pl-2.5 mt-5">
-                                    <span>
-                                        Phản hồi từ shop 
-                                    </span>
-                                    <br />
-                                    <span className='text-[rgba(0,0,0,0.459)] text-[15px] line-clamp-2'>
-                                        Cảm ơn đã ủng hộ chúng tôi
-                                    </span>
-                                </div>
-                                <div className="flex items-center justify-between mt-4">
-                                    <div className="flex gap-2.5 items-center">
-                                        <BiSolidLike className='text-[20px] cursor-pointer text-[#2f904b]'/>
-                                        <span className='leading-8 text-[20px]'>29</span>
+                                <div className="ml-[15px] w-full">
+                                    <h4>{item.user_id.account}</h4>
+                                    <div className="flex items-center mt-1.5 gap-1">
+                                        <FaStar className='text-[13px] text-[#2f904b]'/>
+                                        <FaStar className='text-[13px] text-[#2f904b]'/>
+                                        <FaStar className='text-[13px] text-[#2f904b]'/>
+                                        <FaStar className='text-[13px] text-[#2f904b]'/>
+                                        <FaStar className='text-[13px] text-[#2f904b]'/>
                                     </div>
-                                    <BsThreeDotsVertical className='text-20px -mr-[7px] cursor-pointer'/>
+                                    <div className="text-[17px] text-[#0e0c0c] mt-1">
+                                        <span className='text-[#0e0c0c63] text-[0.75rem] mb-[0.9375rem]'>
+                                            {item.lastUpdate} | 12:34 | Phân loại: Linh kiện điện
+                                        </span>
+                                        <br />
+                                        Chất lượng sản phẩm: {item.quantity}
+                                        <br />
+                                        Đúng với mô tả: {item.isAccurate}
+                                    </div>
+                                    <div className="my-[15px] text-[17px] line-clamp-2">
+                                        {item.message}
+                                    </div>
+                                    <div className="w-full flex items-center gap-4 flex-wrap">
+                                        <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
+                                        <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
+                                        <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
+                                        <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
+                                    </div>
+                                    <div className="w-full bg-[rgba(83,82,82,0.0823529412)] py-2.5 pl-2.5 mt-5">
+                                        <span>
+                                            Phản hồi từ shop 
+                                        </span>
+                                        <br />
+                                        <span className='text-[rgba(0,0,0,0.459)] text-[15px] line-clamp-2'>
+                                            Cảm ơn đã ủng hộ chúng tôi
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between mt-4">
+                                        <div className="flex gap-2.5 items-center">
+                                            <BiSolidLike className='text-[20px] cursor-pointer text-[#2f904b]'/>
+                                            <span className='leading-8 text-[20px]'>29</span>
+                                        </div>
+                                        <BsThreeDotsVertical className='text-20px -mr-[7px] cursor-pointer'/>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
+                            </li>
+                        ))}
                     </ul>
                     <PageBar/>
                 </div>

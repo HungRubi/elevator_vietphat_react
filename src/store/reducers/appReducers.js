@@ -22,6 +22,7 @@ const initState = {
     articleSearch: [],
     videoSearch: [],
     order: [],
+    comments: [],
 }
 
 const appReducer = (state = initState, action) => {
@@ -86,7 +87,8 @@ const appReducer = (state = initState, action) => {
             return {
                 ...state,
                 productDetail: action.payload?.data?.product || {},
-                productSuggest: action.payload?.data?.productSuggest || []
+                productSuggest: action.payload?.data?.productSuggest || [],
+                comments: action.payload?.data?.comment || []
             }
         
         case actionType.GET_ARTICLE_DETAIL:
@@ -125,6 +127,11 @@ const appReducer = (state = initState, action) => {
                 productSearch: action.payload?.product || [],
                 articleSearch: action.payload?.article || [],
                 videoSearch: action.payload?.video || [],
+            }
+        case actionType.ADD_COMMENT:
+            return {
+                ...state,
+                message: action.payload?.message || null,
             }
         default:
             return state

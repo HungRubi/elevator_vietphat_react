@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
-import {LoveButton, Button, SearchProperty} from '../../components';
+import {LoveButton, Button, SearchProperty, ModalQuestion} from '../../components';
 import icons from '../../util/icons';
 import { useState, useCallback, useEffect } from 'react';
 import {formatMoney} from '../../util/formatMoney'
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as actions from '../../store/actions';
+
 const {FiTruck} = icons;
 const Order = () => {
     const dispatch = useDispatch();
@@ -18,10 +19,10 @@ const Order = () => {
     
     useEffect(() => {
         if (orders) {
-            const handleOrders = orders.filter(item => item.status === 'Đang xử lý');
-            const deliveryOrders = orders.filter(item => item.status === 'Đang giao hàng');
-            const successOrders = orders.filter(item => item.status === 'Thành công');
-            const failOrders = orders.filter(item => item.status === 'Thất bại');
+            const handleOrders = orders?.filter(item => item.status === 'Đang xử lý');
+            const deliveryOrders = orders?.filter(item => item.status === 'Đang giao hàng');
+            const successOrders = orders?.filter(item => item.status === 'Thành công');
+            const failOrders = orders?.filter(item => item.status === 'Thất bại');
 
             setOrderHanle(handleOrders);
             setOrderDelivery(deliveryOrders);
@@ -170,10 +171,33 @@ const Order = () => {
                                                     hủy đơn
                                                 </Button>
                                             ) : (
-                                                <Button onClick={() => handleBuyAgain(item)}
-                                                className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
+                                                <>
+                                                </>
+
+                                            )}
+                                            {item.status === 'Thất bại' ? (
+                                                <Button onClick={() => handleBuyAgain(item)}>
                                                     mua lại
                                                 </Button>
+                                            ) : (
+                                                <>
+
+                                                </>
+
+                                            )}
+                                            {item.status === 'Thành công' ? (
+                                                <>
+                                                    <ModalQuestion products={item.orderDetails.map(detail => detail.product)} />
+                                                    <Button
+                                                        className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
+                                                        Trả hàng
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <>
+
+                                                </>
+
                                             )}
                                         </div>
                                     </div>
@@ -477,8 +501,9 @@ const Order = () => {
                                         </div>
                                         <div className="w-1/2 flex items-center justify-end gap-2.5">
                                             <Button>
-                                                đánh giá
+                                                liên hệ ngay
                                             </Button>
+                                            <ModalQuestion products={item.orderDetails.map(detail => detail.product)} />
                                             <Button
                                             className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                                                 Trả hàng
@@ -663,7 +688,7 @@ const Order = () => {
                                                         <h6 className='text-[25px] text-[#2f904b]'>
                                                             {formatMoney(product.quantity * product.product.price)}đ
                                                         </h6>
-                                                    </div>
+                                                        productDetail                                                    </div>
                                                 </div>
                                                 
                                             </li>
