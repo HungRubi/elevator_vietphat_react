@@ -9,8 +9,12 @@ import * as actions from '../../store/actions';
 const {FiTruck} = icons;
 const Order = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { orders, currentUser } = useSelector(state => state.user);
+    useEffect(() => {
+        dispatch(actions.getOrderByUser(currentUser?._id));
+
+    }, [dispatch, currentUser])
+    const navigate = useNavigate();
     const [active, setActive] = useState(0);
     const [orderHanle, setOrderHanle] = useState([]);
     const [orderDelivery, setOrderDelivery] = useState([]);
@@ -28,8 +32,11 @@ const Order = () => {
             setOrderDelivery(deliveryOrders);
             setOrderSuccess(successOrders);
             setOrderFail(failOrders);
+
         }
     }, [orders]);
+
+    console.log(orders);
 
     const tab = [
         {
@@ -91,7 +98,7 @@ const Order = () => {
             <SearchProperty>search</SearchProperty>
             {active === 0 ? (
                 <>
-                    {orders && orders.length > 0 ? orders.map(item => (
+                    {orders && orders?.length > 0 ? orders.map(item => (
                         <ul className="w-full mt-5" key={item._id}>
                             <li className="w-full mb-5" >
                                 <div className="bg-white w-full px-5">
@@ -114,7 +121,7 @@ const Order = () => {
                                         
                                     </div>
                                     <ul className="w-full">
-                                        {item.orderDetails.map((product, index) => (
+                                        {item?.orderDetails?.map((product, index) => (
                                             <li key={index} className="w-full order_items border-b border-[#cbd0dd] py-5">
                                                 <div className="w-full flex items-center justify-between">
                                                     <div className="flex gap-2.5 w-[70%]">
@@ -187,7 +194,7 @@ const Order = () => {
                                             )}
                                             {item.status === 'Thành công' ? (
                                                 <>
-                                                    <ModalQuestion products={item.orderDetails.map(detail => detail.product)} />
+                                                    <ModalQuestion products={item.orderDetails?.map(detail => detail.product)} />
                                                     <Button
                                                         className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                                                         Trả hàng
@@ -248,7 +255,7 @@ const Order = () => {
                                         
                                     </div>
                                     <ul className="w-full">
-                                        {item.orderDetails.map((product, index) => (
+                                        {item.orderDetails?.map((product, index) => (
                                             <li key={index} className="w-full order_items border-b border-[#cbd0dd] py-5">
                                                 <div className="w-full flex items-center justify-between">
                                                     <div className="flex gap-2.5 w-[70%]">
@@ -352,7 +359,7 @@ const Order = () => {
                                         
                                     </div>
                                     <ul className="w-full">
-                                        {item.orderDetails.map((product, index) => (
+                                        {item.orderDetails?.map((product, index) => (
                                             <li key={index} className="w-full order_items border-b border-[#cbd0dd] py-5">
                                                 <div className="w-full flex items-center justify-between">
                                                     <div className="flex gap-2.5 w-[70%]">
@@ -452,7 +459,7 @@ const Order = () => {
                                         
                                     </div>
                                     <ul className="w-full">
-                                        {item.orderDetails.map((product, index) => (
+                                        {item.orderDetails?.map((product, index) => (
                                             <li key={index} className="w-full order_items border-b border-[#cbd0dd] py-5">
                                                 <div className="w-full flex items-center justify-between">
                                                     <div className="flex gap-2.5 w-[70%]">
@@ -503,7 +510,7 @@ const Order = () => {
                                             <Button>
                                                 liên hệ ngay
                                             </Button>
-                                            <ModalQuestion products={item.orderDetails.map(detail => detail.product)} />
+                                            <ModalQuestion products={item.orderDetails?.map(detail => detail.product)} />
                                             <Button
                                             className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                                                 Trả hàng
@@ -557,7 +564,7 @@ const Order = () => {
                                         
                                     </div>
                                     <ul className="w-full">
-                                        {item.orderDetails.map((product, index) => (
+                                        {item.orderDetails?.map((product, index) => (
                                             <li key={index} className="w-full order_items border-b border-[#cbd0dd] py-5">
                                                 <div className="w-full flex items-center justify-between">
                                                     <div className="flex gap-2.5 w-[70%]">
@@ -661,7 +668,7 @@ const Order = () => {
                                         
                                     </div>
                                     <ul className="w-full">
-                                        {item.orderDetails.map((product, index) => (
+                                        {item.orderDetails?.map((product, index) => (
                                             <li key={index} className="w-full order_items border-b border-[#cbd0dd] py-5">
                                                 <div className="w-full flex items-center justify-between">
                                                     <div className="flex gap-2.5 w-[70%]">

@@ -128,11 +128,13 @@ const appReducer = (state = initState, action) => {
                 articleSearch: action.payload?.article || [],
                 videoSearch: action.payload?.video || [],
             }
+        
         case actionType.ADD_COMMENT:
             return {
                 ...state,
                 message: action.payload?.message || null,
             }
+
         default:
             return state
     }

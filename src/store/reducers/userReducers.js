@@ -109,6 +109,11 @@ const userReducer = (state = initialState, action) => {
                 productCart: (action.payload?.product?.length > 0) ? action.payload.product : state.product,
             }
 
+        case actionType.GET_ORDER_BY_USER:
+            return {
+                ...state,
+                orders: action.payload?.order || [],
+            }
         default:
             return state;
     }

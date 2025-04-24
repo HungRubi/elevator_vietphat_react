@@ -21,6 +21,7 @@ export const deleteCartItem = async (data, id) => {
             url: `/cart/delete/${id}`,
             data: data
         })
+        console.log(respronse)
         return respronse;
     }catch(error){
         console.error('Error deleting cart:', error);

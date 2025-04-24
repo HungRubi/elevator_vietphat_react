@@ -66,3 +66,26 @@ export const logout = () => {
         type: actionTypes.LOGOUT,
     }
 }
+
+export const getOrderByUser =  (id) => async (dispatch) => {
+    try{
+        const response = await apis.getOrderByUser(id);
+        console.log(response.data)
+        if(response?.status === 200) {
+            dispatch({
+                type: actionTypes.GET_ORDER_BY_USER,
+                payload: response.data
+            })
+        }else{
+            dispatch({
+                type: actionTypes.GET_ORDER_BY_USER,
+                payload: null
+            })
+        }
+    }catch(err){
+        dispatch({
+            type: actionTypes.GET_ORDER_BY_USER,
+            payload: err
+        })
+    }
+}

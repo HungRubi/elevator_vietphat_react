@@ -12,3 +12,16 @@ export const updateAdress = async (data, id) => {
         console.log(error);
     }
 }
+
+export const getOrderByUser = async (id) => {
+    try{
+        const response = await axios({
+            url: `/user/order/${id}`,
+            method: 'GET',
+        });
+        console.log(response);
+        return response;
+    }catch(error){
+        return error.response;
+    }
+}

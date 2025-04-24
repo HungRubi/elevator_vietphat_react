@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../../store/actions/'
 import { useParams } from 'react-router-dom';
-const {FaStar, FiTruck, AiOutlineRight, IoShieldCheckmarkOutline, PiShoppingCartBold, MdEmail, BsThreeDotsVertical, BiSolidLike} = icons
+const {FaStar, FiTruck, AiOutlineRight, IoShieldCheckmarkOutline, PiShoppingCartBold, MdEmail,
+     BsThreeDotsVertical, BiSolidLike, FaRegStar} = icons
 
 const ProductDetail = () => {
     const dispatch = useDispatch();
@@ -15,6 +16,7 @@ const ProductDetail = () => {
     const [threeStar, setThreeStar] = useState([]);
     const [fourStar, setFourStar] = useState([]);
     const [fiveStar, setFiveStar] = useState([]);
+    const [averageStar, setAverageStar] = useState(0);
 
     useEffect(() => {
         if(comments){
@@ -29,6 +31,11 @@ const ProductDetail = () => {
             setThreeStar(three);
             setFourStar(four);
             setFiveStar(five);
+
+            // Calculate average star
+            const totalStars = comments.reduce((sum, item) => sum + item.star, 0);
+            const avg = totalStars / comments.length;
+            setAverageStar(Math.round(avg * 10) / 10); // Round to 1 decimal place
         }
     }, [comments])
     const typeComment = [
@@ -230,33 +237,43 @@ const ProductDetail = () => {
                             đánh giá sản phẩm
                         </h3>
                     </div>
-                    <div className="w-[90%] mx-auto mt-5 px-[1.875rem] py-[1.875rem] mb-[1rem] rounded-[2px] bg-[#e3ffec] border border-[#2f904a34] flex items-center">
-                        <div>
-                            <div className="flex text-[1.875rem] text-[#2f904b] items-end">
-                                5.0 <span className='text-[1.125rem] leading-9 ml-[5px]'>trên 5</span>
+                    <div className={`${comments && comments.length > 0 ? "bg-[#e3ffec] border border-[#2f904a34] mt-5 px-[1.875rem] py-[1.875rem] mb-[1rem] rounded-[2px]" : "bg-inherit"} w-[90%] mx-auto  flex items-center`}>
+                        {comments && comments.length > 0 ? (
+                            <>
+                            <div>
+                                <div className="flex text-[1.875rem] text-[#2f904b] items-end">
+                                    {averageStar} <span className='text-[1.125rem] leading-9 ml-[5px]'>trên 5</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    {[...Array(5)].map((_, index) => {
+                                        const starValue = averageStar - index;
+                                        if (starValue >= 1) {
+                                            return <FaStar key={index} className='text-[20px] text-[#2f904b]'/>;
+                                        } else if (starValue > 0) {
+                                            return <FaRegStar key={index} className='text-[20px] text-[#2f904b] opacity-50'/>;
+                                        } else {
+                                            return <FaRegStar key={index} className='text-[20px] text-[#2f904b]'/>;
+                                        }
+                                    })}
+                                </div>
                             </div>
-                            <div className="flex items-center">
-                                <FaStar className='text-[20px] text-[#2f904b]'/>
-                                <FaStar className='text-[20px] text-[#2f904b]'/>
-                                <FaStar className='text-[20px] text-[#2f904b]'/>
-                                <FaStar className='text-[20px] text-[#2f904b]'/>
-                                <FaStar className='text-[20px] text-[#2f904b]'/>
+                            <div className="ml-[25px] w-full flex flex-wrap items-center gap-4">
+                                {typeComment.map((item, idx) => (
+                                    <Button key={idx}
+                                    className="!capitalize !py-[5px] font-[400] 
+                                    !bg-transparent border border-[#2f904b] !text-[#2f904b]
+                                    hover:!bg-[#2f904b] hover:!text-white transition duration-300">
+                                        {item.title} ({item.length} đánh giá)
+                                    </Button> 
+                                ))}
+                                
                             </div>
-                        </div>
-                        <div className="ml-[25px] w-full flex flex-wrap items-center gap-4">
-                            {typeComment.map((item, idx) => (
-                                <Button key={idx}
-                                className="!capitalize !py-[5px] font-[400] 
-                                !bg-transparent border border-[#2f904b] !text-[#2f904b]
-                                hover:!bg-[#2f904b] hover:!text-white transition duration-300">
-                                    {item.title} ({item.length} đánh giá)
-                                </Button> 
-                            ))}
-                              
-                        </div>
+                            </>
+                        ) : ""}
+                        
                     </div>
                     <ul className="w-[90%] mx-auto mt-5">
-                        {comments?.map(item => (
+                        {comments && comments?.length > 0 ? comments?.map(item => (
                             <li key={item._id}
                             className="flex border-b border-b-[#2e2a2a17] py-[1rem] pl-[1.25rem]">
                                 <div className="w-[40px] h-[40px] rounded-[50%] flex items-center justify-center overflow-hidden">
@@ -265,11 +282,13 @@ const ProductDetail = () => {
                                 <div className="ml-[15px] w-full">
                                     <h4>{item.user_id.account}</h4>
                                     <div className="flex items-center mt-1.5 gap-1">
-                                        <FaStar className='text-[13px] text-[#2f904b]'/>
-                                        <FaStar className='text-[13px] text-[#2f904b]'/>
-                                        <FaStar className='text-[13px] text-[#2f904b]'/>
-                                        <FaStar className='text-[13px] text-[#2f904b]'/>
-                                        <FaStar className='text-[13px] text-[#2f904b]'/>
+                                        {[...Array(5)].map((_, index) => (
+                                            index < item.star ? (
+                                                <FaStar key={index} className='text-[13px] text-yellow-500'/>
+                                            ) : (
+                                                <FaRegStar key={index} className='text-[13px] text-yellow-500'/>
+                                            )
+                                        ))}
                                     </div>
                                     <div className="text-[17px] text-[#0e0c0c] mt-1">
                                         <span className='text-[#0e0c0c63] text-[0.75rem] mb-[0.9375rem]'>
@@ -307,9 +326,20 @@ const ProductDetail = () => {
                                     </div>
                                 </div>
                             </li>
-                        ))}
+                        )) : (
+                            <div className="w-full py-10 flex items-center justify-center flex-col gap-5">
+                                <img 
+                                    src="/img/no-comment.png" 
+                                    alt="" 
+                                    className='w-[200px] h-[200px] opacity-30'
+                                />
+                                <h3 className='text-[20px] text-gray-400'>
+                                    Chưa có đánh giá nào
+                                </h3>
+                            </div>
+                        )}
                     </ul>
-                    <PageBar/>
+                    {comments && comments?.length > 0 ? <PageBar/> : ""}
                 </div>
             
             </div>
