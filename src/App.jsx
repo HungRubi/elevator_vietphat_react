@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { toast } from 'react-toastify';
+import QrPaymentInfo from './containers/system/QrPaymentInfo';
 
 
 function App() {
@@ -94,6 +95,7 @@ function App() {
           <Route path={path.CONTACT} element={<Contact />}/>
           <Route path={path.PAGE404} element={<Page404 />}/>
           <Route path={path.STAR} element={<Home />}/>
+          <Route path="/payment-qr" element={<QrPaymentInfo />} />
         </Route>
       </Routes>
       <ToastContainer

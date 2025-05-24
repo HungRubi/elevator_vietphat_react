@@ -11,8 +11,28 @@ import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
 import { loadFile } from '../../util/loadFile';
+import QrPaymentInfo from '../system/QrPaymentInfo';
+import { setPaymentMethod } from '../../store/actions';
 
 const Pay = () => {
+   
+     const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+     const selectedPaymentMethod = useSelector(state => state.user.selectedPaymentMethod);
+     const [tempPaymentMethod, setTempPaymentMethod] = useState(selectedPaymentMethod);
+
+        // Reset tạm khi mở modal
+        useEffect(() => {
+         if (showPaymentOptions) {
+                 setTempPaymentMethod(selectedPaymentMethod);
+            }
+            }, [showPaymentOptions, selectedPaymentMethod]);
+
+    const [selectedPaymentText, setSelectedPaymentText] = useState(
+        selectedPaymentMethod === 'bank'
+         ? 'Thanh toán QR qua ngân hàng'
+        : 'Thanh toán khi nhận hàng'
+        );
+
     const {selectedProducts, currentUser, selectedVoucher} = useSelector(state => state.user);
     const [totalPrice, setTotalPrice] = useState(0);
     const [totalQuantity, setTotalQuantity] = useState(0);
@@ -161,8 +181,66 @@ const Pay = () => {
         navigate('/account/order');
     }
     
+
     return (
         <>
+{showPaymentOptions && (
+  <div className="fixed inset-0 flex justify-center items-center z-50 pointer-events-none">
+    <div className="bg-white px-8 py-6 rounded shadow-md w-[400px] pointer-events-auto">
+      <h3 className="text-[22px] font-semibold text-gray-800 mb-6 text-center">Chọn phương thức thanh toán</h3>
+      <div className="space-y-4">
+        <button
+          className={`w-full py-3 px-4 rounded border text-left ${
+            tempPaymentMethod === 'cod' ? 'border-green-600 bg-green-50' : 'border-gray-300'
+          }`}
+          onClick={() => setTempPaymentMethod('cod')}
+        >
+          Thanh toán khi nhận hàng
+        </button>
+        <button
+          className={`w-full py-3 px-4 rounded border text-left ${
+            tempPaymentMethod === 'bank' ? 'border-green-600 bg-green-50' : 'border-gray-300'
+          }`}
+          onClick={() => setTempPaymentMethod('bank')}
+        >
+          Thanh toán QR qua ngân hàng
+        </button>
+      </div>
+      <div className="flex justify-between items-center mt-6">
+        <button
+          className="text-gray-600 text-sm hover:underline"
+          onClick={() => setShowPaymentOptions(false)}
+        >
+          TRỞ LẠI
+        </button>
+                    <button
+                         className="bg-green-600 text-white px-4 py-2 rounded"
+                         onClick={() => {
+                         dispatch(setPaymentMethod(tempPaymentMethod));
+                         setShowPaymentOptions(false);
+
+            // Delay nhẹ để Redux cập nhật state trước khi chuyển route
+                     if (tempPaymentMethod === 'bank') {
+                         setTimeout(() => {
+                        navigate('/payment-qr', {
+                    state: {
+                    name: currentUser?.name,
+                    phone: currentUser?.phone,
+                    amount: totalPrice + totalShipingCost - (selectedVoucher?.value_discount || 0)
+                    }
+                    });
+
+                }, 100); // 100ms delay
+                 }
+                 }}
+                 >
+                     HOÀN THÀNH
+                    </button>
+      </div>
+    </div>
+  </div>
+)}
+
             <div className="w-full bg-white py-2.5"
             style={{boxShadow: '0 1px 1px 0 rgba(0,0,0,.09)'}}>
                 <div className="px-[10%] w-full flex items-center justify-between">
@@ -245,9 +323,18 @@ const Pay = () => {
                             <div className="w-full flex items-center justify-between">
                                 <div className="flex items-center line-clamp-1">
                                     Phương thức thanh toán:
-                                    <span className='ml-2.5'>Thanh toán khi nhận hàng</span>
+                                   
                                 </div>
-                                <span className='ml-15 capitalize text-[18px] text-blue-600 cursor-pointer'>thay đổi</span>
+                                <span className='ml-2.5'>
+                                    {selectedPaymentText}
+                                </span>
+                                <span
+                                onClick={() => setShowPaymentOptions(true)}
+                                className='ml-15 capitalize text-[18px] text-blue-600 cursor-pointer'
+                                >
+                                thay đổi
+                                </span>
+
                             </div>
                             <div className="flex items-center line-clamp-1 justify-between mt-5">
                                 <div className="flex items-center gap-2">
@@ -286,6 +373,14 @@ const Pay = () => {
                                     Tổng tiền hàng
                                     <h5 className='text-[26px] text-[#2f904b]'>₫{formatMoney(totalPrice + totalShipingCost - (selectedVoucher?.value_discount || 0))}</h5>
                                 </div>
+                                    {selectedPaymentMethod === 'bank' && (
+                                        <QrPaymentInfo
+                                            name={currentUser?.name}
+                                            phone={currentUser?.phone}
+                                            amount={totalPrice + totalShipingCost - (selectedVoucher?.value_discount || 0)}
+                                         />
+                                    )}
+
                             </div>
                         </div>
                         <div className="w-full px-[30px] flex items-center justify-between text-[18px] text-[#888] py-6">

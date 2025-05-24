@@ -6,10 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import * as actions from '../../store/actions'
 import { toast } from "react-toastify";
 
+
 const {FcGoogle, FaFacebook} = icons;
 
-
 const Register = () => {
+    const [errors, setErrors] = useState({});
     const {messageRegister, registerError} = useSelector(state => state.app);
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -27,6 +28,36 @@ const Register = () => {
         confirm: '',
         phone: '',
     })
+    const validateForm = () => {
+    const newErrors = {};
+    const { frist, last, email, phone, city, street, day, month, year, account, password, confirm } = formData;
+
+    if (!frist.trim()) newErrors.frist = "Vui lòng nhập Họ.";
+    if (!last.trim()) newErrors.last = "Vui lòng nhập Tên.";
+
+    if (!email.trim()) {
+        newErrors.email = "Vui lòng nhập Email.";
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+        newErrors.email = "Email không hợp lệ.";
+    }
+
+    if (!phone.trim()) {
+        newErrors.phone = "Vui lòng nhập số điện thoại.";
+    } else if (!/^[0-9]{9,11}$/.test(phone)) {
+        newErrors.phone = "Số điện thoại phải từ 9 đến 11 chữ số.";
+    }
+
+    if (!city.trim()) newErrors.city = "Vui lòng nhập Tỉnh/Thành phố.";
+    if (!street.trim()) newErrors.street = "Vui lòng nhập Đường.";
+    if (!account.trim()) newErrors.account = "Vui lòng nhập tên tài khoản.";
+    if (!password) newErrors.password = "Vui lòng nhập mật khẩu.";
+    if (password !== confirm) newErrors.confirm = "Mật khẩu xác nhận không khớp.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+};
+
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -34,10 +65,12 @@ const Register = () => {
         })
     }
     const handleSubmit = (e) => {
-        e.preventDefault();
+    e.preventDefault();
+    if (validateForm()) {
         dispatch(actions.register(formData));
         navigate("/login");
     }
+    };
     useEffect(() => {
         if(messageRegister){
             toast.success(messageRegister);
@@ -73,7 +106,7 @@ const Register = () => {
                                 name="frist" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2"
                             />
-
+                            {errors.frist && <span className="text-red-500 text-sm">{errors.frist}</span>}
                             <input 
                                 onChange={handleChange} 
                                 type="text" 
@@ -81,6 +114,7 @@ const Register = () => {
                                 name="last" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2"
                             />
+                            {errors.last && <span className="text-red-500 text-sm">{errors.last}</span>}
                         </div>
                         <div className="mt-5 flex gap-5">
                             <input 
@@ -90,6 +124,7 @@ const Register = () => {
                                 name="email" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2"
                             />
+                            {errors.email && <span className="text-red-500 text-sm mt-1">{errors.email}</span>}
                             <input 
                                 onChange={handleChange} 
                                 type="text" 
@@ -97,6 +132,7 @@ const Register = () => {
                                 name="phone" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2"
                             />
+                            {errors.phone && <span className="text-red-500 text-sm">{errors.phone}</span>}
                         </div>
                         <div className="mt-5 flex gap-5">
                             <input 
@@ -105,6 +141,7 @@ const Register = () => {
                                 name="city" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
                             />
+                                {errors.city && <span className="text-red-500 text-sm">{errors.city}</span>}
                             <input 
                                 onChange={handleChange} 
                                 type="text" 
@@ -112,15 +149,18 @@ const Register = () => {
                                 name="street" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
                             />
+                                {errors.street && <span className="text-red-500 text-sm">{errors.street}</span>}
                         </div>
                         <div className="mt-5 flex gap-5 items-center">
                             <input 
                                 onChange={handleChange} 
                                 type="number" 
                                 placeholder="Day" 
-                                name="day" 
+                                name="day"
+                                value={formData.day || ''}
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
                             />
+                            {errors.date && <span className="text-red-500 text-sm">{errors.date}</span>}
                             <span className="text-4xl text-gray-500">/</span>
                             <input 
                                 onChange={handleChange} 
@@ -129,6 +169,7 @@ const Register = () => {
                                 name="month" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
                             />
+                            {errors.date && <span className="text-red-500 text-sm">{errors.date}</span>}
                             <span className="text-4xl text-gray-500">/</span>
                             <input 
                                 onChange={handleChange} 
@@ -137,6 +178,7 @@ const Register = () => {
                                 name="year" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
                             />
+                            {errors.date && <span className="text-red-500 text-sm">{errors.date}</span>}
                         </div>
                         <div className="mt-5">
                             <input 
@@ -147,6 +189,7 @@ const Register = () => {
                                 name="account" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-full" 
                             />
+                            {errors.account && <span className="text-red-500 text-sm">{errors.account}</span>}
                         </div>
                         <div className="mt-5 flex gap-5">
                             <input 
@@ -157,6 +200,7 @@ const Register = () => {
                                 name="password"  
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
                             />
+                            {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
                             <input 
                                 onChange={handleChange} 
                                 autoComplete="new-password"
@@ -165,6 +209,7 @@ const Register = () => {
                                 name="confirm" 
                                 className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
                             />
+                            {errors.confirm && <span className="text-red-500 text-sm">{errors.confirm}</span>}
                         </div>
                         <div className="mt-4">
                             <span className="text-sm text-red-500">
