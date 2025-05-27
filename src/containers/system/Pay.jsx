@@ -222,7 +222,7 @@ const Pay = () => {
             // Delay nhẹ để Redux cập nhật state trước khi chuyển route
                      if (tempPaymentMethod === 'bank') {
                          setTimeout(() => {
-                        navigate('/payment-qr', {
+                         navigate('/payment-qr', {
                     state: {
                     name: currentUser?.name,
                     phone: currentUser?.phone,

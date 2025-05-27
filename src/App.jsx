@@ -66,7 +66,7 @@ function App() {
     <>
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
-          <Route path={path.HOME} element={<Home />}/>
+          <Route path={path.HOME} element={<Home/>}/>
           <Route path={path.LOGIN} element={<Login/>}/>
           <Route path={path.REGISTER} element={<Register/>}/>
           <Route path={path.VIDEO} element={<VideoDetail/>}/>
