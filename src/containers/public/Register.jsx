@@ -1,52 +1,34 @@
-import { NavLink, useNavigate } from "react-router-dom"
-import {Footer} from "../../components/index"
+import { NavLink, useNavigate } from "react-router-dom";
+import { Footer } from "../../components/index";
 import icons from '../../util/icons';
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as actions from '../../store/actions'
+import * as actions from '../../store/actions';
 import { toast } from "react-toastify";
 
-
-const {FcGoogle, FaFacebook} = icons;
+const { FcGoogle, FaFacebook } = icons;
 
 const Register = () => {
-    const [errors, setErrors] = useState({});
-    const {messageRegister, registerError} = useSelector(state => state.app);
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const [formData, setFormData] = useState({
-        frist: '',
-        last: '',
-        email: '',
-        city: '',
-        street: '',
-        day: '',
-        month: '',
-        year: '',
-        account: '',
-        password: '',
-        confirm: '',
-        phone: '',
-    })
-    const validateForm = () => {
+  const [errors, setErrors] = useState({});
+  const { messageRegister, registerError } = useSelector(state => state.app);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [formData, setFormData] = useState({
+    frist: '', last: '', email: '', city: '', street: '', day: '', month: '', year: '',
+    account: '', password: '', confirm: '', phone: '',
+  });
+
+  const validateForm = () => {
     const newErrors = {};
-    const { frist, last, email, phone, city, street, day, month, year, account, password, confirm } = formData;
+    const { frist, last, email, phone, city, street, account, password, confirm } = formData;
 
     if (!frist.trim()) newErrors.frist = "Vui lòng nhập Họ.";
     if (!last.trim()) newErrors.last = "Vui lòng nhập Tên.";
-
-    if (!email.trim()) {
-        newErrors.email = "Vui lòng nhập Email.";
-    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-        newErrors.email = "Email không hợp lệ.";
-    }
-
-    if (!phone.trim()) {
-        newErrors.phone = "Vui lòng nhập số điện thoại.";
-    } else if (!/^[0-9]{9,11}$/.test(phone)) {
-        newErrors.phone = "Số điện thoại phải từ 9 đến 11 chữ số.";
-    }
-
+    if (!email.trim()) newErrors.email = "Vui lòng nhập Email.";
+    else if (!/^\S+@\S+\.\S+$/.test(email)) newErrors.email = "Email không hợp lệ.";
+    if (!phone.trim()) newErrors.phone = "Vui lòng nhập số điện thoại.";
+    else if (!/^[0-9]{9,11}$/.test(phone)) newErrors.phone = "Số điện thoại phải từ 9 đến 11 chữ số.";
     if (!city.trim()) newErrors.city = "Vui lòng nhập Tỉnh/Thành phố.";
     if (!street.trim()) newErrors.street = "Vui lòng nhập Đường.";
     if (!account.trim()) newErrors.account = "Vui lòng nhập tên tài khoản.";
@@ -55,203 +37,112 @@ const Register = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-};
+  };
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        })
-    }
-    const handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-        dispatch(actions.register(formData));
-        navigate("/login");
+      dispatch(actions.register(formData));
+      navigate("/login");
     }
-    };
-    useEffect(() => {
-        if(messageRegister){
-            toast.success(messageRegister);
-        }
-    }, [messageRegister, navigate])
-    return (
-        <div className="fixed w-full bg-[#f3f3f3] top-0 z-[9999] h-screen overflow-y-auto">
-            <div className="w-full h-1/7 flex items-center justify-between px-[10%]">
-                <div className="flex items-center gap-5">
-                    <img src="/img/logo.png" alt="" className="h-[110px] w-auto mb-4"/>
-                    <h1 className="text-[35px] font-[500] cursor-default text-[#2f904b]">Đăng nhập</h1>
-                </div>
-                <NavLink
-                className="text-[18px] text-[#2f904b]">
-                    Bạn cần giúp đỡ?
-                </NavLink>
+  };
+
+  useEffect(() => {
+    if (messageRegister) {
+      toast.success(messageRegister);
+    }
+  }, [messageRegister, navigate]);
+
+  return (
+    <div className="flex flex-col min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/img/slider/background_login.png')" }}>
+      <div className="flex-grow flex justify-center items-center px-4 py-10">
+        <div className="w-full max-w-[700px] bg-white rounded shadow-md px-6 py-8">
+          <div className="text-[1.8rem] text-center capitalize text-[#2f904b] font-semibold mb-6">
+            Đăng Ký
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <input onChange={handleChange} name="frist" placeholder="First Name" className="px-3 py-2 border border-gray-300 rounded w-full" />
+                {errors.frist && <div className="text-red-500 text-xs mt-1">{errors.frist}</div>}
+              </div>
+              <div>
+                <input onChange={handleChange} name="last" placeholder="Last Name" className="px-3 py-2 border border-gray-300 rounded w-full" />
+                {errors.last && <div className="text-red-500 text-xs mt-1">{errors.last}</div>}
+              </div>
+              <div>
+                <input onChange={handleChange} name="email" placeholder="Email" className="px-3 py-2 border border-gray-300 rounded w-full" />
+                {errors.email && <div className="text-red-500 text-xs mt-1">{errors.email}</div>}
+              </div>
+              <div>
+                <input onChange={handleChange} name="phone" placeholder="Phone" className="px-3 py-2 border border-gray-300 rounded w-full" />
+                {errors.phone && <div className="text-red-500 text-xs mt-1">{errors.phone}</div>}
+              </div>
+              <div>
+                <input onChange={handleChange} name="city" placeholder="City" className="px-3 py-2 border border-gray-300 rounded w-full" />
+                {errors.city && <div className="text-red-500 text-xs mt-1">{errors.city}</div>}
+              </div>
+              <div>
+                <input onChange={handleChange} name="street" placeholder="Street" className="px-3 py-2 border border-gray-300 rounded w-full" />
+                {errors.street && <div className="text-red-500 text-xs mt-1">{errors.street}</div>}
+              </div>
+              <input onChange={handleChange} name="day" placeholder="Day" className="px-3 py-2 border border-gray-300 rounded w-full" />
+              <input onChange={handleChange} name="month" placeholder="Month" className="px-3 py-2 border border-gray-300 rounded w-full" />
+              <input onChange={handleChange} name="year" placeholder="Year" className="px-3 py-2 border border-gray-300 rounded w-full" />
+              <div className="md:col-span-2">
+                <input onChange={handleChange} name="account" placeholder="Account" className="px-3 py-2 border border-gray-300 rounded w-full" />
+                {errors.account && <div className="text-red-500 text-xs mt-1">{errors.account}</div>}
+              </div>
+              <div>
+                <input onChange={handleChange} type="password" name="password" placeholder="Password" className="px-3 py-2 border border-gray-300 rounded w-full" />
+                {errors.password && <div className="text-red-500 text-xs mt-1">{errors.password}</div>}
+              </div>
+              <div>
+                <input onChange={handleChange} type="password" name="confirm" placeholder="Confirm Password" className="px-3 py-2 border border-gray-300 rounded w-full" />
+                {errors.confirm && <div className="text-red-500 text-xs mt-1">{errors.confirm}</div>}
+              </div>
             </div>
-            <div className="w-full relative mb-8">
-                <img src="/img/slider/background_login.png" alt="" className=""/>
-                <form onSubmit={handleSubmit}
-                className="w-[700px] bg-white rounded-[4px] login_form absolute">
-                    <div className="px-[30px] py-[1.375rem] w-full">
-                        <div className="text-[1.8rem] text-center capitalize text-[#2f904b]">
-                            đăng ký
-                        </div>
-                    </div>
-                    <div className="px-[30px] pb-[30px]">
-                        <div className="mt-5 flex gap-5">
-                            <input 
-                                onChange={handleChange} 
-                                type="text" 
-                                placeholder="Frist Name" 
-                                name="frist" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2"
-                            />
-                            {errors.frist && <span className="text-red-500 text-sm">{errors.frist}</span>}
-                            <input 
-                                onChange={handleChange} 
-                                type="text" 
-                                placeholder="Last Name" 
-                                name="last" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2"
-                            />
-                            {errors.last && <span className="text-red-500 text-sm">{errors.last}</span>}
-                        </div>
-                        <div className="mt-5 flex gap-5">
-                            <input 
-                                onChange={handleChange} 
-                                type="text" 
-                                placeholder="Email" 
-                                name="email" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2"
-                            />
-                            {errors.email && <span className="text-red-500 text-sm mt-1">{errors.email}</span>}
-                            <input 
-                                onChange={handleChange} 
-                                type="text" 
-                                placeholder="Phone" 
-                                name="phone" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2"
-                            />
-                            {errors.phone && <span className="text-red-500 text-sm">{errors.phone}</span>}
-                        </div>
-                        <div className="mt-5 flex gap-5">
-                            <input 
-                                onChange={handleChange} 
-                                type="text" placeholder="City" 
-                                name="city" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
-                            />
-                                {errors.city && <span className="text-red-500 text-sm">{errors.city}</span>}
-                            <input 
-                                onChange={handleChange} 
-                                type="text" 
-                                placeholder="Street" 
-                                name="street" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
-                            />
-                                {errors.street && <span className="text-red-500 text-sm">{errors.street}</span>}
-                        </div>
-                        <div className="mt-5 flex gap-5 items-center">
-                            <input 
-                                onChange={handleChange} 
-                                type="number" 
-                                placeholder="Day" 
-                                name="day"
-                                value={formData.day || ''}
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
-                            />
-                            {errors.date && <span className="text-red-500 text-sm">{errors.date}</span>}
-                            <span className="text-4xl text-gray-500">/</span>
-                            <input 
-                                onChange={handleChange} 
-                                type="number" 
-                                placeholder="Month" 
-                                name="month" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
-                            />
-                            {errors.date && <span className="text-red-500 text-sm">{errors.date}</span>}
-                            <span className="text-4xl text-gray-500">/</span>
-                            <input 
-                                onChange={handleChange} 
-                                type="number" 
-                                placeholder="Year" 
-                                name="year" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
-                            />
-                            {errors.date && <span className="text-red-500 text-sm">{errors.date}</span>}
-                        </div>
-                        <div className="mt-5">
-                            <input 
-                                onChange={handleChange} 
-                                autoComplete="username"
-                                type="text" 
-                                placeholder="Account" 
-                                name="account" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-full" 
-                            />
-                            {errors.account && <span className="text-red-500 text-sm">{errors.account}</span>}
-                        </div>
-                        <div className="mt-5 flex gap-5">
-                            <input 
-                                onChange={handleChange} 
-                                autoComplete="new-password"
-                                type="password" 
-                                placeholder="Password" 
-                                name="password"  
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
-                            />
-                            {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
-                            <input 
-                                onChange={handleChange} 
-                                autoComplete="new-password"
-                                type="password" 
-                                placeholder="Confirm Password" 
-                                name="confirm" 
-                                className="flex-1 outline-none px-[0.75rem] py-[0.95rem] border border-[rgba(0,0,0,.14)] rounded-[2px] h-[2.5rem] w-1/2" 
-                            />
-                            {errors.confirm && <span className="text-red-500 text-sm">{errors.confirm}</span>}
-                        </div>
-                        <div className="mt-4">
-                            <span className="text-sm text-red-500">
-                                {registerError ? registerError : ""}
-                            </span>
-                        </div>
-                        <div className={`${registerError ? "mt-4" : "mt-8"}`}>
-                            <button type="submit"
-                            className="flex-1 outline-none px-[0.75rem] cursor-pointer py-[0.95rem] leading-1 uppercase border-none bg-[#2f904b] rounded-[2px] h-[2.5rem] w-full text-white opacity-70" >
-                                ĐĂNG KÝ
-                            </button>
-                        </div>
-                        <div className="w-full flex items-center mt-8">
-                            <div className="w-full flex-1 h-[1px] bg-[#dbdbdb]"></div>
-                            <div className="text-[#ccc] px-4 text-[0.75rem] uppercase">hoặc</div>
-                            <div className="w-full flex-1 h-[1px] bg-[#dbdbdb]"></div>
-                        </div>
-                        <div className="flex items-center gap-5 mt-8">
-                            <button className="text-[18px] w-full border border-[rgba(0,0,0,.26)] rounded-[2px] text-[rgba(0,0,0,.87)] flex items-center justify-center gap-2.5 py-[0.55rem] cursor-pointer">
-                                <FaFacebook className="text-[25px] text-blue-600"/>
-                                Facebook
-                            </button>
-                            <button className="text-[18px] w-full border border-[rgba(0,0,0,.26)] rounded-[2px] text-[rgba(0,0,0,.87)] flex items-center justify-center gap-2.5 py-[0.55rem] cursor-pointer">
-                                <FcGoogle className="text-[25px]"/>
-                                Google
-                            </button>
-                        </div>
-                        <div className="text-center text-[0.875rem] text-[rgba(0,0,0,.26)] mt-8">
-                            Bạn đã có tài khoản?
-                            <NavLink
-                            to={"/login"} 
-                            className="text-[#2f904b] ml-1 text-[1rem] cursor-pointer">
-                                Đăng nhập
-                            </NavLink>
-                        </div>
-                    </div>
-                </form>
+
+            {registerError && <div className="text-red-500 text-sm mt-2">{registerError}</div>}
+
+            <button type="submit" className="w-full mt-4 bg-[#2f904b] text-white py-3 rounded uppercase">
+              ĐĂNG KÝ
+            </button>
+
+            <div className="flex items-center my-6">
+              <div className="flex-1 h-px bg-gray-300" />
+              <span className="px-4 text-gray-400 text-sm uppercase">hoặc</span>
+              <div className="flex-1 h-px bg-gray-300" />
             </div>
-            <div className="z-100">
-                <Footer/>
+
+            <div className="flex flex-col md:flex-row gap-4">
+              <button className="flex-1 border border-gray-300 rounded py-2 flex justify-center items-center gap-2">
+                <FaFacebook className="text-blue-600 text-xl" /> Facebook
+              </button>
+              <button className="flex-1 border border-gray-300 rounded py-2 flex justify-center items-center gap-2">
+                <FcGoogle className="text-xl" /> Google
+              </button>
             </div>
+
+            <div className="text-center text-sm text-gray-500 mt-6">
+              Bạn đã có tài khoản?
+              <NavLink to="/login" className="text-[#2f904b] ml-1">Đăng nhập</NavLink>
+            </div>
+
+            <div className="text-center text-sm text-gray-400 mt-2">
+              <NavLink to="#" className="hover:underline">Bạn cần giúp đỡ?</NavLink>
+            </div>
+          </form>
         </div>
-    )
-}
-export default Register
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+export default Register;

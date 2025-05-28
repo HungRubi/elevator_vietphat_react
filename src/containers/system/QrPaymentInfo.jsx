@@ -93,10 +93,10 @@ const QrPaymentInfo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center py-10">
-      <div className="bg-white shadow-lg rounded-lg flex w-full max-w-5xl overflow-hidden border border-gray-300">
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center py-10 px-4">
+      <div className="bg-white shadow-lg rounded-lg flex flex-col lg:flex-row w-full max-w-5xl overflow-hidden border border-gray-300">
         {/* Cột thông tin mua hàng */}
-        <div className="w-1/2 p-8 border-r border-gray-200">
+        <div className="w-full lg:w-1/2 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-gray-200">
           <h2 className="text-xl font-semibold text-[#2F904B] mb-6 text-center">Thông Tin Mua Hàng</h2>
           <div className="space-y-4 text-sm">
             <input type="text" value={formData.name} className="w-full border rounded px-3 py-2" disabled />
@@ -104,12 +104,12 @@ const QrPaymentInfo = () => {
             <input type="text" value={formData.phone} className="w-full border rounded px-3 py-2" disabled />
             <input type="text" value={formData.address} className="w-full border rounded px-3 py-2" disabled />
             <input type="text" value={formatMoney(formData.amount)} className="w-full border rounded px-3 py-2" disabled />
-            <div className="flex items-center space-x-2">
-              <input type="checkbox" onChange={(e) => setAgreeInfo(e.target.checked)} className="cursor-pointer" />
+            <div className="flex items-start space-x-2">
+              <input type="checkbox" onChange={(e) => setAgreeInfo(e.target.checked)} className="cursor-pointer mt-1" />
               <label className="text-sm">Xác nhận những thông tin trên của bạn là chính xác</label>
             </div>
-            <div className="flex items-center space-x-2">
-              <input type="checkbox" onChange={(e) => setAgreePolicy(e.target.checked)} className="cursor-pointer" />
+            <div className="flex items-start space-x-2">
+              <input type="checkbox" onChange={(e) => setAgreePolicy(e.target.checked)} className="cursor-pointer mt-1" />
               <label className="text-sm">
                 Đồng ý với <span className="text-[#2F904B] underline cursor-pointer">Điều khoản sử dụng</span> của công ty
               </label>
@@ -140,20 +140,19 @@ const QrPaymentInfo = () => {
         </div>
 
         {/* Cột thông tin chuyển khoản */}
-        <div className="w-1/2 p-8 bg-gray-50">
+        <div className="w-full lg:w-1/2 p-6 md:p-8 bg-gray-50">
           <h2 className="text-xl font-semibold text-center text-[#2F904B] mb-6">Thông Tin Chuyển Khoản</h2>
           <div className="flex justify-center mb-4">
             {showQR ? (
               <img
                 src={`https://img.vietqr.io/image/MSB-02001013741555-print.png?amount=${formData.amount}&addInfo=Thanh+toan+don+hang&accountName=PHAM+HONG+QUAN`}
                 alt="QR thanh toán"
-                className="w-100 h-100 rounded border"
+                className="w-64 h-64 rounded border"
               />
             ) : (
-              <img src="/path/to/qr-placeholder.png" alt="QR Code" className="w-50 h-50 rounded border" />
+              <img src="/path/to/qr-placeholder.png" alt="QR Code" className="w-40 h-40 rounded border" />
             )}
           </div>
-          
         </div>
       </div>
     </div>
