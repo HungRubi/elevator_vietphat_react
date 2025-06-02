@@ -9,8 +9,13 @@ export const updateCart = async (data, id) => {
         })
         return respronse;
     }catch(error){
-        console.error('Error updating cart:', error);
-        throw error;
+        if(error.respronse) {
+            return error.respronse
+        }
+        return {
+            status: 500,
+            message: "Lỗi server vui lòng thử lại sau"
+        }
     }
 }
 
@@ -21,10 +26,14 @@ export const deleteCartItem = async (data, id) => {
             url: `/cart/delete/${id}`,
             data: data
         })
-        console.log(respronse)
         return respronse;
     }catch(error){
-        console.error('Error deleting cart:', error);
-        throw error;
+        if(error.respronse) {
+            return error.respronse
+        }
+        return {
+            status: 500,
+            message: "Lỗi server vui lòng thử lại sau"
+        }
     }
 }

@@ -59,6 +59,18 @@ const userReducer = (state = initialState, action) => {
                 messageUser: action.payload?.message || null,
             }
 
+        case actionType.UPDATE_CART_ERR:
+            return {
+                ...state,
+                message: action.payload.message || null
+            }
+
+        case actionType.DELETE_CART_ITEM_ERR:
+            return {
+                ...state,
+                message: action.payload.message || null
+            }
+
         case actionType.SELECT_VOUCHER:
             return {
                 ...state,

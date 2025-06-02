@@ -83,9 +83,14 @@ const ProductDetail = () => {
     }
     const handleAddToCart = (product,userId) => {
         const cartData = {
-            productId: product._id,
-            quantity: 1,
-        };
+            items: [
+                {
+                    productId: product._id,
+                    quantity: 1,
+                    price: product.price
+                }
+            ]
+        }
         dispatch(actions.updateCart(cartData, userId));
     }
     return (

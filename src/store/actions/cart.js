@@ -11,14 +11,14 @@ export const updateCart = (data, id) => async (dispatch)  => {
             })
         }else{
             dispatch({
-                type: actionType.UPDATE_CART,
+                type: actionType.UPDATE_CART_ERR,
                 payload: response.data
             })
         }
-    }catch(err){
+    }catch(error){
         dispatch({
-            type: actionType.UPDATE_CART,
-            payload: err,
+            type: actionType.UPDATE_CART_ERR,
+            payload: (error.response && error.response.data) || { message: 'Lỗi server vui lòng thử lại sau' }
         })
     }
 }
@@ -33,14 +33,14 @@ export const deleteCartItem = (data, id) => async (dispatch)  => {
             })
         }else{
             dispatch({
-                type: actionType.DELETE_CART_ITEM,
+                type: actionType.DELETE_CART_ITEM_ERR,
                 payload: response.data
             })
         }
-    }catch(err){
+    }catch(error){
         dispatch({
-            type: actionType.DELETE_CART_ITEM,
-            payload: err,
+            type: actionType.DELETE_CART_ITEM_ERR,
+            payload: (error.response && error.response.data) || { message: 'Lỗi server vui lòng thử lại sau' }
         })
     }
 }

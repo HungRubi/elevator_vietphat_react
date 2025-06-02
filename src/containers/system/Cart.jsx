@@ -33,7 +33,7 @@ const Cart = () => {
         }));
 
         // Cập nhật số lượng trong Redux store
-        const updatedCart = cart.map(cartItem => {
+        const updatedItems = cart?.item?.map(cartItem => {
             if (cartItem.productId === productId) {
                 return {
                     ...cartItem,
@@ -42,8 +42,20 @@ const Cart = () => {
             }
             return cartItem;
         });
-        dispatch(actions.updateCart(updatedCart));
+        // Tính tổng tiền mới
+        const totalPrice = updatedItems?.reduce((total, item) => total + item.price * item.quantity, 0);
+
+        // Tạo object gửi lên server
+        const updatedCartObj = {
+            productId,
+            quantity: newQuantity,
+            items: updatedItems,
+            totalPrice
+        };
+
+        dispatch(actions.updateCart(updatedCartObj, currentUser?._id));
     };
+
 
     const handleProductSelect = (productId) => {
         setSelectedProducts(prev => {

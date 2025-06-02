@@ -19,8 +19,13 @@ const ListProduct = ({data, category}) => {
     const dispatch = useDispatch();
     const handleAddToCart = (product,userId) => {
         const cartData = {
-            productId: product._id,
-            quantity: 1,
+            items: [
+                {
+                    productId: product._id,
+                    quantity: 1,
+                    price: product.price
+                }
+            ]
         };
         dispatch(actions.updateCart(cartData, userId));
     }
