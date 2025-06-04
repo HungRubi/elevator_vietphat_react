@@ -9,6 +9,7 @@ const initialState = {
     messageUser: null,
     selectedVoucher: null,
     orders: [],
+    myNotifi: [],
 }
 
 const userReducer = (state = initialState, action) => {
@@ -20,6 +21,7 @@ const userReducer = (state = initialState, action) => {
                 cart: action.cart,
                 productCart: action.productCart,
                 orders: action.orders,
+                myNotifi: action.myNotifi,
             }
         
         case actionType.LOGOUT:
@@ -31,7 +33,8 @@ const userReducer = (state = initialState, action) => {
                 selectedProducts: [],
                 selectedVoucher: null,
                 orders: [],
-                messageUser: null
+                messageUser: null,
+                myNotifi: null,
             }
         
         case actionType.SET_SELECTED_PRODUCTS:

@@ -18,7 +18,8 @@ const userConfig = {
         'cart', 
         'productCart',
         'selectedProducts',
-        'orders'
+        'orders',
+        'myNotifi',
     ],
 }
 

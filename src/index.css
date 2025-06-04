@@ -136,6 +136,8 @@ input{
     border-radius: 0.25rem;
     z-index: 999999999;
 }
+
+
 .login_form{
     box-shadow: 0 3px 10px 0 rgba(0, 0, 0, .14);
     top: 50%;
@@ -246,16 +248,35 @@ input{
     transition: .3s linear;
 }
   /* Khi hover vào nút */
-  .swiper-button-next:hover, .swiper-button-prev:hover {
+.swiper-button-next:hover, .swiper-button-prev:hover {
     background: rgba(255, 255, 255, 0.445);
     transition: .3s linear;
-  }
-  
-  /* Đẩy nút ra xa ảnh một chút */
-  .swiper-button-next {
+}
+
+/* Đẩy nút ra xa ảnh một chút */
+.swiper-button-next {
     right: 10px;
-  }
-  .swiper-button-prev {
+}
+.swiper-button-prev {
     left: 10px;
-  }
+}
+
+.menu_chat{
+    content: "";
+    display: block;
+    width: 350px;
+    height: 450px;
+    background: white;
+    box-shadow: #5a5757;
+    left: 0;
+    bottom: 115%;
+}
+.menu_chat.menu::after{
+    left: 35px;
+    top: 441px;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.082);
+    border-radius: 0.1rem;
+    z-index: 1000;
+}
+
  

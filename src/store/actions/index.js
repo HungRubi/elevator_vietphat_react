@@ -8,4 +8,5 @@ export * from './cart';
 export * from './discount';
 export * from './order';
 export * from './comment';
+export * from './category';
 export { setPaymentMethod } from './payQR';

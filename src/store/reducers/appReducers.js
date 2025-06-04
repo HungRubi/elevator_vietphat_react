@@ -23,15 +23,29 @@ const initState = {
     videoSearch: [],
     order: [],
     comments: [],
+    categoryProduct: [],
+    notification: [],
 }
 
 const appReducer = (state = initState, action) => {
     switch (action.type){
 
-        /** === LOGIN === */
+        case actionType.GET_CATEGORY:
+            return {
+                ...state,
+                categoryProduct: action.payload.data?.categoryProduct || []
+            }
+
+        case actionType.GET_PRODUCT_BY_CATEGORY:
+            return {
+                ...state,
+                products: action.payload.products || []
+            }
+
         case actionType.LOGIN:
             return {
                 ...state,
+                notification: action.payload?.myNotifi || [],
                 currentUser: action.payload?.user || null,
                 message: action.payload?.message || null,
                 cartUser: action.payload?.cart || [],

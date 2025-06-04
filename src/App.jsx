@@ -21,7 +21,7 @@ import QrPaymentInfo from './containers/system/QrPaymentInfo';
 
 function App() {
   const dispatch = useDispatch();
-  const {currentUser, cartUser, productCart, orders, message} = useSelector(state => state.app);
+  const {currentUser, cartUser, productCart, orders, message, notification} = useSelector(state => state.app);
   const {messageUser} = useSelector(state => state.user);
 
   // Handle all messages in one useEffect
@@ -58,9 +58,9 @@ function App() {
   useEffect(() => {
     dispatch(actions.getHome())
     if(currentUser) {
-      dispatch(actions.setCurrentUser(currentUser, cartUser, productCart, orders))
+      dispatch(actions.setCurrentUser(currentUser, cartUser, productCart, orders, notification))
     }
-  }, [dispatch, currentUser, cartUser, productCart, orders]);
+  }, [dispatch, currentUser, cartUser, productCart, orders, notification]);
 
   return(
     <>

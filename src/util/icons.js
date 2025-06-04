@@ -3,6 +3,7 @@ import { FaCamera } from "react-icons/fa";
 import { FaRegStar } from "react-icons/fa";
 import { FaPhoneAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+import { IoIosSend } from "react-icons/io";
 import { BsFacebook } from "react-icons/bs";
 import { FaYoutube } from "react-icons/fa";
 import { FaInstagramSquare } from "react-icons/fa";
@@ -11,6 +12,7 @@ import { FaStar } from "react-icons/fa";
 import { FaRegBell } from "react-icons/fa";
 import { PiShoppingCartBold } from "react-icons/pi";
 import { IoChevronUpSharp } from "react-icons/io5";
+import { FaLongArrowAltUp } from "react-icons/fa";
 import { AiOutlineLeft } from "react-icons/ai";
 import { AiOutlineRight } from "react-icons/ai";
 import { FaGem } from "react-icons/fa";
@@ -36,8 +38,13 @@ import { FaRegEye } from "react-icons/fa";
 import { FaCirclePlay } from "react-icons/fa6";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { FaVideo } from "react-icons/fa6";
+import { BiSolidPhoneCall } from "react-icons/bi";
+import { AiOutlineMessage } from "react-icons/ai";
 
 const icons = {
+    IoIosSend,
+    BiSolidPhoneCall,
+    AiOutlineMessage,
     FaVideo,
     FaCamera,
     FaRegStar,
@@ -45,6 +52,7 @@ const icons = {
     FaCirclePlay,
     FaRegEye,
     FaRegCalendarAlt,
+    FaLongArrowAltUp,
     FiSearch,
     FaCaretDown,
     GoPlus,

@@ -1,13 +1,14 @@
 import actionTypes from './actionTypes';
 import * as apis from '../../apis/user';
 
-export const setCurrentUser = (user, cart, productCart, orders) => {
+export const setCurrentUser = (user, cart, productCart, orders, myNotifi) => {
     return {
         type: actionTypes.SET_CURRENT_USER,
         user,
         cart,
         productCart,
         orders,
+        myNotifi,
     }
 }
 
@@ -70,7 +71,6 @@ export const logout = () => {
 export const getOrderByUser =  (id) => async (dispatch) => {
     try{
         const response = await apis.getOrderByUser(id);
-        console.log(response.data)
         if(response?.status === 200) {
             dispatch({
                 type: actionTypes.GET_ORDER_BY_USER,
