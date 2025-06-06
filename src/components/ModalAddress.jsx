@@ -7,9 +7,9 @@ const ModalAddress = () => {
     const {currentUser} = useSelector(state => state.user);
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({
-        name: "",
-        phone: "",
-        address: "",
+        name: currentUser?.name,
+        phone: currentUser?.phone,
+        address: currentUser?.address,
         specificAddress: ""
     });
     const handleChange = (e) => {
@@ -19,17 +19,36 @@ const ModalAddress = () => {
             [name]: value
         });
     }
+    const [err, setErr] = useState(null);
     const handleSubmit = (e) => {
         e.preventDefault();
-        const combinedAddress = `${formData.specificAddress}, ${formData.address} `;
+
+        if (formData.name === "") {
+            setErr("Nhập họ tên của bạn");
+            return;
+        }
+
+        if (formData.phone === "") {
+            setErr("Nhập số điện thoại của bạn");
+            return;
+        }
+
+        if (formData.address === "" && formData.specificAddress === "") {
+            setErr("Nhập địa chỉ của bạn");
+            return;
+        }
+
+        setErr(null);
+        const combinedAddress = `${formData.specificAddress} ${formData.address}`;
         const formDataToSubmit = {
             name: formData.name,
             phone: formData.phone,
             address: combinedAddress
         };
+
         dispatch(actions.updateAddress(formDataToSubmit, currentUser?._id));
-        setIsOpen(false);
-    }
+        setIsOpen(false); // ✅ chỉ đóng khi không lỗi
+    };
     return (
         <>
             <button 
@@ -88,6 +107,11 @@ const ModalAddress = () => {
                                 className="w-full py-2 px-[15px] border border-[rgba(0,0,0,0.14)] rounded-[2px]"
                                 style={{boxShadow: 'inset 0 2px 0 rgba(0,0,0,0.02)'}}
                             />
+                            <div className="my-2">
+                                <span className="text-red-500 text-[12px]">
+                                    {err}
+                                </span>
+                            </div>
                             <div className="flex justify-end gap-5">
                                 <Button
                                     type="button"
@@ -96,7 +120,7 @@ const ModalAddress = () => {
                                 >
                                     trở lại
                                 </Button>
-                                <Button type="submit" onClick={() => setIsOpen(false)}>
+                                <Button type="submit">
                                     hoàn thành
                                 </Button>
                             </div>

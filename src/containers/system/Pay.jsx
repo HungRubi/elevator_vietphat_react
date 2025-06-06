@@ -20,12 +20,11 @@ const Pay = () => {
      const selectedPaymentMethod = useSelector(state => state.user.selectedPaymentMethod);
      const [tempPaymentMethod, setTempPaymentMethod] = useState(selectedPaymentMethod);
 
-        // Reset tạm khi mở modal
-        useEffect(() => {
-         if (showPaymentOptions) {
-                 setTempPaymentMethod(selectedPaymentMethod);
-            }
-            }, [showPaymentOptions, selectedPaymentMethod]);
+    useEffect(() => {
+        if (showPaymentOptions) {
+                setTempPaymentMethod(selectedPaymentMethod);
+        }
+    }, [showPaymentOptions, selectedPaymentMethod]);
 
     const [selectedPaymentText, setSelectedPaymentText] = useState(
         selectedPaymentMethod === 'bank'
@@ -149,6 +148,7 @@ const Pay = () => {
     const totalShipingCost = selectedProducts?.reduce((acc, item) => {
         return acc + item.product.shipping_cost
     }, 0);
+    
     const handleAddOrder = () => {
         const orderData = {
             user_id: currentUser?._id,
@@ -177,69 +177,62 @@ const Pay = () => {
             productId: orderedProductIds
         };
         dispatch(actions.deleteCartItem(data, currentUser?._id));
+        dispatch(actions.getNotifiByUser(currentUser?._id));
         
         navigate('/account/order');
     }
-    
-
     return (
         <>
-{showPaymentOptions && (
-  <div className="fixed inset-0 flex justify-center items-center z-50 pointer-events-none">
-    <div className="bg-white px-8 py-6 rounded shadow-md w-[400px] pointer-events-auto">
-      <h3 className="text-[22px] font-semibold text-gray-800 mb-6 text-center">Chọn phương thức thanh toán</h3>
-      <div className="space-y-4">
-        <button
-          className={`w-full py-3 px-4 rounded border text-left ${
-            tempPaymentMethod === 'cod' ? 'border-green-600 bg-green-50' : 'border-gray-300'
-          }`}
-          onClick={() => setTempPaymentMethod('cod')}
-        >
-          Thanh toán khi nhận hàng
-        </button>
-        <button
-          className={`w-full py-3 px-4 rounded border text-left ${
-            tempPaymentMethod === 'bank' ? 'border-green-600 bg-green-50' : 'border-gray-300'
-          }`}
-          onClick={() => setTempPaymentMethod('bank')}
-        >
-          Thanh toán QR qua ngân hàng
-        </button>
-      </div>
-      <div className="flex justify-between items-center mt-6">
-        <button
-          className="text-gray-600 text-sm hover:underline"
-          onClick={() => setShowPaymentOptions(false)}
-        >
-          TRỞ LẠI
-        </button>
-                    <button
-                         className="bg-green-600 text-white px-4 py-2 rounded"
-                         onClick={() => {
-                         dispatch(setPaymentMethod(tempPaymentMethod));
-                         setShowPaymentOptions(false);
-
-            // Delay nhẹ để Redux cập nhật state trước khi chuyển route
-                     if (tempPaymentMethod === 'bank') {
-                         setTimeout(() => {
-                        navigate('/payment-qr', {
-                    state: {
-                    name: currentUser?.name,
-                    phone: currentUser?.phone,
-                    amount: totalPrice + totalShipingCost - (selectedVoucher?.value_discount || 0)
-                    }
-                    });
-
-                }, 100); // 100ms delay
-                 }
-                 }}
-                 >
-                     HOÀN THÀNH
-                    </button>
-      </div>
-    </div>
-  </div>
-)}
+            {showPaymentOptions && (
+                <div className="fixed inset-0 flex justify-center items-center z-50 pointer-events-none">
+                    <div className="bg-white px-8 py-6 rounded shadow-md w-[400px] pointer-events-auto">
+                            <h3 className="text-[22px] font-semibold text-gray-800 mb-6 text-center">Chọn phương thức thanh toán</h3>
+                            <div className="space-y-4">
+                                <button
+                                    className={`w-full py-3 px-4 rounded border text-left ${
+                                        tempPaymentMethod === 'cod' ? 'border-green-600 bg-green-50' : 'border-gray-300'
+                                    }`}
+                                    onClick={() => setTempPaymentMethod('cod')}
+                                >
+                                    Thanh toán khi nhận hàng
+                                </button>
+                                <button
+                                    className={`w-full py-3 px-4 rounded border text-left ${tempPaymentMethod === 'bank' ? 'border-green-600 bg-green-50' : 'border-gray-300'}`}
+                                    onClick={() => setTempPaymentMethod('bank')}
+                                >
+                                    Thanh toán QR qua ngân hàng
+                                </button>
+                            </div>
+                        <div className="flex justify-between items-center mt-6">
+                            <button
+                                className="text-gray-600 text-sm hover:underline"
+                                onClick={() => setShowPaymentOptions(false)}
+                            >
+                                TRỞ LẠI
+                            </button>
+                            <button
+                                className="bg-green-600 text-white px-4 py-2 rounded"
+                                onClick={() => {
+                                    dispatch(setPaymentMethod(tempPaymentMethod));
+                                    setShowPaymentOptions(false);
+                                    if (tempPaymentMethod === 'bank') {
+                                        setTimeout(() => {
+                                            navigate('/payment-qr', {
+                                                state: {
+                                                name: currentUser?.name,
+                                                phone: currentUser?.phone,
+                                                amount: totalPrice + totalShipingCost - (selectedVoucher?.value_discount || 0)
+                                            }}); 
+                                        }, 100); // 100ms delay
+                                    }
+                                }}
+                            >
+                                HOÀN THÀNH
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="w-full bg-white py-2.5"
             style={{boxShadow: '0 1px 1px 0 rgba(0,0,0,.09)'}}>

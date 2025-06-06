@@ -1,19 +1,67 @@
 import {Button, CircleButton} from '../../components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useRef } from 'react';
+import * as actions from "../../store/actions"
+
 const Profile = () => {
     const {currentUser} = useSelector(state => state.user);
+    const fileInputRef = useRef();
     const [formData, setFormData] = useState({
         account: currentUser?.account,
         name: currentUser?.name,
         email: currentUser?.email,
         phone: currentUser?.phone,
         birth: currentUser?.format,
+        avatar: currentUser?.avatar
     });
     const handleChange = (e) => {
         setFormData({
             ...formData, [e.target.name]: e.target.value
         });
+    }
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+            toast.warn("Dung lượng ảnh vượt quá 2MB!");
+            return;
+        }
+
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            toast.warn("Chỉ hỗ trợ ảnh JPEG hoặc PNG!");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setFormData(prev => ({
+                ...prev,
+                avatar: reader.result
+            }));
+
+            // 🟢 Tại đây bạn có thể gửi reader.result (base64) lên server
+            // hoặc tiếp tục xử lý upload lên Dropbox
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleClickUpload = () => {
+        fileInputRef.current.click();
+    };
+    const dispatch = useDispatch();
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const dataToSend = { ...formData };
+
+    // Nếu avatar không thay đổi thì xóa khỏi dataToSend
+        if (dataToSend.avatar === currentUser?.avatar) {
+            delete dataToSend.avatar;
+        }
+        dispatch(actions.updateProfileUser(dataToSend, currentUser?._id));
     }
     return (
         <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
@@ -27,9 +75,9 @@ const Profile = () => {
                 </span>
             </div>
             <div className="flex items-center">
-                <form action="" method="post"
-                className='w-2/3 mt-[15px]'>
-                    <table className="w-full">
+                <form onSubmit={handleSubmit}
+                className='w-full mt-[15px] flex'>
+                    <table className="w-2/3">
                         <tbody>
                             <tr className='h-[65px]'>
                                 <td className="w-[30%] text-[15px] font-[500] capitalize text-right pr-5">
@@ -119,26 +167,41 @@ const Profile = () => {
                                     </Button>
                                 </td>
                             </tr>
-                            </tbody>
+                        </tbody>
                     </table>
-                </form>
-                <div className="flex-none flex flex-col items-center justify-center w-1/3">
-                    <div className="w-[150px] h-[150px] relative">
-                        <img src={currentUser?.avatar} 
-                        alt="avatar" 
-                        className='rounded-[50%]'/>
-                        <div className="absolute bottom-0 right-0">
-                            <CircleButton>
-                                <input type="file" name="avatar" id="avatar" hidden/>
-                            </CircleButton>
+                    <div className="flex-none flex flex-col items-center justify-center w-1/3">
+                        <div className="w-[150px] h-[150px] relative">
+                            <img src={
+                                formData?.avatar?.startsWith('/uploads')
+                                    ? `${import.meta.env.VITE_SERVER_URL}${formData.avatar}`
+                                    : formData.avatar
+                                } 
+                                alt="avatar" 
+                                className='rounded-[50%]'
+                            />
+                            <div className="absolute bottom-0 right-0">
+                                <CircleButton>
+                                    <input 
+                                        ref={fileInputRef}
+                                        type="file"
+                                        name="avatar"
+                                        id="avatar"
+                                        hidden
+                                        onChange={handleFileChange}
+                                        accept="image/jpeg,image/png"
+                                    />
+                                </CircleButton>
+                            </div>
                         </div>
+                        <Button type={"button"} className="my-3" onClick={handleClickUpload}>
+                            Chọn ảnh
+                        </Button>
+                        <span className='text-[15px] line-clamp-2 text-[#888] text-center'>
+                            Dung lượng file tối đa 2MB <br />
+                            Định dạng:.JPEG, .PNG
+                        </span>
                     </div>
-                    <Button className="my-3">Chọn ảnh</Button>
-                    <span className='text-[15px] line-clamp-2 text-[#888] text-center'>
-                        Dung lượng file tối đa 2MB <br />
-                        Định dạng:.JPEG, .PNG
-                    </span>
-                </div>
+                </form>
             </div>
         </div>
     );

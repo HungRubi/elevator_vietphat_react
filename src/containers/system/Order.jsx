@@ -5,6 +5,8 @@ import { useState, useCallback, useEffect } from 'react';
 import {formatMoney} from '../../util/formatMoney'
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as actions from '../../store/actions';
+import ModelContact from '../../components/ModelContact';
+import { toast } from 'react-toastify';
 
 const {FiTruck} = icons;
 const Order = () => {
@@ -35,8 +37,6 @@ const Order = () => {
 
         }
     }, [orders]);
-
-    console.log(orders);
 
     const tab = [
         {
@@ -83,6 +83,9 @@ const Order = () => {
         navigate('/pay');
     }, [dispatch, navigate]);
 
+    const buttonContact = () => {
+        toast.success('Vui lòng liên hệ với chúng tôi qua email hoặc tin nhắn góc phải màn hình để được hỗ trợ');
+    }
     return (
         <div className="ml-8 flex-1">
             <div className="flex items-center justify-between bg-white w-full">
@@ -169,7 +172,7 @@ const Order = () => {
                                             </p>                            
                                         </div>
                                         <div className="w-1/2 flex items-center justify-end gap-2.5">
-                                            <Button>
+                                            <Button onClick={buttonContact}>
                                                 liên hệ ngay
                                             </Button>
                                             {item.status === 'Đang xử lý' ? (
@@ -195,10 +198,7 @@ const Order = () => {
                                             {item.status === 'Thành công' ? (
                                                 <>
                                                     <ModalQuestion products={item.orderDetails?.map(detail => detail.product)} />
-                                                    <Button
-                                                        className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
-                                                        Trả hàng
-                                                    </Button>
+                                                    <ModelContact/>
                                                 </>
                                             ) : (
                                                 <>
@@ -303,7 +303,7 @@ const Order = () => {
                                             </p>                            
                                         </div>
                                         <div className="w-1/2 flex items-center justify-end gap-2.5">
-                                            <Button>
+                                            <Button onClick={buttonContact}>
                                                 liên hệ ngay
                                             </Button>
                                             <Button onClick={hanleCanCelOrder(item._id)}
@@ -407,7 +407,7 @@ const Order = () => {
                                             </p>                            
                                         </div>
                                         <div className="w-1/2 flex items-center justify-end gap-2.5">
-                                            <Button>
+                                            <Button onClick={buttonContact}>
                                                 liên hệ ngay
                                             </Button>
                                         </div>
@@ -507,14 +507,11 @@ const Order = () => {
                                             </p>                            
                                         </div>
                                         <div className="w-1/2 flex items-center justify-end gap-2.5">
-                                            <Button>
+                                            <Button onClick={buttonContact}>
                                                 liên hệ ngay
                                             </Button>
                                             <ModalQuestion products={item.orderDetails?.map(detail => detail.product)} />
-                                            <Button
-                                            className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
-                                                Trả hàng
-                                            </Button>
+                                            <ModelContact/>
                                         </div>
                                     </div>
                                 </div>
@@ -612,7 +609,7 @@ const Order = () => {
                                             </p>                            
                                         </div>
                                         <div className="w-1/2 flex items-center justify-end gap-2.5">
-                                            <Button>
+                                            <Button onClick={buttonContact}>
                                                 liên hệ ngay
                                             </Button>
                                             <Button onClick={() => handleBuyAgain(item)}
@@ -716,7 +713,7 @@ const Order = () => {
                                             </p>                            
                                         </div>
                                         <div className="w-1/2 flex items-center justify-end gap-2.5">
-                                            <Button>
+                                            <Button onClick={buttonContact}>
                                                 liên hệ ngay
                                             </Button>
                                             <Button onClick={() => handleBuyAgain(item)}

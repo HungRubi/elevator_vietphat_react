@@ -47,3 +47,26 @@ export const register = (data) => async (dispatch) => {
         });
     }
 };
+
+export const changePassword = (id, data) => async (dispatch) => {
+    try {
+        const response = await apis.changePassword(id, data);
+        if (response?.status === 200) {
+            dispatch({
+                type: actionTypes.CHANGE_PASSWORD,
+                payload: response.data,
+            });
+        } else {
+            dispatch({
+                type: actionTypes.CHANGE_PASSWORD_ERR,
+                payload: response.data,
+            });
+        }
+    } catch (err) {
+        dispatch({
+            type: actionTypes.CHANGE_PASSWORD_ERR,
+            payload: err.response?.data || "Đã xảy ra lỗi",
+            err,
+        });
+    }
+};

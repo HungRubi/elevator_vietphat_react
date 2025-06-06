@@ -14,6 +14,26 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
     switch (action.type) {
+
+        case actionType.UPDATE_PROFILE_USER: 
+            return {
+                ...state,
+                currentUser: action.payload.user || []
+            }
+        
+
+        case actionType.IS_READ_NOTIFI:
+            return {
+                ...state,
+                myNotifi: action.payload.myNotifi || []
+            }
+
+        case actionType.GET_NOTIFI_USER:
+            return {
+                ...state,
+                myNotifi: action.payload.myNotifi || []
+            }
+            
         case actionType.SET_CURRENT_USER:
             return {
                 ...state,

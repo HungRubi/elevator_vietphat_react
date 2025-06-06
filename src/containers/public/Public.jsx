@@ -1,5 +1,5 @@
 import {CircleButton, Footer, HeaderBar} from '../../components'
-import { Outlet } from "react-router-dom"
+import { NavLink, Outlet } from "react-router-dom"
 import { useLocation } from 'react-router-dom';
 import icons from '../../util/icons';
 import { useCallback, useEffect, useState } from 'react';
@@ -62,13 +62,15 @@ const Public = () => {
                             pointer-events-none"
                         ></span>
                     </CircleButton>
-                    <CircleButton className="fixed bottom-20 left-10 z-100
-                        bg-gradient-to-br from-[#FFD700] to-[#FFA500] 
-                        text-[#8B4513] font-bold shadow-xl !w-14 !h-14
-                        hover:from-[#FFE066] hover:to-[#FFBB33] 
-                        transform hover:scale-110 transition-all duration-400 ease-in-out group ">
-                            <BiSolidPhoneCall className='text-3xl text-white'/>
-                    </CircleButton>
+                    <NavLink to={"tel:0924113113"}>
+                        <CircleButton className="fixed bottom-20 left-10 z-100
+                            bg-gradient-to-br from-[#FFD700] to-[#FFA500] 
+                            text-[#8B4513] font-bold shadow-xl !w-14 !h-14
+                            hover:from-[#FFE066] hover:to-[#FFBB33] 
+                            transform hover:scale-110 transition-all duration-400 ease-in-out group ">
+                                <BiSolidPhoneCall className='text-3xl text-white'/>
+                        </CircleButton>
+                    </NavLink>
                 </>
             ) : ("")}
         </div>

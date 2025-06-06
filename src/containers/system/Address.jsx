@@ -1,17 +1,21 @@
-import {Button} from '../../components';
+import { toast } from 'react-toastify';
+import {Button, ModalAddress} from '../../components';
 import icons from '../../util/icons';
 import { useSelector } from 'react-redux';
 const {GoPlus} = icons;
 
 const Address = () => {
     const {currentUser} = useSelector(state => state.user);
+    const handleButton = () => {
+        toast.warning("Button này chỉ để trang trí");
+    }
     return (
         <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
             <div className="py-[15px] border-b border-b-[#cbd0dd] flex items-center justify-between">
                 <h5 className='text-[22px] capitalize'>
                     địa chỉ của tôi
                 </h5>
-                <Button
+                <Button onClick={handleButton}
                 className={"flex items-center gap-1"}>
                     <GoPlus className='text-[20px] -mt-[2px]'/>
                     thêm địa chỉ mới
@@ -34,9 +38,7 @@ const Address = () => {
                     </Button>
                 </div>
                 <div className="text-right">
-                    <span className='capitalize text-blue-600 cursor-pointer'>
-                        cập nhật
-                    </span>
+                    <ModalAddress/>
                     <p className='cursor-pointer'>Thiết lập làm mặc định</p>
                 </div>
             </div>

@@ -51,9 +51,15 @@ const Account = () => {
                 <div className="flex w-full items-center">
                     <CircleButton
                     className="mr-3">
-                        <img src={currentUser?.avatar}
-                        alt="avatar" 
-                        className='rounded-[50%]'/>
+                        <img 
+                            src={
+                                currentUser?.avatar?.startsWith('/uploads')
+                                ? `${import.meta.env.VITE_SERVER_URL}${currentUser.avatar}`
+                                : currentUser.avatar
+                            } 
+                            alt="avatar" 
+                            className='rounded-[50%]'
+                        />
                     </CircleButton>
                     <div className="cursor-default text-[15px]">
                     <div className="font-[600]">

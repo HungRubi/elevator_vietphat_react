@@ -30,10 +30,46 @@ const initState = {
 const appReducer = (state = initState, action) => {
     switch (action.type){
 
+        case actionType.UPDATE_PROFILE_USER: 
+            return {
+                ...state,
+                message: action.payload.message || []
+            }
+            
+        case actionType.CHANGE_PASSWORD:
+            return {
+                ...state,
+                message: action.payload.message || null
+            }
+
+        case actionType.UPDATE_PROFILE_USER_ERR: 
+            return {
+                ...state,
+                message: action.payload.message || null
+            }
+
+        case actionType.CHANGE_PASSWORD_ERR:
+            return {
+                ...state,
+                message: action.payload.message || null
+            }
+
         case actionType.GET_CATEGORY:
             return {
                 ...state,
                 categoryProduct: action.payload.data?.categoryProduct || []
+            }
+
+        case actionType.IS_READ_NOTIFI_ERR: 
+            return {
+                ...state,
+                message: action.payload.message || null
+            }
+            
+        case actionType.GET_NOTIFI_USER_ERR: 
+            return {
+                ...state,
+                message: action.payload.message || null
             }
 
         case actionType.GET_PRODUCT_BY_CATEGORY:

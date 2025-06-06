@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { menuBar } from '../util/menu';
-import { CircleButton, Search } from './index';
+import { CircleButton, Notification, Search } from './index';
 import icons from '../util/icons';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
@@ -11,7 +11,8 @@ const active = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-ce
 const notActive = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-center item_nav relative z-10 hover:bg-[#2f904b] transition duration-300 ease-linear';
 
 const HeaderBar = () => {
-    const { currentUser, productCart } = useSelector(state => state.user)
+    const { currentUser, productCart, myNotifi } = useSelector(state => state.user);
+    const filterNotifi = myNotifi?.filter(item => item.isRead === false);
     const [openMenu, setOpenMenu] = useState(null);
     const [hoveredMenu, setHoveredMenu] = useState(null);
     const timeoutRef = useRef(null);
@@ -60,8 +61,9 @@ const HeaderBar = () => {
     const navigate = useNavigate();
     const hanleLogout = () => {
         dispatch(actions.logout());
-        navigate('/login')
+        navigate('/')
     }
+
     return (
         <div className={`w-full px-[10%] m-auto flex items-center justify-between ${location.pathname === '/' ? "bg-transparent" : "bg-black"}`}
         data-aos="fade-down" data-aos-anchor-placement="top-bottom">
@@ -119,27 +121,11 @@ const HeaderBar = () => {
                     onClick={() => handleToggleMenu("notification")}
                 >
                     <FaRegBell className='size-[20px] text-[#ffffffb4]'/>
+                    <CircleButton className={`absolute -top-[10px] -right-[10px] bg-red-500 text-white !h-6 !w-6 flex-none text-[12px] ${filterNotifi ? "" : "hidden"}`}>
+                        {filterNotifi?.length}
+                    </CircleButton>
                     {openMenu === "notification" && (
-                        <div className="notification-menu menu absolute bg-white w-[350px] top-[140%] right-0 rounded-[3px] pb-2.5">
-                            <div className="flex items-center justify-between border-b border-[#cbd0dd] px-2.5">
-                                <h5 className="text-[15px]">Notification</h5>
-                                <h6>
-                                    <span className='text-[15px] text-blue-500 leading-8'>Đọc tất cả</span>
-                                </h6>
-                            </div>
-                            <div className="w-full flex flex-col">
-                                <div className="w-full flex items-center justify-between p-2.5 border-b border-b-[#cbd0dd]">
-                                    <div className="flex items-center gap-2.5">
-                                        <input type="checkbox" name="" id="" className='border-gray-500'/>
-                                        <div className="w-10 h-10 border border-[#cbd0dd] flex-none">
-                                            <img src="/img/logo.png" alt="" className=''/>
-                                        </div>
-                                        <h5 className="text-[12px] capitalize line-clamp-2">Đơn hàng của bạn đã được xác nhận</h5>
-                                        <span className='text-[12px] text-[#888] whitespace-nowrap'>10 phút trước</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <Notification/>
                     )}
                 </div>
 
@@ -147,7 +133,7 @@ const HeaderBar = () => {
                 to={'/cart'} 
                 className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative">
                     <PiShoppingCartBold className='size-[22px] font-bold text-[#ffffffb4]'/>
-                    <CircleButton className={"absolute -top-[10px] -right-[10px] bg-red-500 text-white !h-6 !w-6 flex-none text-[12px]"}>
+                    <CircleButton className={`absolute -top-[10px] -right-[10px] bg-red-500 text-white !h-6 !w-6 flex-none text-[12px] ${productCart?.length > 0 ? "" : "hidden"}`}>
                         {productCart?.length || 0}
                     </CircleButton>
                 </NavLink>
@@ -157,13 +143,21 @@ const HeaderBar = () => {
                     className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative" 
                     onClick={() => handleToggleMenu("account")}
                 >
-                    <img src={currentUser ? `${currentUser?.avatar}` : "/img/default.png"} alt="" className='rounded-[50%]'/>
+                    <img src={currentUser ? `${currentUser?.avatar?.startsWith('/uploads') ? `${import.meta.env.VITE_SERVER_URL}${currentUser?.avatar}` : currentUser?.avatar}` : "/img/default.png"} alt="" className='rounded-[50%]'/>
                     {openMenu === "account" && (
                         <div className="account-menu menu absolute bg-white w-[250px] top-[140%] right-0 rounded-[3px] pb-2.5">
                             {currentUser ? (
                                 <>
                                     <div className="flex flex-col items-center pt-[15px] justify-center">
-                                        <img src={currentUser?.avatar} alt="" className='w-[40px] h-[40px] rounded-[50%] '/>
+                                        <img 
+                                            src={
+                                            currentUser?.avatar?.startsWith('/uploads')
+                                                ? `${import.meta.env.VITE_SERVER_URL}${currentUser.avatar}`
+                                                : currentUser.avatar
+                                            } 
+                                            alt="avatar" 
+                                            className='w-[40px] h-[40px] rounded-[50%] '
+                                        />
                                         <h5 className="text-[15px] mt-2.5">
                                             {currentUser?.name}
                                         </h5>

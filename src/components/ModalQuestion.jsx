@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button, LoveButton } from './index';
 import { NavLink, useNavigate } from 'react-router-dom';
 import icons from '../util/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../store/actions';
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
+
 const {FaStar, FaRegStar, FaCamera, FaVideo} = icons;
 
 const ModalQuestion = ({products}) => {
@@ -18,6 +20,7 @@ const ModalQuestion = ({products}) => {
         user_id: currentUser?._id,
         product_id: products?.map(product => product._id) || [],
         star: rating,
+        img: [],
         quality: '',
         isAccurate: '',
         message: '',
@@ -56,6 +59,51 @@ const ModalQuestion = ({products}) => {
                 return '';
         }
     };
+
+    const fileInputRef = useRef();
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+
+        if (files.length + formData.img.length > 3) {
+            toast.warn("Chỉ được tải lên tối đa 3 ảnh!");
+            return;
+        }
+
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        const oversized = files.find(file => file.size > 2 * 1024 * 1024);
+        if (oversized) {
+            toast.warn("Có ảnh vượt quá 2MB!");
+            return;
+        }
+
+        const invalid = files.find(file => !allowedTypes.includes(file.type));
+        if (invalid) {
+            toast.warn("Chỉ hỗ trợ ảnh JPEG hoặc PNG!");
+            return;
+        }
+
+        // Đọc tất cả ảnh
+        const readers = files.map(file => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(file);
+            });
+        });
+
+        Promise.all(readers).then((base64Images) => {
+            setFormData(prev => ({
+                ...prev,
+                img: [...prev.img, ...base64Images]
+            }));
+        });
+    };
+
+
+    const handleClickUpload = () => {
+        fileInputRef.current.click();
+    };
     
     const hanleSubmit = () => {
         dispatch(actions.addComment(formData));
@@ -63,23 +111,19 @@ const ModalQuestion = ({products}) => {
     }
     return (
         <>
-            <Button 
-                type="button"
-                onClick={() => setIsOpen(true)}
-            >
+            <Button type="button" onClick={() => setIsOpen(true)}>
                 đánh giá
             </Button>
-
             <div 
                 className={`fixed top-0 right-0 left-0 bottom-0 z-100 justify-center items-center bg-black/10  ${isOpen ? 'block' : 'hidden'}`}
                 onClick={() => setIsOpen(false)}
             >
                 <div className="w-full h-full relative">
                     <div
-                    className="w-[45.625rem] flex-none 
-                    bg-white rounded-[3px] shadow-md shadow-black/50 flex flex-col 
-                    p-7.5 gap-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                    onClick={(e) => e.stopPropagation()}
+                        className="w-[45.625rem] flex-none 
+                        bg-white rounded-[3px] shadow-md shadow-black/50 flex flex-col 
+                        p-7.5 gap-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                        onClick={(e) => e.stopPropagation()}
                     >
                         <h5 className="text-[22px] capitalize">
                             đánh giá sản phẩm
@@ -100,7 +144,7 @@ const ModalQuestion = ({products}) => {
                                         </NavLink>
                                         <div className="ml-2.5 line-clamp-1 text-gray-600">
                                             <div className="flex mb-1">
-                                                <LoveButton className="!py-[2px]"/> 
+                                                <LoveButton/> 
                                                 <span className="font-[600]">Thang máy Việt Phát</span>
                                             </div>
                                             <span className=" text-gray-600">
@@ -160,19 +204,65 @@ const ModalQuestion = ({products}) => {
                                     />
                                 </div>
                                 <div className="mt-5 flex items-center gap-5">
-                                    <Button className="!capitalize flex items-center gap-2 bg-inherit text-lg !text-[#2f904b] border-2 border-[#2f904b]">
+                                    <Button 
+                                        onClick={handleClickUpload}
+                                        className="!capitalize flex items-center gap-2 bg-inherit text-lg !text-[#2f904b] border-2 border-[#2f904b]"
+                                    >
                                         <FaCamera className="text-[28px]" />
                                         thêm hình ảnh
                                     </Button>
-                                    <Button className="!capitalize flex items-center gap-2 bg-inherit text-lg !text-[#2f904b] border-2 border-[#2f904b]">
+                                    <Button 
+                                        onClick={() => {
+                                            toast.warn("Chức năng này đang bảo trì. Vui lòng quay lại sau")
+                                        }}
+                                        className="!capitalize flex items-center gap-2 bg-inherit text-lg !text-[#2f904b] border-2 border-[#2f904b]"
+                                    >
                                         <FaVideo className="text-[28px]" />
                                         thêm video
                                     </Button>
                                 </div>
                                 <div className="mt-5 text-gray-400">
+                                    <div className="flex-none">
+                                        <div className="mt-5 text-gray-400 flex gap-2 flex-wrap">
+                                            {formData.img.map((image, index) => (
+                                                <div key={index} className="relative w-24 h-24">
+                                                    <img
+                                                        src={image}
+                                                        alt={`preview-${index}`}
+                                                        className="w-full h-full object-cover rounded border"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                img: prev.img.filter((_, i) => i !== index)
+                                                            }));
+                                                        }}
+                                                        className="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-bl cursor-pointer"
+                                                    >
+                                                        x
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <input 
+                                            ref={fileInputRef}
+                                            type="file"
+                                            name="img"
+                                            id="img"
+                                            hidden
+                                            onChange={handleFileChange}
+                                            accept="image/jpeg,image/png"
+                                            multiple 
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mt-5 text-gray-400">
                                     Thêm 50 ký tự và 1 hình ảnh và 1 video để đánh giá tốt nhất
                                 </div>
                             </div>
+                            
                             <div className="flex justify-end gap-5">
                                 <Button
                                     type="button"

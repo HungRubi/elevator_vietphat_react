@@ -94,6 +94,11 @@ const ProductDetail = () => {
         }
         dispatch(actions.updateCart(cartData, userId));
     }
+    const [current, setCurrent] = useState(1);
+    const limit = 3;
+    const lastItemIndex = limit * current;
+    const firstItemIndex = lastItemIndex - limit;
+    const currentComment = comments?.slice(firstItemIndex, lastItemIndex);
     return (
         <>
             <Helmet>
@@ -327,11 +332,18 @@ const ProductDetail = () => {
                             
                         </div>
                         <ul className="w-[90%] mx-auto mt-5">
-                            {comments && comments?.length > 0 ? comments?.map(item => (
+                            {currentComment && currentComment?.length > 0 ? currentComment?.map(item => (
                                 <li key={item._id}
                                 className="flex border-b border-b-[#2e2a2a17] py-[1rem] pl-[1.25rem]">
                                     <div className="w-[40px] h-[40px] rounded-[50%] flex items-center justify-center overflow-hidden">
-                                        <img src={item.user_id.avatar} alt="" />
+                                        <img 
+                                            src={
+                                                item?.user_id?.avatar?.startsWith('/uploads')
+                                                ? `${import.meta.env.VITE_SERVER_URL}${item?.user_id?.avatar}`
+                                                : item?.user_id?.avatar
+                                            }  
+                                            alt="avatar" 
+                                        />
                                     </div>
                                     <div className="ml-[15px] w-full">
                                         <h4>{item.user_id.account}</h4>
@@ -357,10 +369,27 @@ const ProductDetail = () => {
                                             {item.message}
                                         </div>
                                         <div className="w-full flex items-center gap-4 flex-wrap">
-                                            <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
-                                            <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
-                                            <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
-                                            <img src="/img/products/1.png" alt="" className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'/>
+                                            {item.img_1 && (
+                                                <img 
+                                                    src={`${import.meta.env.VITE_SERVER_URL}${item.img_1}`} 
+                                                    alt="ảnh đánh giá" 
+                                                    className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'
+                                                />
+                                            )}
+                                            {item.img && (
+                                                <img 
+                                                    src={`${import.meta.env.VITE_SERVER_URL}${item.img}`} 
+                                                    alt="ảnh đánh giá" 
+                                                    className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'
+                                                />
+                                            )}
+                                            {item.img_2 && (
+                                                <img 
+                                                    src={`${import.meta.env.VITE_SERVER_URL}${item.img_2}`} 
+                                                    alt="ảnh đánh giá" 
+                                                    className='w-[100px] h-[100px] border border-[#cbd0dd] rounded-[5px]'
+                                                />
+                                            )}
                                         </div>
                                         <div className="w-full bg-[rgba(83,82,82,0.0823529412)] py-2.5 pl-2.5 mt-5">
                                             <span>
@@ -393,7 +422,7 @@ const ProductDetail = () => {
                                 </div>
                             )}
                         </ul>
-                        {comments && comments?.length > 0 ? <PageBar/> : ""}
+                        <PageBar currentPage={current} totalPage={Math.ceil(comments.length / limit)} onPageChange={setCurrent}/>
                     </div>
                 
                 </div>

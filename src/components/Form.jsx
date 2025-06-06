@@ -66,9 +66,10 @@ const Form = () => {
                         className="border border-[#eee] border-l-[3px] border-l-[#013e5a] w-full h-[39px] px-2.5 text-[13px] outline-none" />
                     </li>
                     <li className="w-full leading-8 flex mb-[14px]">
-                        <textarea 
-                        type="text" name="message" placeholder="* Nội dung văn bản" rows="5"
-                        className="border border-[#eee] border-l-[3px] border-l-[#013e5a] w-full h-[39px] px-2.5 text-[13px] outline-none">
+                        <textarea
+                        rows="5" 
+                        type="text" name="message" placeholder="* Nội dung văn bản"
+                        className="border border-[#eee] border-l-[3px] border-l-[#013e5a] w-full px-2.5 text-[13px] outline-none">
                         </textarea>
                     </li>
                     <li className="w-full leading-8 flex mb-[14px]">

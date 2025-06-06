@@ -89,3 +89,25 @@ export const getOrderByUser =  (id) => async (dispatch) => {
         })
     }
 }
+
+export const updateProfileUser =  (data, id) => async (dispatch) => {
+    try{
+        const response = await apis.updateProfileUser(data, id);
+        if(response.status === 200) {
+            dispatch({
+                type: actionTypes.UPDATE_PROFILE_USER,
+                payload: response.data
+            })
+        }else{
+            dispatch({
+                type: actionTypes.UPDATE_PROFILE_USER_ERR,
+                payload: response.data,
+            })
+        }
+    }catch(err){
+        dispatch({
+            type: actionTypes.UPDATE_PROFILE_USER_ERR,
+            payload: err.response,
+        })
+    }
+}
