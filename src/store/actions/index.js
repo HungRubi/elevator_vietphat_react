@@ -10,4 +10,3 @@ export * from './order';
 export * from './comment';
 export * from './category';
 export * from './notification';
-export { setPaymentMethod } from './payQR';

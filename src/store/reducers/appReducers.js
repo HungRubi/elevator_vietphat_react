@@ -25,10 +25,43 @@ const initState = {
     comments: [],
     categoryProduct: [],
     notification: [],
+    paymentUrl: "",
+    dataPayment: [],
 }
 
 const appReducer = (state = initState, action) => {
     switch (action.type){
+        case actionType.PAYMENT_CHECKOUT:
+            console.log(action.payload.data)
+            return {
+                ...state,
+                message: action.payload.message || null,
+                dataPayment: action.payload.data || [],
+            }
+
+        case actionType.PAYMENT_CHECKOUT_ERR:
+            return {
+                ...state,
+                message: action.payload.message || null,
+            }
+    
+        case actionType.CREATE_PAYMENT_URL:
+            return {
+                ...state,
+                paymentUrl: action.payload.paymentUrl || "",
+            }
+
+        case actionType.CREATE_PAYMENT_URL_ERR:
+            return {
+                ...state,
+                message: action.payload.message || null,
+            }
+
+        case actionType.ADD_ORDER_ERR:
+            return {
+                ...state,
+                message: action.payload.message || null,
+            }
 
         case actionType.UPDATE_PROFILE_USER: 
             return {

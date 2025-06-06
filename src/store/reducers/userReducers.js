@@ -10,6 +10,7 @@ const initialState = {
     selectedVoucher: null,
     orders: [],
     myNotifi: [],
+    inforOrder: {}
 }
 
 const userReducer = (state = initialState, action) => {
@@ -20,7 +21,18 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 currentUser: action.payload.user || []
             }
-        
+
+        case actionType.SET_INFOR_ORDER:
+            return {
+                ...state,
+                inforOrder: action.data
+            }
+
+        case actionType.RESET_INFOR_ORDER:
+            return {
+                ...state,
+                inforOrder: null
+            }
 
         case actionType.IS_READ_NOTIFI:
             return {
@@ -55,6 +67,7 @@ const userReducer = (state = initialState, action) => {
                 orders: [],
                 messageUser: null,
                 myNotifi: null,
+                inforOrder: null,
             }
         
         case actionType.SET_SELECTED_PRODUCTS:

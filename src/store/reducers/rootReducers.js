@@ -20,6 +20,7 @@ const userConfig = {
         'selectedProducts',
         'orders',
         'myNotifi',
+        'inforOrder',
     ],
 }
 

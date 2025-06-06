@@ -16,6 +16,7 @@ const path = {
     LOGIN: '/login',
     REGISTER: '/register',
     TUYENDUNG: '/tuyen-dung',
+    PAYMENT_RETURN: '/vnpay/return',
     STAR: '*'
 }
 

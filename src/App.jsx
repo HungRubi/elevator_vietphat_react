@@ -8,7 +8,7 @@ import {
 } from './containers/public/';
 import { ProtectedRoute } from './components';
 import { Routes, Route } from 'react-router-dom';
-import { Account, Cart, Pay } from './containers/system'
+import { Account, Cart, Pay, PaymentReturn } from './containers/system'
 import path from './util/path';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from './store/actions'
@@ -16,8 +16,6 @@ import { useEffect } from 'react';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { toast } from 'react-toastify';
-import QrPaymentInfo from './containers/system/QrPaymentInfo';
-
 
 function App() {
   const dispatch = useDispatch();
@@ -89,13 +87,17 @@ function App() {
               <Pay />
             </ProtectedRoute>
           }/>
+          <Route path={path.PAYMENT_RETURN} element={
+            <ProtectedRoute>
+              <PaymentReturn />
+            </ProtectedRoute>
+          }/>
           <Route path={path.ABOUTUS} element={<AboutUs />}/>
           <Route path={path.TIMKIEM} element={<TimKiem />}/>
           <Route path={path.TUYENDUNG} element={<TuyenDung />}/>
           <Route path={path.CONTACT} element={<Contact />}/>
           <Route path={path.PAGE404} element={<Page404 />}/>
           <Route path={path.STAR} element={<Home />}/>
-          <Route path="/payment-qr" element={<QrPaymentInfo />} />
         </Route>
       </Routes>
       <ToastContainer
