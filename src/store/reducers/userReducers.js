@@ -53,6 +53,7 @@ const userReducer = (state = initialState, action) => {
                 cart: action.cart,
                 productCart: action.productCart,
                 orders: action.orders,
+                    
                 myNotifi: action.myNotifi,
             }
         
@@ -95,12 +96,6 @@ const userReducer = (state = initialState, action) => {
                 messageUser: action.payload?.message || null,
             }
 
-        case actionType.UPDATE_CART_ERR:
-            return {
-                ...state,
-                message: action.payload.message || null
-            }
-
         case actionType.DELETE_CART_ITEM_ERR:
             return {
                 ...state,
@@ -123,7 +118,6 @@ const userReducer = (state = initialState, action) => {
         case actionType.ADD_ORDER:
             return {
                 ...state,
-                messageUser: action.payload?.message || null,
                 orders: (action.payload?.orders?.length > 0) ? action.payload.orders : state.orders,
             }
 
@@ -146,7 +140,7 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 messageUser: action.payload?.message || null,
-                orders: (action.payload?.orders?.length > 0) ? action.payload.orders : state.orders,
+                orders: action.payload?.orders,
             }
 
         case actionType.DELETE_CART_ITEM:

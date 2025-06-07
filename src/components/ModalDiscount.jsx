@@ -62,7 +62,7 @@ const ModalDiscount = () => {
             setValidDiscounts([]);
             setSelectedVoucher(null);
         }
-    }, [discount]);
+    }, [discount, selectedVoucher]);
 
     const handleApplyVoucher = () => {
         if (selectedVoucher) {
@@ -116,18 +116,19 @@ const ModalDiscount = () => {
                                         type="radio" 
                                         name="discount" 
                                         className='form-radio text-blue-600 w-4 h-4 rounded-full border-2 border-gray-300 mx-5'
-                                        checked={selectedVoucher?.id === item.id}
+                                        checked={selectedVoucher?._id === item._id}
                                         onChange={() => handleVoucherSelect(item)}
                                     />
                                     <img 
                                         src="/img/voucher.png" alt="" 
                                         className='w-[100px] h-[100px] object-cover flex-none'
                                     />
-                                    <div className="ml-5">
-                                        <h5 className='mb-1.5'>{item.title}</h5>
-                                        <span>HSD: {item.endDate} 
-                                            <span className='ml-2 capitalize text-blue-500'>Điều kiện</span>
-                                        </span>
+                                    <div className="ml-3 flex-1 text-start pr-5">
+                                        <h5>{item.title}</h5>
+                                        <div className="flex items-center justify-between mt-1">
+                                            <span className='text-start'>HSD: {item.endDate}</span>
+                                            <span className='capitalize text-blue-500 text-end'>Điều kiện</span>
+                                        </div>
                                     </div>
                                 </div>
                             )) : (

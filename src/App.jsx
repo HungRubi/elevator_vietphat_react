@@ -21,18 +21,17 @@ function App() {
   const dispatch = useDispatch();
   const {currentUser, cartUser, productCart, orders, message, notification} = useSelector(state => state.app);
   const {messageUser} = useSelector(state => state.user);
-
   // Handle all messages in one useEffect
   useEffect(() => {
-    if (message) {
-      toast.success(message);
-      dispatch(actions.resetMessage());
-    }
-    if (messageUser) {
-      toast.success(messageUser);
-      dispatch(actions.resetMessageUser());
-    }
-  }, [message, messageUser, dispatch]);
+      if (message) {
+          toast.success(message);
+          dispatch(actions.resetMessage());
+      }
+      if (messageUser) {
+          toast.success(messageUser);
+          dispatch(actions.resetMessageUser());
+      }
+    }, [message, messageUser, dispatch]);
 
   useEffect(() => {
     Aos.init({

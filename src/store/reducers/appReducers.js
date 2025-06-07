@@ -26,6 +26,7 @@ const initState = {
     categoryProduct: [],
     notification: [],
     paymentUrl: "",
+
     dataPayment: [],
 }
 
@@ -55,7 +56,12 @@ const appReducer = (state = initState, action) => {
                 ...state,
                 message: action.payload.message || null,
             }
-
+        case actionType.ADD_ORDER:
+            return {
+                ...state,
+                message: action.payload.message || null,
+            }
+        
         case actionType.ADD_ORDER_ERR:
             return {
                 ...state,

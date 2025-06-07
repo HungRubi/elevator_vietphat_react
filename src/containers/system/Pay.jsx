@@ -8,17 +8,17 @@ import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
 import { loadFile } from '../../util/loadFile';
-import { formatMoney } from '../../util/formatMoney';
+import { formatMoney, convertToWords } from '../../util/formatMoney';
 
 const { FaMapMarkerAlt, BsTag } = icons;
 
 const Pay = () => {
+    const VAT = 0.1;
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { selectedProducts, currentUser, selectedVoucher } = useSelector((state) => state.user);
     const { message, paymentUrl } = useSelector((state) => state.app);
 
-    // Memoized calculations
     const totalPrice = useMemo(
         () => selectedProducts?.reduce((acc, item) => acc + item.product.price * item.quantity, 0) || 0,
         [selectedProducts]
@@ -31,44 +31,12 @@ const Pay = () => {
         () => selectedProducts?.reduce((acc, item) => acc + item.product.shipping_cost, 0) || 0,
         [selectedProducts]
     );
-    const total = totalPrice + totalShippingCost - (selectedVoucher?.value_discount || 0);
+    const subTotal = totalPrice + totalShippingCost - (selectedVoucher?.value_discount || 0);
+    const moneyVat = subTotal * VAT;
+    const total = subTotal + moneyVat;
 
     const [paymentMethod, setPaymentMethod] = useState('cod');
 
-    // Constants
-    const SHIPPING_COST = 100000;
-
-    // Convert number to words (Vietnamese)
-    const convertToWords = (num) => {
-        if (!num || num === 0) return 'không đồng';
-
-        const ones = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
-        const tens = ['', 'mười', 'hai mươi', 'ba mươi', 'bốn mươi', 'năm mươi', 'sáu mươi', 'bảy mươi', 'tám mươi', 'chín mươi'];
-        const hundreds = ['', 'một trăm', 'hai trăm', 'ba trăm', 'bốn trăm', 'năm trăm', 'sáu trăm', 'bảy trăm', 'tám trăm', 'chín trăm'];
-
-        const convertThreeDigits = (n) => {
-            if (n === 0) return '';
-            const h = Math.floor(n / 100);
-            const t = Math.floor((n % 100) / 10);
-            const o = n % 10;
-            return `${hundreds[h]} ${tens[t]} ${ones[o]}`.trim();
-        };
-
-        let result = '';
-        const billion = Math.floor(num / 1000000000);
-        const million = Math.floor((num % 1000000000) / 1000000);
-        const thousand = Math.floor((num % 1000000) / 1000);
-        const rest = num % 1000;
-
-        if (billion > 0) result += `${convertThreeDigits(billion)} tỷ `;
-        if (million > 0) result += `${convertThreeDigits(million)} triệu `;
-        if (thousand > 0) result += `${convertThreeDigits(thousand)} nghìn `;
-        if (rest > 0) result += convertThreeDigits(rest);
-
-        return `${result.trim()} đồng`;
-    };
-
-    // Prepare order data
     const orderData = useMemo(
         () => ({
             user_id: currentUser?._id,
@@ -89,8 +57,6 @@ const Pay = () => {
         }),
         [currentUser, paymentMethod, selectedProducts, selectedVoucher, total]
     );
-
-    // Fetch discounts on mount
     useEffect(() => {
         dispatch(actions.getDiscounts());
     }, [dispatch]);
@@ -113,12 +79,15 @@ const Pay = () => {
     // Handle successful order creation
     useEffect(() => {
         if (message === 'Tạo đơn hàng thành công') {
-            const orderedProductIds = selectedProducts.map((item) => item.product._id);
-            dispatch(actions.deleteCartItem({ productId: orderedProductIds }, currentUser?._id));
-            dispatch(actions.getNotifiByUser(currentUser?._id));
-            navigate('/account/orders');
+            if(paymentMethod === 'cod') {
+                const orderedProductIds = selectedProducts.map((item) => item.product._id);
+                dispatch(actions.deleteCartItem({ productId: orderedProductIds }, currentUser?._id));
+                dispatch(actions.getNotifiByUser(currentUser?._id));
+                navigate('/account/order');
+            }
         }
-    }, [message, navigate, currentUser, selectedProducts, dispatch]);
+    }, [message, navigate, dispatch, selectedProducts, currentUser, paymentMethod]);
+
 
     // Export invoice
     const handleExportInvoice = async () => {
@@ -129,20 +98,26 @@ const Pay = () => {
 
             const today = new Date();
             const data = {
+                order_code: "Vui lòng đặt hàng để có mã đơn hàng",
                 name: currentUser?.name || '',
                 phone: currentUser?.phone || '',
                 address: currentUser?.address || '',
-                products: selectedProducts.map((item, index) => ({
+                p: selectedProducts?.map((item, index) => ({
                     no: index + 1,
                     productName: item.product.name || '',
+                    unit: item.product.unit || '',
                     quantity: item.quantity || 0,
-                    price: formatMoney(item.product.price) || '0đ',
-                    purchers: formatMoney(item.product.price * item.quantity) || '0đ',
+                    price: formatMoney(item.product.price) || '0',
+                    purchers: formatMoney(item.product.price * item.quantity) || '0',
+                    shipping: formatMoney(item.product.shipping_cost) || 0
                 })),
-                totalPrice: formatMoney(totalPrice + SHIPPING_COST - (selectedVoucher?.value_discount || 0)) || '0đ',
-                stringPrice: convertToWords(totalPrice + SHIPPING_COST - (selectedVoucher?.value_discount || 0)) || 'không đồng',
+                shipping: formatMoney(totalShippingCost) || 0,
+                vat: formatMoney(subTotal <= 0 ? 0 : moneyVat),
+                discount: formatMoney(selectedVoucher?.value_discount) || 0,
+                totalPrice: formatMoney(total) || '0',
+                stringPrice: convertToWords(total) || 'không đồng',
                 date: today.getDate(),
-                month: today.getMonth() + 1,
+                month: today.getMonth() + 1
             };
 
             doc.render(data);
@@ -272,6 +247,9 @@ const Pay = () => {
                                 </div>
                                 <div className="w-full flex text-left justify-between mt-4">
                                     Tổng giảm giá <h5>₫{formatMoney(selectedVoucher?.value_discount || 0)}</h5>
+                                </div>
+                                <div className="w-full flex text-left justify-between mt-4">
+                                    VAT <h5>₫{formatMoney(subTotal <= 0 ? 0 : moneyVat)}</h5>
                                 </div>
                                 <div className="w-full flex text-left justify-between mt-4 items-center">
                                     Tổng thanh toán <h5 className="text-[26px] text-[#2f904b]">₫{formatMoney(total < 0 ? 0 : total)}</h5>

@@ -40,8 +40,10 @@ import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { FaVideo } from "react-icons/fa6";
 import { BiSolidPhoneCall } from "react-icons/bi";
 import { AiOutlineMessage } from "react-icons/ai";
+import { MdError } from "react-icons/md";
 
 const icons = {
+    MdError,
     IoIosSend,
     BiSolidPhoneCall,
     AiOutlineMessage,

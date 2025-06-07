@@ -67,12 +67,14 @@ const ProductDetail = () => {
     ]
     const {slug} = useParams();
     let pricePre = 0;
-    if(Number(productDetail?.sale) === 0){
+
+    if (Number(productDetail?.sale) === 0) {
         pricePre = Number(productDetail?.price);
-    }else{
-        const discount = Number(productDetail?.sale) * Number(productDetail?.price) 
-        pricePre = Number(productDetail?.pice) - discount;
+    } else {
+        const discount = (Number(productDetail?.sale) * Number(productDetail?.price)) / 100;
+        pricePre = Number(productDetail?.price) - discount;
     }
+
 
     useEffect(() => {
         if(slug){
