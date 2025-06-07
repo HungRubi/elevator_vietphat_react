@@ -32,7 +32,6 @@ const initState = {
 const appReducer = (state = initState, action) => {
     switch (action.type){
         case actionType.PAYMENT_CHECKOUT:
-            console.log(action.payload.data)
             return {
                 ...state,
                 message: action.payload.message || null,

@@ -1,28 +1,24 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { formatMoney } from '../../util/formatMoney';
 import * as actions from '../../store/actions';
 
-// Constants
-const REDIRECT_TIMEOUT = 10000; // 10 seconds
 
 const PaymentReturn = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const hasOrdered = useRef(false);
 
   const { dataPayment } = useSelector((state) => state.app);
-  const { inforOrder } = useSelector((state) => state.user);
+  const { inforOrder, currentUser } = useSelector((state) => state.user);
 
   // Process payment check on mount
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     dispatch(actions.paymentCheckOut(searchParams));
   }, [dispatch, location.search]);
-
-  // Handle order creation
+  console.log('inforOrder', inforOrder);
   useEffect(() => {
     if (dataPayment && inforOrder && !hasOrdered.current) {
       hasOrdered.current = true;
@@ -31,19 +27,12 @@ const PaymentReturn = () => {
         orderInfor: dataPayment.vnp_OrderInfo || 'N/A',
         code_banking: dataPayment.vnp_BankTranNo || 'N/A',
       };
+      const orderedProductIds = inforOrder.items.map((item) => item.product_id);
+      dispatch(actions.deleteCartItem({ productId: orderedProductIds }, currentUser?._id));
       dispatch(actions.addOrder(orderData));
       dispatch(actions.resetInforOrder());
     }
-  }, [dataPayment, inforOrder, dispatch]);
-
-  // Redirect to homepage after timeout
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate('/');
-    }, REDIRECT_TIMEOUT);
-
-    return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [dataPayment, inforOrder, dispatch, currentUser]);
 
   return (
     <div className="bg-gray-100">
