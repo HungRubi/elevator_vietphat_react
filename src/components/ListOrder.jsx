@@ -40,7 +40,7 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                     shipping: formatMoney(product.product.shipping_cost) || 0
                 })),
                 shipping: item.orderDetails.reduce((acc, product) => acc + (product.product.shipping_cost || 0), 0) || 0,
-                // vat: formatMoney(subTotal <= 0 ? 0 : moneyVat),
+                vat: "10%",
                 discount: formatMoney(item?.discount_id?.value_discount) || 0,
                 totalPrice: formatMoney(item.total_price) || '0',
                 stringPrice: convertToWords(item.total_price) || 'không đồng',
@@ -136,7 +136,7 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                     <Button onClick={buttonContact}>
                                         liên hệ ngay
                                     </Button>
-                                    {item.status === 'Đang xử lý' ? (
+                                    {item.status === 'Đang xử lý' && (
                                         <>
                                             <Button onClick={() => {handleExportInvoice(item)}}
                                             className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
@@ -147,31 +147,23 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                                 hủy đơn
                                             </Button>
                                         </>
-                                    ) : (
-                                        <>
-                                        </>
-
                                     )}
-                                    {item.status === 'Thất bại' ? (
+                                    {item.status === 'Thất bại' && (
                                         <Button onClick={() => handleBuyAgain(item)}>
                                             mua lại
                                         </Button>
-                                    ) : (
-                                        <>
-
-                                        </>
-
                                     )}
-                                    {item.status === 'Thành công' ? (
+                                    {item.status === 'Thành công' && (
                                         <>
+                                            <Button 
+                                                onClick={() => {handleExportInvoice(item)}}
+                                                className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}
+                                            >
+                                                xuất hóa đơn
+                                            </Button>
                                             <ModalQuestion products={item.orderDetails?.map(detail => detail.product)} />
                                             <ModelContact/>
                                         </>
-                                    ) : (
-                                        <>
-
-                                        </>
-
                                     )}
                                 </div>
                             </div>

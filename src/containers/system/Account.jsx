@@ -2,9 +2,9 @@ import { NavLink } from 'react-router-dom';
 import {CircleButton} from '../../components';
 import icons  from '../../util/icons';
 import { Route, Routes } from 'react-router-dom';
-import {Profile, Banking, Address, Password, Notification, Order} from './index'
+import {Profile, Banking, Address, Password, Notification, Order, Voucher} from './index'
 import { useSelector } from 'react-redux';
-const {CiEdit, FaRegBell, BsPerson, RiBillLine} = icons;
+const {CiEdit, FaRegBell, BsPerson, RiBillLine, BsTag} = icons;
 const active = '!text-[#2f904b] capitalize flex items-center';
 const notActive = 'text-[#000] capitalize flex items-center';
 const Account = () => {
@@ -42,6 +42,11 @@ const Account = () => {
             label: 'Đơn hàng', 
             icon: <RiBillLine className='text-[16px] mr-2.5 mb-1'/>,
             path: '/account/order'
+        },
+        {
+            label: 'Voucher', 
+            icon: <BsTag className='text-[16px] mr-2.5 mb-1'/>,
+            path: '/account/voucher'
         },
     ]
     return (
@@ -106,6 +111,7 @@ const Account = () => {
                 <Route path="password" element={<Password/>}/>   
                 <Route path="notification" element={<Notification/>}/>   
                 <Route path="order" element={<Order/>}/>   
+                <Route path="voucher" element={<Voucher/>}/>   
             </Routes>
         </div>
     );

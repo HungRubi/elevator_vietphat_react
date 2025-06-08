@@ -119,6 +119,13 @@ const Cart = () => {
         }
     }, [dispatch, selectedProducts, currentUser]);
 
+    const handleDeleteItem = (itemId) => {
+        const data = {
+            productId: itemId
+        }
+        dispatch(actions.deleteCartItem(data, currentUser?._id))
+    }
+
     return (
         <>
             <div className="w-full bg-white py-2.5">
@@ -219,10 +226,10 @@ const Cart = () => {
                                             {formatMoney((quantities[item._id] || initialQuantity) * item.price)}đ
                                         </div>
                                         <div className="w-1/4 text-center">
-                                            <NavLink
+                                            <button onClick={() => handleDeleteItem(item._id)}
                                             className={'capitalize text-blue-600'}>
                                                 xóa
-                                            </NavLink>
+                                            </button>
                                             <div className='line-clamp-2 flex items-center gap 2.5'>
                                                 Tìm kiếm sản phẩm tương tự 
                                                 <FaCaretDown className='cursor-pointer text-[18px]'/>

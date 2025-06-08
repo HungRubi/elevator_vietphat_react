@@ -27,9 +27,11 @@ const   ListArticle = ({current, totalPage, setCurrent, currentArticle, classNam
                                     {article.content}
                                 </div>
                                 <div className="flex justify-end">
-                                    <Button className="text-[13px] px-[10px] !py-[3px] rounded-[8px] mt-3">
-                                        read more
-                                    </Button>
+                                    <NavLink to={`/news/detail/${article.slug}`}>
+                                        <Button className="text-[13px] px-[10px] !py-[3px] rounded-[8px] mt-3">
+                                            read more
+                                        </Button>
+                                    </NavLink>
                                 </div>
                             </div>
                         </div>

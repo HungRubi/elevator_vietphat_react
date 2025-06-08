@@ -8,7 +8,7 @@ import * as actions from '../../store/actions';
 const Order = () => {
     const dispatch = useDispatch();
     const { orders, currentUser } = useSelector(state => state.user);
-    console.log(orders)
+    const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     useEffect(() => {
         dispatch(actions.getOrderByUser(currentUser?._id));
 
@@ -22,10 +22,10 @@ const Order = () => {
     
     useEffect(() => {
         if (orders) {
-            const handleOrders = orders?.filter(item => item.status === 'Đang xử lý');
-            const deliveryOrders = orders?.filter(item => item.status === 'Đang giao hàng');
-            const successOrders = orders?.filter(item => item.status === 'Thành công');
-            const failOrders = orders?.filter(item => item.status === 'Thất bại');
+            const handleOrders = sortedOrders?.filter(item => item.status === 'Đang xử lý');
+            const deliveryOrders = sortedOrders?.filter(item => item.status === 'Đang giao hàng');
+            const successOrders = sortedOrders?.filter(item => item.status === 'Thành công');
+            const failOrders = sortedOrders?.filter(item => item.status === 'Thất bại');
 
             setOrderHanle(handleOrders);
             setOrderDelivery(deliveryOrders);
@@ -94,7 +94,7 @@ const Order = () => {
             </div>
             <SearchProperty>search</SearchProperty>
             {active === 0 && orders && orders?.length > 0 && (
-                <ListOrder orders={orders} handleBuyAgain={handleBuyAgain} hanleCanCelOrder={hanleCanCelOrder}/>
+                <ListOrder orders={sortedOrders} handleBuyAgain={handleBuyAgain} hanleCanCelOrder={hanleCanCelOrder}/>
             )}
             {active === 1 && orderHanle && orderHanle.length > 0 && (
                 <ListOrder orders={orderHanle} handleBuyAgain={handleBuyAgain} hanleCanCelOrder={hanleCanCelOrder}/>
