@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../store/actions'
-const {FaRegBell, PiShoppingCartBold, FaArrowRightFromBracket, BsPerson, FiTruck, BsTag} = icons
+const {FaRegBell, RiMenuFill, PiShoppingCartBold, FaArrowRightFromBracket, BsPerson, FiTruck, BsTag} = icons
 const active = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-center item_nav relative z-10 bg-[#2f904b]';
 const notActive = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-center item_nav relative z-10 hover:bg-[#2f904b] transition duration-300 ease-linear';
 
@@ -74,7 +74,7 @@ const HeaderBar = () => {
                     <img src="/img/logo.png" alt="" className='w-full object-cover'/>
                 </NavLink>
             </div>
-            <div className="flex min-w-[45%] max-w-[55%] w-[55%] px-[1.5%]">
+            <div className="flex min-w-[45%] w-[55%] px-[1.5%] navbar-1513 hidden-1174">
                 <ul className="w-full flex items-center justify-between">
                     {menuBar.map(item => (
                         <NavLink
@@ -114,6 +114,7 @@ const HeaderBar = () => {
                     ))}
                 </ul>
             </div>
+            
             <div className="flex items-center justify-end gap-4">
                 <Search/>
                 <div 
@@ -221,6 +222,9 @@ const HeaderBar = () => {
                         </div>
                     )}
                 </div>
+                <CircleButton className={`hidden block-1174`}>
+                    <RiMenuFill className='size-[20px] text-[#ffffffb4]'/>
+                </CircleButton>
             </div>
         </div>
     )

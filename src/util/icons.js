@@ -41,8 +41,10 @@ import { FaVideo } from "react-icons/fa6";
 import { BiSolidPhoneCall } from "react-icons/bi";
 import { AiOutlineMessage } from "react-icons/ai";
 import { MdError } from "react-icons/md";
+import { RiMenuFill } from "react-icons/ri";
 
 const icons = {
+    RiMenuFill,
     MdError,
     IoIosSend,
     BiSolidPhoneCall,

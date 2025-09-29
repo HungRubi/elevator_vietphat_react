@@ -80,10 +80,10 @@ const Home = () => {
                 <div className="mt-[85px] flex items-center justify-between w-full"
                 data-aos="fade-up">
                     <div className="w-[80%] m-auto">
-                        <div className="flex gap-5 mb-5">
+                        <div className="flex gap-5 mb-5 flex-col-1100">
                             {tabs?.map((tab, index) => (
                                 <div 
-                                className={`w-1/4 border text-center text-white uppercase cursor-pointer py-1.5 ${active === index ? "bg-[#2f904b]" : "bg-[black]"}`}
+                                className={`tab_category w-1/4 border text-center text-white uppercase cursor-pointer py-1.5 ${active === index ? "bg-[#2f904b]" : "bg-[black]"}`}
                                 onClick={() => setActive(index)}
                                 key={tab.label}>
                                     {tab.label}

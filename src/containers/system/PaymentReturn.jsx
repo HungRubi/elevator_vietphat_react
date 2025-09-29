@@ -15,6 +15,7 @@ const PaymentReturn = () => {
 
   const { dataPayment, message } = useSelector((state) => state.app);
   const { inforOrder, currentUser } = useSelector((state) => state.user);
+  console.log(message)
 
   // Process payment check on mount
   useEffect(() => {
@@ -31,7 +32,7 @@ const PaymentReturn = () => {
       };
       const orderedProductIds = inforOrder.items?.map((item) => item.product_id);
       dispatch(actions.resetInforOrder());
-      if(message === 'Thanh toán thành công!') {
+      if(message === 'Thanh toán thành công') {
         dispatch(actions.addOrder(orderData));
         dispatch(actions.deleteCartItem({ productId: orderedProductIds }, currentUser?._id));
       }
@@ -41,7 +42,7 @@ const PaymentReturn = () => {
   return (
     <div className="bg-gray-100">
       <div className="bg-white p-6 md:mx-auto">
-        {message === 'Thanh toán thành công!' ? (
+        {message === 'Thanh toán thành công' ? (
           <svg viewBox="0 0 24 24" className="text-green-600 w-16 h-16 mx-auto my-6">
             <path
               fill="currentColor"
@@ -54,10 +55,10 @@ const PaymentReturn = () => {
         
         <div className="text-center">
           <h3 className="md:text-2xl text-base text-gray-900 font-semibold text-center">
-            {message === 'Thanh toán thành công!' ? 'Thanh toán thành công!' : 'Thanh toán thất bại!'}
+            {message === 'Thanh toán thành công' ? 'Thanh toán thành công!' : 'Thanh toán thất bại!'}
           </h3>
-          <p className="text-gray-600 my-2">{message === 'Thanh toán thành công!' ? 'Cảm ơn bạn đã hoàn tất thanh toán trực tuyến an toàn.' : 'Xin lỗi, đã xảy ra lỗi trong quá trình thanh toán.'}</p>
-          {message === 'Thanh toán thành công!' && (
+          <p className="text-gray-600 my-2">{message === 'Thanh toán thành công' ? 'Cảm ơn bạn đã hoàn tất thanh toán trực tuyến an toàn.' : 'Xin lỗi, đã xảy ra lỗi trong quá trình thanh toán.'}</p>
+          {message === 'Thanh toán thành công' && (
             <div className="text-gray-600 my-2">
               <p>Mã đơn hàng: {dataPayment?.vnp_TxnRef || 'N/A'}</p>
               <p>Tổng tiền: {formatMoney(dataPayment?.vnp_Amount / 100 || 0)} VNĐ</p>

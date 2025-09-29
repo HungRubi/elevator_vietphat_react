@@ -11,9 +11,10 @@ const Public = () => {
     const location = useLocation();
     const [isShow, setIsShow] = useState(false);
     const handleScroll = useCallback(() => {
-        const scrollY = window.scrollY; 
+        const scrollY = window.scrollY;
+        const screenWidth = window.innerWidth;
 
-        if (scrollY > 400) { 
+        if (scrollY > 400 && screenWidth > 950) { 
             setIsShow(true);
         } else {
             setIsShow(false);
@@ -35,7 +36,7 @@ const Public = () => {
     };
     return (
         <div className="w-full relative">
-            <div className={` top-0 left-0 right-0 z-90 ${location.pathname !== '/' ? "relative" : "absolute"}`}>
+            <div className={`top-0 left-0 right-0 z-90 ${location.pathname !== '/' ? "relative" : "absolute"}`}>
                 <HeaderBar />
             </div>
             <div className="w-full relative">
@@ -73,6 +74,9 @@ const Public = () => {
                     </NavLink>
                 </>
             ) : ("")}
+            <div className="w-full fixed bottom-0 left-0 right-0 z-100000000000000000 bg-main h-[100px] hidden block-950">
+                
+            </div>
         </div>
     )
 }
