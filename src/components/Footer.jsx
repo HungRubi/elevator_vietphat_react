@@ -8,21 +8,20 @@ const Footer = () => {
                 <div className="h-[400px] bg-cover bg-center bg-fixed flex justify-center" 
                     style={{ backgroundImage: "url('/img/partner/partner.jpg')" }}>
                     <div className="w-[80%] flex flex-col text-white text-3xl font-bold bg-opacity-50 items-center justify-center gap-10">
-                        <h2 className=" uppercase text-3xl">đối tác và khách hàng</h2>
-                        <div className="w-full flex items-center justify-between">
-                            <img src="/img/partner/1.png" alt=""/>
-                            <img src="/img/partner/2.png" alt=""/>
-                            <img src="/img/partner/3.png" alt=""/>
-                            <img src="/img/partner/4.png" alt=""/>
-                            <img src="/img/partner/5.png" alt=""/>
-                            <img src="/img/partner/6.png" alt=""/>
+                        <h2 className=" uppercase text-3xl max-[500px]:text-2xl max-[402px]:text-xl">đối tác và khách hàng</h2>
+                        <div className="w-full flex items-center justify-between max-[700px]:!flex-wrap max-[700px]:gap-5">
+                            <img src="/img/partner/1.png" alt="" className="max-[450px]:w-[80px] max-[368px]:w-[70px]"/>
+                            <img src="/img/partner/2.png" alt="" className="max-[450px]:w-[80px] max-[368px]:w-[70px]"/>
+                            <img src="/img/partner/3.png" alt="" className="max-[450px]:w-[80px] max-[368px]:w-[70px]"/>
+                            <img src="/img/partner/4.png" alt="" className="max-[450px]:w-[80px] max-[368px]:w-[70px]"/>
+                            <img src="/img/partner/5.png" alt="" className="max-[450px]:w-[80px] max-[368px]:w-[70px]"/>
+                            <img src="/img/partner/6.png" alt="" className="max-[450px]:w-[80px] max-[368px]:w-[70px]"/>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="w-full flex flex-col items-center bg-[#051230]">
-                
-                <p className="siez-[16px] line-clamp-2 text-[rgba(255,255,255,0.7607843137)] mt-[30px]">
+            <div className="w-full flex flex-col items-center bg-[#051230] max-[1000px]:px-[15px]">
+                <p className="text-[16px] text-[rgba(255,255,255,0.7607843137)] mt-[30px] text-center">
                     Để biết thêm thông tin về sản phẩm hoặc bảng giá, 
                     vui lòng để lại email cho chúng tôi và chúng tôi
                     sẽ liên hệ trong vòng 24 giờ.
@@ -32,20 +31,21 @@ const Footer = () => {
                         contact now
                     </NavLink>
                 </button>
-                <div className="w-[80%] flex justify-center mt-5 pt-5 border-t border-t-[#2f904b]">
-                    <div className="w-1/3 text-left">
+                <div className="w-[80%] flex justify-center mt-5 pt-5 border-t
+                border-t-[#2f904b] max-[1000px]:w-full max-[830px]:flex-col max-[830px]:gap-5">
+                    <div className="w-1/3 text-left max-[830px]:w-full ">
                         <address className="flex">
                             <FaMapMarkerAlt className="text-[#ffffffcb] size-5"/>
                             <NavLink 
-                            className="line-clamp-2 ml-2.5 text-[#ffffffcb] text-[14px]"
+                            className="ml-2.5 text-[#ffffffcb] text-[14px]"
                             title="địa chỉ"
                             to={'https://www.google.com/maps/dir/20.87506,106.6173419/20.87815,106.61313/@20.8759506,106.6100315,16z/data=!3m1!4b1!4m4!4m3!1m1!4e1!1m0?entry=ttu&g_ep=EgoyMDI1MDIxOS4xIKXMDSoASAFQAw%3D%3D'}>
                                 Address: Km8 + 93 đường 5 mới, xã Nam Sơn, huyện An Dương, Hải Phòng, Việt Nam
                             </NavLink>
                         </address>
                     </div>
-                    <div className="w-1/3">
-                        <address className="flex justify-center">
+                    <div className="w-1/3 max-[830px]:w-full">
+                        <address className="flex justify-center max-[830px]:justify-start">
                             <FaPhoneAlt className="text-[#ffffffcb] size-5"/>
                             <NavLink 
                             className="line-clamp-2 ml-2.5 text-[#ffffffcb] text-[14px]"
@@ -55,8 +55,8 @@ const Footer = () => {
                             </NavLink>
                         </address>
                     </div>
-                    <div className="w-1/3 text-right">
-                        <address className="flex justify-end">
+                    <div className="w-1/3 text-right max-[830px]:w-full">
+                        <address className="flex justify-end max-[830px]:justify-start">
                             <MdEmail className="text-[#ffffffcb] size-5"/>
                             <NavLink
                             className="line-clamp-2 ml-2.5 text-[#ffffffcb] text-[14px]"
@@ -66,7 +66,7 @@ const Footer = () => {
                         </address>
                     </div>
                 </div>
-                <div className="w-[80%] flex justify-center items-center gap-5 mb-5">
+                <div className="w-[80%] flex justify-center items-center gap-5 mb-5 max-[830px]:my-10">
                     <NavLink className="size-8 bg-white rounded-full overflow-hidden"
                     to={'https://www.facebook.com/VietPhatelevator'}>
                         <BsFacebook className="text-[#2564ee] size-8"/>
@@ -82,11 +82,10 @@ const Footer = () => {
                         <img src="/img/footer/twitter.png" alt="" className="h-[32px] object-contain"/>
                     </NavLink>
                 </div>
-                <div className="bg-[#2f904b] w-full text-center py-1 text-[18px] text-[#ffffffde]">
-                    Design By ©HUYHUNG - 2024
-                </div>
             </div>
-
+            <div className="bg-[#2f904b] w-full text-center py-1 text-[18px] text-[#ffffffde]">
+                Design By ©HUYHUNG - 2024
+            </div>
         </div>
         
     )

@@ -40,8 +40,8 @@ const Login = () => {
                 <link rel="canonical" href="https://vmu.com.vnlogin" />
             </Helmet>
 
-            <div className="fixed w-full bg-[#f3f3f3] top-0 z-[9999] h-screen overflow-y-auto">
-                <div className="w-full h-1/7 flex items-center justify-between px-[10%]">
+            <div className="fixed w-full bg-[#f3f3f3] top-0 z-[9999] max-[800px]:relative">
+                <div className="w-full h-1/7 flex items-center justify-between px-[10%] max-[1000px]:px-[15px] max-[800px]:hidden">
                     <div className="flex items-center gap-5">
                         <NavLink to={"/"}>
                             <img src="/img/logo.png" alt="" className="h-[110px] w-auto mb-4"/>
@@ -53,11 +53,12 @@ const Login = () => {
                         Bạn cần giúp đỡ?
                     </NavLink>
                 </div>
-                <div className="w-full relative mb-8">
-                    <img src="/img/slider/background_login.png" alt="" className=""/>
+                <div className="w-full relative mb-8 max-[800px]:h-[500px] max-[800px]:mt-8">
+                    <img src="/img/slider/background_login.png" alt="background_login" 
+                    className="max-[1266px]:h-[500px] max-[1266px]:object-cover max-[800px]:hidden "/>
                     <form onSubmit={handleSubmit}
-                    className="w-[500px] bg-white rounded-[4px] login_form absolute">
-                        <div className="px-[30px] py-[1.375rem] w-full">
+                    className="w-[500px] bg-white rounded-[4px] login_form absolute max-[800px]:h-full max-[800px]:w-full max-[800px]:!left-0">
+                        <div className="px-[30px] py-[1.375rem] w-full ">
                             <div className="text-[1.8rem] text-center capitalize text-[#2f904b]">
                                 đăng nhập
                             </div>
@@ -113,7 +114,7 @@ const Login = () => {
                         </div>
                     </form>
                 </div>
-                <div className="">
+                <div className="max-[800px]:hidden">
                     <Footer/>
                 </div>
             </div>

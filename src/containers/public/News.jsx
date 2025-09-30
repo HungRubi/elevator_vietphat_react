@@ -24,7 +24,7 @@ const News = () => {
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://vmu.com.vn/news" />
             </Helmet>
-            <div className="w-full px-[10%] py-8">
+            <div className="w-full px-[10%] py-8 max-[1000px]:px-[15px]">
                 <ListArticle current={current} setCurrent={setCurrent} currentArticle={currentArticle} totalPage={totalPage}/>
             </div>
         </>

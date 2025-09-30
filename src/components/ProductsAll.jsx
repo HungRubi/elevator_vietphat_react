@@ -28,7 +28,7 @@ const ProductsAll = ({data}) => {
         <div className="flex flex-wrap gap-5">
             {data.length > 0 ? (
                 data.map((item => (
-                    <div key={item._id} className="border border-[#cbd0dd] item_product shadow" data-aos="zoom-in">
+                    <div key={item._id} className="border border-[#cbd0dd] item_product shadow max-[500px]:!w-full" data-aos="zoom-in">
                         <NavLink className="w-full relative overflow-hidden inline-block blur_img" to={`/products/detail/${item.slug}`}>
                             <img src={item.thumbnail_main} alt="ảnh sản phẩm" data-aos="zoom-in"
                             className="w-full border-b border-b-[#cbd0dd]"/>

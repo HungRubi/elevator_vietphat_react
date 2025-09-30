@@ -87,8 +87,8 @@ const Register = () => {
                 <link rel="canonical" href="https://vmu.com.vn/register" />
             </Helmet>
 
-            <div className="fixed w-full bg-[#f3f3f3] top-0 z-[9999] h-screen overflow-y-auto">
-                <div className="w-full h-1/7 flex items-center justify-between px-[10%]">
+            <div className="fixed w-full bg-[#f3f3f3] max-[1892px]:bg-white top-0 z-[49] h-screen overflow-y-auto max-[1892px]:relative ">
+                <div className="w-full h-1/7 flex items-center justify-between px-[10%] max-[1892px]:hidden">
                     <div className="flex items-center gap-5">
                         <img src="/img/logo.png" alt="" className="h-[110px] w-auto mb-4"/>
                         <h1 className="text-[35px] font-[500] cursor-default text-[#2f904b]">Đăng nhập</h1>
@@ -99,15 +99,17 @@ const Register = () => {
                     </NavLink>
                 </div>
                 <div className="w-full relative mb-8">
-                    <img src="/img/slider/background_login.png" alt="" className=""/>
+                    <img src="/img/slider/background_login.png" alt="" 
+                    className="max-[1892px]:hidden"/>
                     <form onSubmit={handleSubmit}
-                    className="w-[700px] bg-white rounded-[4px] login_form absolute">
+                    className="w-[700px] !bg-white rounded-[4px] login_form absolute 
+                    max-[1892px]:w-full max-[1892px]:h-full max-[1892px]:!left-0">
                         <div className="px-[30px] py-[1.375rem] w-full">
                             <div className="text-[1.8rem] text-center capitalize text-[#2f904b]">
                                 đăng ký
                             </div>
                         </div>
-                        <div className="px-[30px] pb-[30px]">
+                        <div className="px-[30px] pb-[30px] max-[1892px]:!pb-0">
                             <div className="mt-5 flex gap-5">
                                 <input 
                                     onChange={handleChange} 
@@ -258,7 +260,7 @@ const Register = () => {
                         </div>
                     </form>
                 </div>
-                <div className="z-100">
+                <div className="z-100 max-[1892px]:hidden">
                     <Footer/>
                 </div>
             </div>

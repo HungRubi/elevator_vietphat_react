@@ -129,23 +129,22 @@ const Cart = () => {
     return (
         <>
             <div className="w-full bg-white py-2.5">
-                <div className="px-[10%] w-full flex items-center justify-between">
+                <div className="px-[10%] w-full flex items-center justify-between max-[1000px]:!px-[15px]">
                     <HeaderNav icon={<PiShoppingCartBold className='text-[30px] text-[#2f904b]'/>}>
                         giỏ hàng
                     </HeaderNav>
-                    <div className="max-w-1/2 w-full flex items-center justify-between">
+                    <div className="max-w-1/2 w-full flex items-center justify-between max-[1000px]:hidden">
                         <SearchProperty>
                             <FiSearch className='text-[20px]'/>
                         </SearchProperty>
-                        
                     </div>
                 </div>
             </div>
-            <div className="w-full px-[10%] my-5">
+            <div className="w-full px-[10%] my-5 max-[1000px]:px-[15px]">
                 <div 
                 className="w-full bg-white flex items-center justify-between py-2.5 text-[#888] h-[55px] "
                 style={{boxShadow: '0 1px 1px 0 rgba(0,0,0,0.05)'}}>
-                    <div className="w-1/2 flex items-center gap-1">
+                    <div className="w-1/2 flex items-center gap-1 max-[800px]:!w-full">
                         <div className="w-[50px] flex items-center justify-center">
                             <input 
                                 type="checkbox" 
@@ -163,17 +162,18 @@ const Cart = () => {
                             </Button>
                         )}
                     </div>
-                    <div className="w-1/2 flex items-center justify-between">
-                        <div className="w-1/4 text-center">
+                    <div className="w-1/2 flex items-center justify-between max-[800px]:hidden
+                    max-[1187px]:!w-1/3 max-[1187px]:!justify-center max-[1187px]:!gap-20">
+                        <div className="w-1/4 text-center max-[1187px]:hidden">
                             Đơn giá
                         </div>
-                        <div className="w-1/4 text-center">
+                        <div className="w-1/4 text-center truncate">
                             Số lượng
                         </div>
                         <div className="w-1/4 text-center">
                             Số tiền
                         </div>
-                        <div className="w-1/4 text-center">
+                        <div className="w-1/4 text-center max-[1187px]:hidden">
                             Thao tác
                         </div>
                     </div>
@@ -182,13 +182,12 @@ const Cart = () => {
                     {productCart && productCart.length > 0 ? productCart.map((item) => {
                         const cartItem = cart[0]?.items.find(cartItem => cartItem.productId === item._id);
                         const initialQuantity = cartItem ? cartItem.quantity : 1;
-                        
                         return (
                             <div key={item._id}
                             className="w-full  border-t border-[#cbd0dd] cart_items">
                                 <div className="w-full bg-white flex items-center justify-between py-5  "
                                 style={{boxShadow: '0 1px 1px 0 rgba(0,0,0,0.05)'}}>
-                                    <div className="w-1/2 flex items-center gap-2.5 ">
+                                    <div className="w-1/2 flex items-center gap-2.5 max-[800px]:!w-full">
                                         <div className="w-[50px] flex items-center justify-center">
                                             <input 
                                                 type="checkbox" 
@@ -198,20 +197,27 @@ const Cart = () => {
                                             />
                                         </div>
                                         <NavLink>
-                                            <img src={item.thumbnail_main} alt="ảnh sản phẩm" 
-                                            className='w-[100px] h-[100px] border border-[#cbd0dd]'/>
+                                            <div className="w-[100px] h-[100px] border border-[#cbd0dd] flex items-center 
+                                            justify-center overflow-hidden max-[600px]:!w-20 max-[600px]:!h-20">
+                                                <img 
+                                                    src={item.thumbnail_main} 
+                                                    alt="ảnh sản phẩm" 
+                                                    className="w-full h-full object-cover" 
+                                                />
+                                            </div>
                                         </NavLink>
                                         <div className="text-[17px] text-[#000000be]">
-                                            <h5 className='line-clamp-1 capitalize'>
+                                            <h5 className='capitalize line-clamp-2 max-[600px]:text-sm'>
                                                 {item.name}
                                             </h5>
-                                            <h5 className='line-clamp-1'>
-                                                {item.category}
-                                            </h5>
+                                             <div className="w-1/4 text-center hidden max-[1187px]:!block max-[600px]:text-sm">
+                                                {formatMoney(item.price)}đ
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="w-1/2 flex items-center justify-between pr-2.5">
-                                        <div className="w-1/4 text-center">
+                                    <div className="w-1/2 flex items-center justify-between max-[800px]:!w-[150px] max-[800px]:!px-5
+                                    pr-2.5 max-[1187px]:!w-1/3 max-[1187px]:!justify-center max-[1187px]:!gap-20">
+                                        <div className="w-1/4 text-center max-[1187px]:hidden">
                                             {formatMoney(item.price)}đ
                                         </div>
                                         <div className="w-1/4 flex items-center justify-center">
@@ -222,29 +228,29 @@ const Cart = () => {
                                                 onQuantityChange={(newQuantity) => handleQuantityChange(item._id, newQuantity)}
                                             />
                                         </div>
-                                        <div className="w-1/4 text-center">
+                                        <div className="w-1/4 text-center max-[800px]:hidden">
                                             {formatMoney((quantities[item._id] || initialQuantity) * item.price)}đ
                                         </div>
-                                        <div className="w-1/4 text-center">
+                                        <div className="w-1/4 text-center max-[1187px]:hidden">
                                             <button onClick={() => handleDeleteItem(item._id)}
                                             className={'capitalize text-blue-600'}>
                                                 xóa
                                             </button>
-                                            <div className='line-clamp-2 flex items-center gap 2.5'>
+                                            <div className='line-clamp-2 flex items-center gap 2.5 '>
                                                 Tìm kiếm sản phẩm tương tự 
                                                 <FaCaretDown className='cursor-pointer text-[18px]'/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="w-full flex items-center bg-white border-t border-[#cbd0dd] h-[55px]">
+                                <div className="w-full flex items-center bg-white border-t border-[#cbd0dd] h-[55px] max-[600px]:text-sm">
                                     <div className="w-[50px] flex items-center justify-center">
                                         <BsTag className='text-[23px] text-[#2f904b]'/>
                                     </div>
                                     <h5>Voucher giảm đến 200k Xem thêm Voucher</h5>
                                     <h5 className="ml-5 cursor-pointer text-blue-600">Xem thêm Voucher</h5>
                                 </div>
-                                <div className="w-full flex items-center bg-white border-t border-[#cbd0dd] h-[55px]">
+                                <div className="w-full flex items-center bg-white border-t border-[#cbd0dd] h-[55px] max-[600px]:text-sm">
                                     <div className="w-[50px] flex items-center justify-center">
                                         <FiTruck className='text-[21px] text-[#2f904b]'/>
                                     </div>
@@ -265,9 +271,10 @@ const Cart = () => {
                     
                 </div>
                 <div 
-                className="w-full bg-white flex items-center justify-between py-2.5 text-[#888] h-[55px] mt-5"
+                className="w-full bg-white flex items-center justify-between py-2.5 text-[#888] 
+                h-[55px] mt-5 max-[600px]:flex-col max-[600px]:h-auto"
                 style={{boxShadow: '0 1px 1px 0 rgba(0,0,0,0.05)'}}>
-                    <div className="w-1/2 flex items-center gap-1">
+                    <div className="w-1/2 flex items-center gap-1 max-[600px]:!w-full">
                         <div className="w-[50px] flex items-center justify-center">
                             <input 
                                 type="checkbox" 
@@ -278,7 +285,9 @@ const Cart = () => {
                         </div>
                         <h5>Chọn tất cả</h5>
                     </div>
-                    <div className="w-1/2 flex items-center justify-end pr-2.5 gap-2.5">
+                    <div className="w-1/2 flex items-center justify-end pr-2.5 gap-2.5 
+                    max-[600px]:!w-full max-[600px]:!justify-start max-[600px]:pl-[15px]
+                    max-[600px]:flex-col max-[600px]:items-start max-[600px]:mt-5">
                         <h5>Tổng thanh toán ({totalItems} sản phẩm): {formatMoney(totalPrice)}đ</h5>
                         <NavLink to={"/pay"}>
                             <Button onClick={handleBuyNow}>

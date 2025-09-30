@@ -23,7 +23,7 @@ const MethodPayment = ({methodPayment}) => {
     return (
         <>
             <span onClick={() => setIsOpen(true)}
-            className='capitalize text-[18px] text-blue-600 cursor-pointer text-end'>
+            className='capitalize text-[18px] text-blue-600 cursor-pointer text-end max-[655px]:!text-sm'>
                 thay đổi
             </span>
             <div className={`fixed flex top-0 right-0 left-0 bottom-0 z-100  bg-black/10 ${isOpen ? "" : "hidden"}`}>

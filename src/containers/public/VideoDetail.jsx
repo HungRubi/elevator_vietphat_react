@@ -43,8 +43,8 @@ const VideoDetail = () => {
                 <meta property="og:url" content={`https://vmu.com.vn/video/${videoDetail?.slug}`} />
                 <meta property="og:image" content={`${videoDetail?.thumbnail}`} />
             </Helmet>
-            <div className="w-full px-[10%] mt-8 flex justify-between mb-15">
-                <div className="w-7/10 bg-white shadow p-5">
+            <div className="w-full px-[10%] my-8 flex justify-between max-[1000px]:px-[15px] max-[700px]:flex-col max-[700px]:gap-5 ">
+                <div className="w-7/10 bg-white shadow p-5 max-[1000px]:mr-5 max-[700px]:!w-full">
                     <div className="w-full h-2/5">
                         <iframe 
                             className="h-full w-full rounded-lg" 
@@ -56,7 +56,8 @@ const VideoDetail = () => {
                     </div>
                     <ListVideo data={listVideo}/>
                 </div>
-                <nav className="w-[25%]">
+                <nav className="w-[25%] max-[1483px]:w-[37%] max-[700px]:flex 
+                max-[700px]:w-full max-[700px]:gap-5 max-[540px]:block">
                     <div className="w-full bg-white shadow">
                         <div className="w-full p-2 border-l-5 border-[#2f904b]">
                             <h2 className="uppercase text-lg font-medium">
@@ -68,19 +69,19 @@ const VideoDetail = () => {
                                 <li key={item._id}
                                 className="px-2 py-4 flex gap-2.5 order_items border-b border-gray-200">
                                     <NavLink to={`/news/detail/${item.slug}`}
-                                    className={"w-[100px] flex-none"}>
+                                    className={"w-[100px] flex-none max-[1400px]:w-[80px]"}>
                                         <img src={item.thumbnail} alt={item.subject} 
                                         className="w-full object-cover"/>
                                     </NavLink>
-                                    <div className="text-base leading-7">
-                                        <h5 className="font-medium capitalize text-gray-900 line-clamp-2">
+                                    <div className="text-base">
+                                        <h5 className="font-medium capitalize text-gray-900 line-clamp-2 max-[1300px]:text-[15px]">
                                             {item.subject}
                                         </h5>
-                                        <span className="text-sm text-gray-600">Tác giả: {item.author}</span>
+                                        <span className="text-sm text-gray-600 max-[1300px]:text-[12px]">Tác giả: {item.author}</span>
                                         <div className="text-sm text-gray-600 flex gap-1.5">
-                                            <FaRegCalendarAlt className="text-base"/> 
-                                            <span className="leading-4">
-                                                Ngày đăng: {item.formatedDate}
+                                            <FaRegCalendarAlt className="text-base max-[1156px]:hidden"/> 
+                                            <span className="leading-4 max-[1300px]:text-[12px]">
+                                                <span className="max-[1156px]:hidden ">Ngày đăng: </span> {item.formatedDate}
                                             </span>
                                         </div>
                                     </div>
@@ -89,35 +90,35 @@ const VideoDetail = () => {
                         </ul>
                     </div>
 
-                    <div className="w-full bg-white shadow mt-10">
+                    <div className="w-full bg-white shadow mt-10 max-[700px]:mt-0 max-[540px]:mt-10">
                         <div className="w-full p-2 border-l-5 border-[#2f904b]">
                             <h2 className="uppercase text-lg font-medium">
                                 Sản phẩm nổi bật
                             </h2>
                         </div>
-                        <ul className="w-full mt-2">
+                        <ul className="w-full mt-2 ">
                             {productNewLast?.map(item => (
                                 <li key={item._id}
                                 className="px-2 py-4 flex gap-2.5 order_items border-b border-gray-200">
                                     <NavLink to={`/products/detail/${item.slug}`}
-                                    className={"w-[100px] flex-none"}>
+                                    className={"w-[100px] flex-none max-[1400px]:w-[80px]"}>
                                         <img src={item.thumbnail_main} alt={item.name} 
-                                        className="w-full object-cover"/>
+                                        className="w-full object-cover border-1 border-[#0000001f]"/>
                                     </NavLink>
-                                    <div className="text-base leading-7">
-                                        <h5 className="font-medium capitalize text-gray-900 line-clamp-2">
+                                    <div className="text-base">
+                                        <h5 className="font-medium capitalize text-gray-900 line-clamp-2 max-[1300px]:text-[15px]">
                                             {item.name}
                                         </h5>
-                                        <span className="text-sm text-gray-600">
+                                        <span className="text-sm text-gray-600 max-[1300px]:text-[13px]">
                                             đ 
-                                            <span className="ml-1 text-lg text-main font-medium">
+                                            <span className="ml-1 text-lg text-main font-medium ">
                                                 {format(item.price)}
                                             </span>
                                         </span>
                                         <div className="text-sm text-gray-600 flex gap-1.5">
-                                            <FaRegCalendarAlt className="text-base"/> 
-                                            <span className="leading-4">
-                                                Ngày đăng: {item.formatedDate}
+                                            <FaRegCalendarAlt className="text-base max-[1156px]:hidden"/> 
+                                            <span className="leading-4 max-[1300px]:text-[12px]">
+                                                <span className="max-[1156px]:hidden ">Ngày đăng: </span> {item.formatedDate}
                                             </span>
                                         </div>
                                     </div>

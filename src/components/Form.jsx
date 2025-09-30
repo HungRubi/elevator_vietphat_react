@@ -39,7 +39,7 @@ const Form = () => {
     }, [status])
      
     return (
-        <div className="w-[80%] m-auto mt-8" data-aos="fade-up">
+        <div className="w-[80%] m-auto mt-8 max-[1000px]:w-full max-[1000px]:px-[15px]" data-aos="fade-up">
             <div className="w-full bg-[#2f904b] h-10 leading-10 text-[16px] px-5 text-white">
                 Để lại lời nhắn của bạn ở đây
             </div>

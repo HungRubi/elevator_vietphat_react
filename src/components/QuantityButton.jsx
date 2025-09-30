@@ -26,7 +26,8 @@ const QuantityButton = ({ quantity, setQuantity, price, onQuantityChange }) => {
         <div className="flex items-center">
             <button 
                 onClick={handleDecrease}
-                className="w-[30px] h-[30px] flex items-center justify-center !bg-transparent !text-black border border-[#cbd0dd] text-[18px] cursor-pointer"
+                className="w-[30px] h-[30px] flex items-center justify-center !bg-transparent 
+                !text-black border border-[#cbd0dd] text-[18px] cursor-pointer max-[600px]:!w-6.5 max-[600px]:!h-6.5"
             >
                 -
             </button>
@@ -34,11 +35,13 @@ const QuantityButton = ({ quantity, setQuantity, price, onQuantityChange }) => {
                 type="text" 
                 value={quantity || 1} 
                 onChange={handleInputChange}
-                className='text-center h-[30px] w-[50px] border-t bg-white border-t-[#cbd0dd] border-b border-b-[#cbd0dd] outline-0'
+                className='text-center h-[30px] w-[50px] border-t bg-white border-t-[#cbd0dd] border-b border-b-[#cbd0dd] 
+                outline-0 max-[600px]:!w-6.5 max-[600px]:!h-6.5 max-[600px]:text-sm'
             />
             <button 
                 onClick={handleIncrease}
-                className="w-[30px] h-[30px] flex items-center justify-center !bg-transparent !text-black border border-[#cbd0dd] text-[18px] cursor-pointer"
+                className="w-[30px] h-[30px] flex items-center justify-center !bg-transparent !text-black border 
+                border-[#cbd0dd] text-[18px] cursor-pointer max-[600px]:!w-6.5 max-[600px]:!h-6.5"
             >
                 +
             </button>

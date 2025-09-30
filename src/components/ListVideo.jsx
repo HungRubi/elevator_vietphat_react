@@ -12,7 +12,7 @@ const ListVideo = ({data}) => {
                 {data?.length > 0 ? (
                     data?.map(item => (
                         <li key={item._id} data-aos="fade-up"
-                        className="item_video bg-white shadow">
+                        className="item_video bg-white shadow max-[700px]:!w-full">
                             <NavLink to={`/video/${item.slug}`} title={item.name}
                             className="w-full relative blur_img overflow-hidden inline-block">
                                 <img src={item.thumbnail} data-aos="zoom-in"

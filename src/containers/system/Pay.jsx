@@ -139,11 +139,11 @@ const Pay = () => {
     return (
         <>
             <div className="w-full bg-white py-2.5" style={{ boxShadow: '0 1px 1px 0 rgba(0,0,0,.09)' }}>
-                <div className="px-[10%] w-full flex items-center justify-between">
+                <div className="px-[10%] w-full flex items-center justify-between max-[1000px]:px-[15px]">
                     <HeaderNav>Thanh toán</HeaderNav>
                 </div>
             </div>
-            <div className="w-full px-[10%] mt-5">
+            <div className="w-full px-[10%] mt-5 max-[1000px]:px-[15px]">
                 {/* Address Section */}
                 <div className="w-full bg-white" style={{ boxShadow: '0 1px 1px 0 rgba(0,0,0,.09)' }}>
                     <div className="w-full h-[3px] bg_pay"></div>
@@ -152,12 +152,12 @@ const Pay = () => {
                             <FaMapMarkerAlt className="text-[#2f904b] text-[1.225rem] mr-[9px]" />
                             <h5 className="capitalize text-[1.425rem]">địa chỉ nhận hàng</h5>
                         </div>
-                        <div className="w-full flex items-center">
-                            <h5 className="text-[18px] line-clamp-1 max-w-[700px]">
+                        <div className="w-full flex items-center max-[665px]:flex-col max-[665px]:items-start gap-2.5">
+                            <h5 className="text-[18px] max-w-[700px] max-[1172px]:!max-w-[500px] max-[757px]:!max-w-[400px]">
                                 <span className="font-[600] mr-2.5">{currentUser?.name} (+84) {currentUser?.phone}</span>
                                 {currentUser?.address}
                             </h5>
-                            <div className="ml-[1.5rem] border border-[#2f904b] py-[2px] px-[5px] uppercase text-[10px] text-[#2f904b]">
+                            <div className="ml-[1.5rem] border border-[#2f904b] py-[2px] px-[5px] max-[665px]:!ml-0 uppercase text-[10px] text-[#2f904b]">
                                 mặc định
                             </div>
                             <ModalAddress />
@@ -170,9 +170,9 @@ const Pay = () => {
                     <div className="pt-6 pb-3 flex items-center">
                         <div className="w-2/3 text-[25px]">Sản phẩm</div>
                         <div className="w-1/3 text-[18px] flex text-[#888]">
-                            <div className="w-1/3 text-center">Đơn giá</div>
-                            <div className="w-1/3 text-center">Số lượng</div>
-                            <div className="w-1/3 text-center">Thành tiền</div>
+                            <div className="w-1/3 text-center max-[879px]:hidden">Đơn giá</div>
+                            <div className="w-1/3 text-center max-[879px]:hidden">Số lượng</div>
+                            <div className="w-1/3 text-center max-[879px]:hidden">Thành tiền</div>
                         </div>
                     </div>
                     <div className="py-3 flex">
@@ -182,17 +182,25 @@ const Pay = () => {
                     <ul className="w-full pb-8">
                         {selectedProducts.map((item) => (
                             <li key={item.product._id} className="w-full py-2.5 flex items-center">
-                                <div className="w-2/3 flex items-center">
+                                <div className="w-2/3 flex items-center max-[879px]:!w-full">
                                     <NavLink to={`/products/detail/${item.product.slug}`}>
-                                        <img src={item.product.thumbnail_main} alt="ảnh sản phẩm" className="w-[80px] h-[80px] border border-[#cbd0dd]" />
+                                        <div className="w-[80px] h-[80px] border border-[#cbd0dd] flex-none">
+                                            <img src={item.product.thumbnail_main} alt="ảnh sản phẩm" className="w-full object-cover " />
+                                        </div>
                                     </NavLink>
-                                    <h5 className="mr-4 text-[17px] text-[#222] line-clamp-1 ml-2.5 max-w-[400px]">{item.product.name}</h5>
-                                    <h5 className="text-[17px] text-[#888] line-clamp-1">Loại: Linh kiện điện</h5>
+                                    <div className="flex items-center max-[1083px]:flex-col max-[1083px]:items-start">
+                                        <h5 className="mr-4 text-[17px] text-[#222] line-clamp-1 ml-2.5 max-w-[400px]">{item.product.name}</h5>
+                                        <h5 className="text-[17px] text-[#888] line-clamp-1 max-[1083px]:ml-2.5">Loại: Linh kiện điện</h5>
+                                        <div className="flex items-center">
+                                            <h5 className="text-[17px] text-[#888] line-clamp-1 max-[1083px]:ml-2.5 hidden max-[879px]:!block">x{item.quantity}</h5>
+                                            <h5 className="text-[17px] text-[#888] line-clamp-1 max-[1083px]:ml-2.5 hidden max-[635px]:!block">₫{formatMoney(item.product.price)}</h5>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="w-1/3 text-[18px] flex text-[#888]">
-                                    <div className="w-1/3 text-center">₫{formatMoney(item.product.price)}</div>
-                                    <div className="w-1/3 text-center">{item.quantity}</div>
-                                    <div className="w-1/3 text-center">₫{formatMoney(item.product.price * item.quantity)}</div>
+                                <div className="w-1/3 text-[18px] flex text-[#888] max-[635px]:hidden">
+                                    <div className="w-1/3 text-center max-[635px]:hidden">₫{formatMoney(item.product.price)}</div>
+                                    <div className="w-1/3 text-center max-[879px]:hidden">{item.quantity}</div>
+                                    <div className="w-1/3 text-center max-[879px]:hidden">₫{formatMoney(item.product.price * item.quantity)}</div>
                                 </div>
                             </li>
                         ))}
@@ -201,25 +209,25 @@ const Pay = () => {
 
                 {/* Payment and Voucher Section */}
                 <div className="w-full bg-[#fafdff] px-[30px] border-b-dash">
-                    <div className="w-full flex">
-                        <div className="w-4/10 flex items-center border-r-dash py-10">
-                            <div className="w-full flex items-center gap-2.5">
+                    <div className="w-full flex max-[1283px]:!flex-col">
+                        <div className="w-4/10 flex items-center border-r-dash py-10 max-[1283px]:!w-full max-[1283px]:!border-none max-[1283px]:order-2">
+                            <div className="w-full flex items-center gap-2.5 max-[1322px]:!flex-col max-[1322px]:items-start">
                                 <span className="line-clamp-1">Lời nhắn:</span>
                                 <input type="text" placeholder="Lưu ý cho người bán..." className="border border-[#cbd0dd] py-[6px] px-[15px] w-[80%]" />
                             </div>
                         </div>
-                        <div className="w-6/10 py-[25px] pl-[25px]">
-                            <div className="w-full grid grid-cols-3 items-center gap-2">
-                                <div className="flex items-center line-clamp-1">Phương thức thanh toán:</div>
-                                <span className="text-end truncate">{paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng' : 'Thanh toán qua thẻ ngân hàng'}</span>
+                        <div className="w-6/10 py-[25px] pl-[25px] max-[1283px]:!w-full max-[1283px]:!pl-0 max-[1283px]:order-1">
+                            <div className="w-full grid grid-cols-3 items-center gap-2 max-[600px]:!grid-cols-2">
+                                <div className="flex items-center line-clamp-1 max-[600px]:hidden">Phương thức thanh toán:</div>
+                                <span className="text-end max-[600px]:!text-start truncate">{paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng' : 'Thanh toán qua thẻ ngân hàng'}</span>
                                 <MethodPayment methodPayment={setPaymentMethod} />
                             </div>
-                            <div className="w-full grid grid-cols-3 items-center gap-2 mt-5">
-                                <div className="flex items-center gap-2">
-                                    <BsTag className="text-[23px] text-[#2f904b]" />
+                            <div className="w-full grid grid-cols-3 items-center gap-2 mt-5 max-[600px]:!grid-cols-2">
+                                <div className="flex items-center gap-2 max-[600px]:hidden">
+                                    <BsTag className="text-[23px] text-[#2f904b] max-[665px]:hidden" />
                                     Voucher của Shop
                                 </div>
-                                <span className="text-end">{selectedVoucher ? selectedVoucher.title : 'Không có voucher nào'}</span>
+                                <span className="text-end line-clamp-1 max-[600px]:text-start">{selectedVoucher ? selectedVoucher.title : 'Không có voucher nào'}</span>
                                 <span className='text-end'>
                                     <ModalDiscount />
                                 </span>
@@ -256,16 +264,18 @@ const Pay = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full px-[30px] flex items-center justify-between text-[18px] text-[#888] py-6">
-                            <h5>
+                        <div className="w-full px-[30px] flex items-center justify-between text-[18px] text-[#888] py-6
+                        max-[770px]:flex-col max-[770px]:items-start gap-5">
+                            <h5 className='w-1/2 max-[770px]:w-full'>
                                 Nhấn &quot;Đặt hàng&quot; đồng nghĩa với việc bạn đồng ý tuân theo
                                 <NavLink className="ml-1 text-blue-600">Điều Khoản Việt Phát</NavLink>
                             </h5>
                             <div className="flex items-center gap-5">
+                                <Button className={'max-[770px]:block'} onClick={handleAddOrder}>Đặt hàng</Button>
                                 <Button className="bg-inherit !text-[#2f904b]" onClick={handleExportInvoice}>
                                     Xuất hóa đơn
                                 </Button>
-                                <Button onClick={handleAddOrder}>Đặt hàng</Button>
+                                <Button className={'max-[770px]:hidden'} onClick={handleAddOrder}>Đặt hàng</Button>
                             </div>
                         </div>
                     </div>

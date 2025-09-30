@@ -80,7 +80,7 @@ const ModalDiscount = () => {
     return (
         <>
             <button 
-                className="ml-[2.5rem] capitalize text-blue-600 !cursor-pointer text-lg" 
+                className="ml-[2.5rem] capitalize text-blue-600 !cursor-pointer text-lg max-[665px]:text-sm" 
                 type="button"
                 onClick={() => setIsOpen(true)}
             >

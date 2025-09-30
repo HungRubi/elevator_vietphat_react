@@ -1,12 +1,12 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { menuBar } from '../util/menu';
-import { CircleButton, Notification, Search } from './index';
+import { CircleButton, Notification, Search, Button } from './index';
 import icons from '../util/icons';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../store/actions'
-const {FaRegBell, RiMenuFill, PiShoppingCartBold, FaArrowRightFromBracket, BsPerson, FiTruck, BsTag} = icons
+const {FaRegBell, RiMenuFill, PiShoppingCartBold, IoCloseSharp, FiSearch, FaArrowRightFromBracket, BsPerson, FiTruck, BsTag} = icons
 const active = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-center item_nav relative z-10 bg-[#2f904b]';
 const notActive = 'leading-[2.5] py-[5px] px-5 text-xl text-white uppercase text-center item_nav relative z-10 hover:bg-[#2f904b] transition duration-300 ease-linear';
 
@@ -16,7 +16,6 @@ const HeaderBar = () => {
     const [openMenu, setOpenMenu] = useState(null);
     const [hoveredMenu, setHoveredMenu] = useState(null);
     const timeoutRef = useRef(null);
-
     const handleToggleMenu = (menu) => {
         setOpenMenu(menu);
     }
@@ -63,15 +62,24 @@ const HeaderBar = () => {
         dispatch(actions.logout());
         navigate('/')
     }
-
-    return (
-        <div className={`w-full px-[10%] m-auto flex items-center justify-between ${location.pathname === '/' ? "bg-transparent" : "bg-black"}`}
+    const { menu_mobie } = useSelector(state => state.app);
+    const clickMenuMobie = () => {
+        dispatch(actions.toggleMenuMobie(!menu_mobie));
+    }
+    const [isSearchMobie, setIsSearchMobie] = useState(false);
+    return (    
+        <div className={`w-full px-[10%] max-[1000px]:pr-[15px] max-[1000px]:pl-[0px] m-auto flex items-center justify-between ${location.pathname === '/' ? "bg-transparent" : "bg-black"}`}
         data-aos="fade-down" data-aos-anchor-placement="top-bottom">
             <div className="w-[90px]">
                 <NavLink
-                className="w-full"
+                className="w-full max-[600px]:hidden"
                 to={'/'}>
                     <img src="/img/logo.png" alt="" className='w-full object-cover'/>
+                </NavLink>
+                <NavLink
+                className="w-full hidden max-[600px]:block"
+                to={'/'}>
+                    <img src="/img/logo_white.png" alt="" className='w-full object-cover'/>
                 </NavLink>
             </div>
             <div className="flex min-w-[45%] w-[55%] px-[1.5%] navbar-1513 hidden-1174">
@@ -116,9 +124,15 @@ const HeaderBar = () => {
             </div>
             
             <div className="flex items-center justify-end gap-4">
-                <Search/>
+                <div className="max-[560px]:hidden">
+                    <Search/>
+                </div>
+                <CircleButton onClick={() => setIsSearchMobie(true)} className={'hidden max-[560px]:!flex'}>
+                    <FiSearch className='size-[20px] text-[#ffffffb4]'/>
+                </CircleButton>
                 <div 
-                    className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative" 
+                    className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] 
+                    flex items-center justify-center cursor-pointer relative max-[500px]:hidden" 
                     onClick={() => handleToggleMenu("notification")}
                 >
                     <FaRegBell className='size-[20px] text-[#ffffffb4]'/>
@@ -132,7 +146,7 @@ const HeaderBar = () => {
 
                 <NavLink
                 to={'/cart'} 
-                className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative">
+                className="rounded-[50%] max-[500px]:hidden h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative">
                     <PiShoppingCartBold className='size-[22px] font-bold text-[#ffffffb4]'/>
                     <CircleButton className={`absolute -top-[10px] -right-[10px] bg-red-500 text-white !h-6 !w-6 flex-none text-[12px] ${productCart?.length > 0 ? "" : "hidden"}`}>
                         {productCart?.length || 0}
@@ -222,9 +236,17 @@ const HeaderBar = () => {
                         </div>
                     )}
                 </div>
-                <CircleButton className={`hidden block-1174`}>
+                <CircleButton className={`hidden block-1174`} onClick={clickMenuMobie}>
                     <RiMenuFill className='size-[20px] text-[#ffffffb4]'/>
                 </CircleButton>
+            </div>
+            <div className={`absolute top-0 bottom-0 left-0 right-0 bg-black flex items-center 
+            justify-center transition-transform duration-600 ease-in-out ${isSearchMobie ? "translate-y-0" : "-translate-y-full"}`}>
+                <Search className={'w-7/10'}/>
+                <Button className={'!bg-transparent !px-1.5 !py-1 absolute right-2 top-1'}
+                onClick={() => setIsSearchMobie(false)}>
+                    <IoCloseSharp className='size-[30px] text-white '/>
+                </Button>
             </div>
         </div>
     )

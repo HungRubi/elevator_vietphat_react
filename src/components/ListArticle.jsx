@@ -7,23 +7,25 @@ const   ListArticle = ({current, totalPage, setCurrent, currentArticle, classNam
         <div className={`px-[35px] pb-[30px] bg-white ${className}`}>
                 {currentArticle?.length > 0 ? (
                     currentArticle?.map(article => (
-                        <div key={article._id} className="w-full py-[35px] border-b border-b-[#eee] flex justify-between gap-[50px]"
+                        <div key={article._id} className="w-full py-[35px] border-b border-b-[#eee] 
+                        flex justify-between gap-[50px] max-[600px]:gap-5"
                         data-aos="fade-up">
                             <NavLink 
                             to={`/news/detail/${article.slug}`} 
-                            className="max-w-[200px] inline-block">
+                            className="max-w-[200px] inline-block max-[550px]:max-w-[160px] max-[476px]:max-w-[100px]">
                                 <img src={article.thumbnail} alt={article.subject} className="w-full" data-aos="zoom-in"/>
                             </NavLink>
                             <div className="flex-1 flex flex-col text-left" data-aos="fade-left">
                                 <NavLink 
                                 to={`/news/detail/${article.slug}`} 
-                                className="text-[20px] font-[500] text-[#393939] line-clamp-1">
+                                className="text-[20px] font-[500] text-[#393939] line-clamp-1 max-[550px]:line-clamp-2
+                                hover:text-[#2f904b] max-[550px]:text-base max-[550px]:font-bold max-[450px]:line-clamp-3">
                                     {article.subject}
                                 </NavLink>
                                 <div className="block text-[14px] text-gray-500 my-2">
                                     by {article.author} on {article.dateFormat}
                                 </div>
-                                <div className="text-[15px] line-clamp-2 leading-6">
+                                <div className="text-[15px] line-clamp-2 leading-6 max-[600px]:line-clamp-3 max-[550px]:hidden">
                                     {article.content}
                                 </div>
                                 <div className="flex justify-end">

@@ -52,7 +52,7 @@ const ModalAddress = () => {
     return (
         <>
             <button 
-                className="ml-[2.5rem] capitalize text-blue-600 !cursor-pointer" 
+                className="ml-[2.5rem] capitalize text-blue-600 !cursor-pointer max-[665px]:!ml-0" 
                 type="button"
                 onClick={() => setIsOpen(true)}
             >

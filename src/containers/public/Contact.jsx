@@ -16,31 +16,31 @@ const Contact = () => {
             </Helmet>
 
             <div className="mt-[75px] w-full mb-15">
-                <div className="w-[80%] px-[10%]" data-aos="fade-up">
+                <div className="w-[80%] px-[10%] max-[1000px]:px-[15px] max-[1000px]:w-full" data-aos="fade-up">
                     <h1
                     style={{fontFamily: "Poppins, sans-serif"}} 
-                    className="text-[24px] text-[#2f904b] font-[600] line-clamp-1">
+                    className="text-[24px] text-[#2f904b] font-[600] max-[560px]:text-center">
                         Công ty TNHH Thang máy Việt Phát
                     </h1>
                     <h2
                     style={{fontFamily: "Poppins, sans-serif"}} 
-                    className="line-clamp-1 text-[18px] font-[600] text-[#0a0a0a]">
+                    className="text-[18px] font-[600] text-[#0a0a0a] max-[560px]:text-center">
                         Chúng tôi rất mong chờ câu hỏi của bạn!
                     </h2>
                 </div>
                 <Form className="!w-full"/>
-                <div className="w-full px-[10%] mt-2.5" data-aos="fade-up">
-                    <p className="text-center line-clamp-3 py-[4px] leading-8">
+                <div className="w-full px-[10%] max-[1000px]:px-[15px] mt-2.5" data-aos="fade-up">
+                    <p className="text-center py-[4px] leading-8">
                         Chúng tôi sẽ phấn đấu phát triển bằng uy tín, tồn tại bằng chất lượng,hướng 
                         tới sự hài lòng của khách hàng và lấy sự tự giác làm kim chỉ nam để cung cấp 
                         cho khách hàng những dịch vụ toàn diện và chất lượng cao hơn.
                     </p>
                     <div className="mt-5 text-left">
                         <div className="flex gap-2.5 justify-start items-center mt-3.5">
-                            <FaMapMarkerAlt className="text-[25px] text-[#2f904b]"/>
+                            <FaMapMarkerAlt className="text-[35px] text-[#2f904b]"/>
                             <NavLink
                             to={""}
-                            className="line-clamp-1">
+                            className="">
                                 Address: Km8 + 93 đường 5 mới, xã Nam Sơn, huyện An Dương, Hải Phòng, Việt Nam
                             </NavLink>
                         </div>

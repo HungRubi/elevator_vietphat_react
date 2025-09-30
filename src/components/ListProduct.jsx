@@ -34,7 +34,7 @@ const ListProduct = ({data, category}) => {
         <div className="flex flex-wrap gap-5">
             {filteredProducts.length > 0 ? (
                 filteredProducts.map((item => (
-                    <div key={item._id} className="border border-[#cbd0dd] item_product shadow" data-aos="zoom-in">
+                    <div key={item._id} className="border border-[#cbd0dd] item_product shadow max-[540px]:!w-full" data-aos="zoom-in">
                         <NavLink className="w-full relative overflow-hidden inline-block blur_img" to={`/products/detail/${item.slug}`}>
                             <img src={item.thumbnail_main} alt="ảnh sản phẩm" data-aos="zoom-in"
                             className="w-full border-b border-b-[#cbd0dd]"/>

@@ -151,10 +151,10 @@ const ProductDetail = () => {
                 />
             </Helmet>
             <div className='mb-15'>
-                <div className="w-full px-[10%] pt-8">
-                    <div className="w-full flex justify-between">
-                        <div className="w-[47%]">
-                        <img src={productDetail?.thumbnail_main} alt={productDetail?.name || "Sản phẩm"} className="w-full"/>
+                <div className="w-full px-[10%] pt-8 max-[1000px]:px-[15px]">
+                    <div className="w-full flex justify-between max-[800px]:flex-col max-[800px]:gap-5">
+                        <div className="w-[47%] order-2 max-[800px]:w-full">
+                            <img src={productDetail?.thumbnail_main} alt={productDetail?.name || "Sản phẩm"} className="w-full"/>
                             <div className="w-full flex items-center justify-baseline mt-4 gap-4">
                                 <img src={productDetail?.thumbnail_main} alt="" style={{width: "calc(25% - 12px)"}}/>
                                 <img src={productDetail?.thumbnail_1} alt="" style={{width: "calc(25% - 12px)"}}/>
@@ -162,7 +162,7 @@ const ProductDetail = () => {
                                 <img src={productDetail?.thumbnail_3} alt="" style={{width: "calc(25% - 12px)"}}/>
                             </div>
                         </div>
-                        <div className="w-1/2">
+                        <div className="w-1/2 max-[800px]:w-full">
                             <div className="relative flex">
                                 <span className='inline-block'>
                                     <LoveButton/>
@@ -173,22 +173,22 @@ const ProductDetail = () => {
                             </div>
                             <div className="flex items-center justify-start mt-3">
                                 <div className='flex gap-1 items-center'>
-                                    <span className='text-[28px] mr-1.5'>5</span>
-                                    <FaStar className='text-[#ee4d2d] text-[18px]'/>
-                                    <FaStar className='text-[#ee4d2d] text-[18px]'/>
-                                    <FaStar className='text-[#ee4d2d] text-[18px]'/>
-                                    <FaStar className='text-[#ee4d2d] text-[18px]'/>
-                                    <FaStar className='text-[#ee4d2d] text-[18px]'/>
+                                    <span className='text-[28px] mr-1.5 max-[800px]:text-xl'>5</span>
+                                    <FaStar className='text-[#ee4d2d] text-[18px] max-[800px]:text-sm'/>
+                                    <FaStar className='text-[#ee4d2d] text-[18px] max-[800px]:text-sm'/>
+                                    <FaStar className='text-[#ee4d2d] text-[18px] max-[800px]:text-sm'/>
+                                    <FaStar className='text-[#ee4d2d] text-[18px] max-[800px]:text-sm'/>
+                                    <FaStar className='text-[#ee4d2d] text-[18px] max-[800px]:text-sm'/>
                                 </div>
                                 <div className="h-[30px] w-[1px] border-l border-l-[#cbd0dd] mx-[15px]"></div>
-                                <div className='flex gap-1 items-end text-[28px]'>
+                                <div className='flex gap-1 items-end text-[28px] max-[800px]:text-xl'>
                                     {comments?.length}
-                                    <span className='text-[#807f7f] capitalize text-[15px] leading-8 ml-1.5'>đánh giá</span>
+                                    <span className='text-[#807f7f] capitalize text-[15px] leading-8 ml-1.5 max-[800px]:text-sm line-clamp-1'>đánh giá</span>
                                 </div>
                                 <div className="h-[30px] w-[1px] border-l border-l-[#cbd0dd] mx-[14px] "></div>
-                                <div className='flex gap-1 items-end text-[28px]'>
+                                <div className='flex gap-1 items-end text-[28px] max-[800px]:text-xl'>
                                     31.2k
-                                    <span className='text-[#807f7f] capitalize text-[15px] leading-8 ml-1.5'>sold</span>
+                                    <span className='text-[#807f7f] capitalize text-[15px] leading-8 ml-1.5 max-[800px]:text-sm'>sold</span>
                                 </div>
                             </div>
                             <div className="flex items-center justify-start mt-3 w-full bg-[#fafafa] py-[15px] px-5">
@@ -197,56 +197,58 @@ const ProductDetail = () => {
                                 <div className="bg-[#e3ffec] text-[12px] px-1 h-4.5 ml-[0.925rem] text-[#2f904b] font-bold rounded-[2px]">{productDetail?.sale}%</div>
                             </div>
                             <div className="flex items-center justify-start mt-8">
-                                <h3 className="text-[#757575] capitalize text-[18px] mr-8 w-[120px] line-clamp-2">Mã giảm giá</h3>
-                                <div className="bg-[#dafce5] py-[3px] px-[7px] whitespace-nowrap flex items-center justify-center discount relative mr-5 cursor-default">
+                                <h3 className="text-[#757575] capitalize text-[18px] mr-8 w-[120px] line-clamp-2 max-[800px]:text-base">Mã giảm giá</h3>
+                                <div className="bg-[#dafce5] py-[3px] px-[7px] whitespace-nowrap 
+                                flex items-center justify-center discount relative mr-5 cursor-default max-[800px]:text-sm">
                                     <span className='text-[#2f904b]'>Giảm ₫200k</span>
                                 </div>
-                                <div className="bg-[#dafce5] py-[3px] px-[7px] whitespace-nowrap flex items-center justify-center discount relative cursor-default">
+                                <div className="bg-[#dafce5] py-[3px] px-[7px] whitespace-nowrap flex items-center 
+                                justify-center discount relative cursor-default max-[800px]:text-sm">
                                     <span className='text-[#2f904b]'>Giảm ₫400k</span>
                                 </div>
                             </div>
                             <div className="flex items-center justify-start mt-8">
-                                <h3 className="text-[#757575] capitalize text-[18px] mr-8 w-[120px] line-clamp-2">vận chuyển</h3>
+                                <h3 className="text-[#757575] capitalize text-[18px] mr-8 w-[120px] line-clamp-2 max-[800px]:text-base">vận chuyển</h3>
                                 <div className="flex items-center">
                                     <FiTruck className='text-[#2f904b] text-[20px] mr-3.5'/>
                                     <div className="">
                                         <div className="mr-5 flex items-center">
-                                            <h5 className="text-[18px] text-[#222] line-clamp-2 flex items-center">
+                                            <h5 className="text-[18px] text-[#222] line-clamp-2 flex items-center max-[800px]:text-sm">
                                                 Nhận hàng sau 5 ngày đặt, phí giao 0đ
                                                 <AiOutlineRight className='ml-1'/>
                                             </h5>
                                         </div>
-                                        <h5 className='text-[14px] text-[#888]'>Đặt hàng ngay để nhận được giá sốc</h5>
+                                        <h5 className='text-[14px] text-[#888] max-[800px]:text-sm'>Đặt hàng ngay để nhận được giá sốc</h5>
                                     </div>
                                 </div>
                             </div>
                             <div className="flex items-center justify-start mt-8">
-                                <h3 className="text-[#757575] capitalize text-[18px] mr-8 w-[120px] line-clamp-2">an tâm mua sắm</h3>
+                                <h3 className="text-[#757575] capitalize text-[18px] mr-8 w-[120px] line-clamp-2 max-[800px]:text-base">an tâm mua sắm</h3>
                                 <div className="flex">
                                     <IoShieldCheckmarkOutline className='text-[#2f904b] text-[20px] mr-3.5 '/>
-                                    <h5 className='flex items-center'>
+                                    <h5 className='flex items-center max-[800px]:text-sm'>
                                         Trả hàng miễn phí sau 7 ngày 
                                         <AiOutlineRight className='ml-1'/>
                                     </h5>
                                 </div>
                             </div>
                             <div className="flex items-center justify-start mt-8">
-                                <h3 className="text-[#757575] capitalize text-[20px] mr-8 w-[120px] line-clamp-2">số lượng</h3>
-                                <div className="flex">
-                                    <QuantityButton quantity={1}/>
-                                    <h3 className="text-[#757575] capitalize text-[18px] mr-8 line-clamp-2 ml-5">Số lượng còn lại: {productDetail?.stock}</h3>
-                                </div>
+                                <h3 className="text-[#757575] capitalize text-[20px] mr-8 w-[120px] line-clamp-2 max-[800px]:text-base">số lượng</h3>
+                                <QuantityButton quantity={1}/>
                             </div>
-                            <div className="flex items-center mt-[80px] gap-5">
+                            <div className="flex mt-8">
+                                <h3 className="text-[#757575] capitalize text-[18px] mr-8 line-clamp-2 max-[800px]:text-base">Số lượng còn lại: {productDetail?.stock || 10}</h3>
+                            </div>
+                            <div className="flex items-center mt-[80px] gap-5 max-[800px]:mt-5">
                                 <Button onClick={() => handleAddToCart(productDetail, currentUser?._id)}
-                                className="!bg-[#e3ffec] !text-[#2f904b] flex items-center gap-2 border border-[#2f904b]">
+                                className="!bg-[#e3ffec] !text-[#2f904b] flex items-center gap-2 border border-[#2f904b] max-[800px]:text-sm">
                                     <PiShoppingCartBold className='text-[20px]'/> 
                                     thêm vào giỏ hàng
                                 </Button>
-                                <Button className="border border-transparent">
+                                <Button className="border border-transparent max-[800px]:text-sm">
                                     mua ngay
                                 </Button>
-                                <Button className="border border-transparent flex items-center gap-2">
+                                <Button className="border border-transparent flex items-center gap-2 max-[800px]:text-sm">
                                     <MdEmail className='text-[20px]'/>
                                     gửi mail
                                 </Button>
@@ -298,7 +300,8 @@ const ProductDetail = () => {
                                 đánh giá sản phẩm
                             </h3>
                         </div>
-                        <div className={`${comments && comments.length > 0 ? "bg-[#e3ffec] border border-[#2f904a34] mt-5 px-[1.875rem] py-[1.875rem] mb-[1rem] rounded-[2px]" : "bg-inherit"} w-[90%] mx-auto  flex items-center`}>
+                        <div className={`${comments && comments.length > 0 ? "bg-[#e3ffec] border border-[#2f904a34] mt-5 px-[1.875rem] py-[1.875rem] mb-[1rem] rounded-[2px]" : "bg-inherit"} 
+                        w-[90%] max-[666px]:flex-col mx-auto max flex items-center max-[666px]:items-start max-[666px]:gap-5`}>
                             {comments && comments.length > 0 ? (
                                 <>
                                 <div>
@@ -318,7 +321,7 @@ const ProductDetail = () => {
                                         })}
                                     </div>
                                 </div>
-                                <div className="ml-[25px] w-full flex flex-wrap items-center gap-4">
+                                <div className="ml-[25px] w-full flex flex-wrap items-center gap-4 max-[666px]:ml-0">
                                     {typeComment.map((item, idx) => (
                                         <Button key={idx}
                                         className="!capitalize !py-[5px] font-[400] 
@@ -337,7 +340,7 @@ const ProductDetail = () => {
                             {currentComment && currentComment?.length > 0 ? currentComment?.map(item => (
                                 <li key={item._id}
                                 className="flex border-b border-b-[#2e2a2a17] py-[1rem] pl-[1.25rem]">
-                                    <div className="w-[40px] h-[40px] rounded-[50%] flex items-center justify-center overflow-hidden">
+                                    <div className="w-[40px] h-[40px] rounded-[50%] flex items-center justify-center overflow-hidden flex-none">
                                         <img 
                                             src={
                                                 item?.user_id?.avatar?.startsWith('/uploads')

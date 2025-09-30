@@ -26,12 +26,17 @@ const initState = {
     categoryProduct: [],
     notification: [],
     paymentUrl: "",
-
     dataPayment: [],
+    menu_mobie: false,
 }
 
 const appReducer = (state = initState, action) => {
     switch (action.type){
+        case actionType.TOGGLE_MENU_MOBIE:
+            return {
+                ...state,
+                menu_mobie: action.menu_mobie,
+            }
         case actionType.PAYMENT_CHECKOUT:
             return {
                 ...state,

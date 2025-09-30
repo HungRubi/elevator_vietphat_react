@@ -37,7 +37,7 @@ const Products = () => {
                 <link rel="canonical" href="https://vmu.com.vn/products" />
             </Helmet>
             <div className="w-full pt-8 mb-8">
-                <div className="w-full px-[10%] flex gap-8">
+                <div className="w-full px-[10%] flex gap-8 max-[1000px]:px-5 max-[770px]:flex-col">
                     <div className="w-[230px] flex-none">
                         <div className="py-1.5 pl-1.5 uppercase text-white bg-[#2f904b] font-[600] ">categories</div>
                         <ul className="w-full pl-2.5">
@@ -54,7 +54,7 @@ const Products = () => {
                         <ProductsAll data={currentProduct} />
                     </div>
                 </div>
-                <div className="w-full ml-[120px] flex justify-center">
+                <div className="w-full ml-[120px] flex justify-center max-[770px]:ml-0">
                     <PageBar currentPage={current} totalPage={Math.ceil(products.length / limit)} onPageChange={setCurrent} />
                 </div>
             </div>

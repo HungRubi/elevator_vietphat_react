@@ -53,3 +53,12 @@ export const resetMessage = (message) => {
         message
     }
 }
+
+export const toggleMenuMobie = (menu_mobie) => {
+    return {
+        type: actionType.TOGGLE_MENU_MOBIE,
+        menu_mobie
+    }
+}
+
+

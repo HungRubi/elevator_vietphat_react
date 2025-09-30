@@ -42,8 +42,10 @@ import { BiSolidPhoneCall } from "react-icons/bi";
 import { AiOutlineMessage } from "react-icons/ai";
 import { MdError } from "react-icons/md";
 import { RiMenuFill } from "react-icons/ri";
+import { IoCloseSharp } from "react-icons/io5";
 
 const icons = {
+    IoCloseSharp,
     RiMenuFill,
     MdError,
     IoIosSend,
