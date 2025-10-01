@@ -64,7 +64,7 @@ const Profile = () => {
         dispatch(actions.updateProfileUser(dataToSend, currentUser?._id));
     }
     return (
-        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
+        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem] max-[750px]:ml-0">
             <div className="py-[15px] border-b border-b-[#cbd0dd]">
                 <h5 className="text-[22px] capitalize">
                     hồ sơ của tôi
@@ -76,8 +76,8 @@ const Profile = () => {
             </div>
             <div className="flex items-center">
                 <form onSubmit={handleSubmit}
-                className='w-full mt-[15px] flex'>
-                    <table className="w-2/3">
+                className='w-full mt-[15px] flex max-[1100px]:flex-col'>
+                    <table className="w-2/3 max-[1100px]:order-2 max-[1100px]:w-full">
                         <tbody>
                             <tr className='h-[65px]'>
                                 <td className="w-[30%] text-[15px] font-[500] capitalize text-right pr-5">
@@ -169,7 +169,7 @@ const Profile = () => {
                             </tr>
                         </tbody>
                     </table>
-                    <div className="flex-none flex flex-col items-center justify-center w-1/3">
+                    <div className="flex-none flex flex-col items-center justify-center w-1/3 max-[1100px]:!w-full ">
                         <div className="w-[150px] h-[150px] relative">
                             <img src={
                                 formData?.avatar?.startsWith('/uploads')

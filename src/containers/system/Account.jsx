@@ -51,8 +51,8 @@ const Account = () => {
     ]
     return (
         <div
-        className="w-full px-[10%] pt-8 flex justify-between">
-            <div className="w-[200px]">
+        className="w-full px-[10%] pt-8 flex justify-between max-[1000px]:px-[15px] max-[750px]:flex-col">
+            <div className="w-[200px] max-[750px]:w-full flex-none">
                 <div className="flex w-full items-center">
                     <CircleButton
                     className="mr-3">
@@ -104,15 +104,17 @@ const Account = () => {
                     ))}
                 </ul>
             </div>
-            <Routes>
-                <Route path="profile" element={<Profile/>}/>   
-                <Route path="banking" element={<Banking/>}/>   
-                <Route path="address" element={<Address/>}/>   
-                <Route path="password" element={<Password/>}/>   
-                <Route path="notification" element={<Notification/>}/>   
-                <Route path="order" element={<Order/>}/>   
-                <Route path="voucher" element={<Voucher/>}/>   
-            </Routes>
+            <div className="flex-1">
+                <Routes>
+                    <Route path="profile" element={<Profile/>}/>   
+                    <Route path="banking" element={<Banking/>}/>   
+                    <Route path="address" element={<Address/>}/>   
+                    <Route path="password" element={<Password/>}/>   
+                    <Route path="notification" element={<Notification/>}/>   
+                    <Route path="order" element={<Order/>}/>   
+                    <Route path="voucher" element={<Voucher/>}/>   
+                </Routes>
+            </div>
         </div>
     );
 }

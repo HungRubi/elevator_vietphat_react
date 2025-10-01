@@ -26,7 +26,7 @@ const Password = () => {
         }
     }   
     return (
-        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
+        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem] max-[750px]:ml-0 max-[500px]:px-2">
             <div className="py-[15px] border-b border-b-[#cbd0dd]">
                 <h5 className='text-[22px] capitalize'>
                     địa chỉ của tôi

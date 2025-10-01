@@ -131,7 +131,7 @@ const HeaderBar = () => {
                     <FiSearch className='size-[20px] text-[#ffffffb4]'/>
                 </CircleButton>
                 <div 
-                    className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] 
+                    className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex-none
                     flex items-center justify-center cursor-pointer relative max-[500px]:hidden" 
                     onClick={() => handleToggleMenu("notification")}
                 >
@@ -146,7 +146,7 @@ const HeaderBar = () => {
 
                 <NavLink
                 to={'/cart'} 
-                className="rounded-[50%] max-[500px]:hidden h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative">
+                className="rounded-[50%] max-[500px]:hidden h-[40px] w-[40px] flex-none bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative">
                     <PiShoppingCartBold className='size-[22px] font-bold text-[#ffffffb4]'/>
                     <CircleButton className={`absolute -top-[10px] -right-[10px] bg-red-500 text-white !h-6 !w-6 flex-none text-[12px] ${productCart?.length > 0 ? "" : "hidden"}`}>
                         {productCart?.length || 0}
@@ -155,7 +155,7 @@ const HeaderBar = () => {
                     
                 {/* Menu User */}
                 <div 
-                    className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex items-center justify-center cursor-pointer relative" 
+                    className="rounded-[50%] h-[40px] w-[40px] bg-[rgba(255,255,255,0.253)] flex-none flex items-center justify-center cursor-pointer relative" 
                     onClick={() => handleToggleMenu("account")}
                 >
                     <img src={currentUser ? `${currentUser?.avatar?.startsWith('/uploads') ? `${import.meta.env.VITE_SERVER_URL}${currentUser?.avatar}` : currentUser?.avatar}` : "/img/default.png"} alt="" className='rounded-[50%]'/>

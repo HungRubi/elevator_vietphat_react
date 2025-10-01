@@ -62,8 +62,8 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
     return (
         <>
             {orders && orders?.length > 0 ? orders.map(item => (
-                <ul className="w-full mt-5" key={item._id}>
-                    <li className="w-full mb-5" >
+                <div className="w-full mt-5" key={item._id}>
+                    <div className="w-full mb-5" >
                         <div className="bg-white w-full px-5">
                             <div className="py-5 border-b border-b-[#cbd0dd] flex items-center justify-between">
                                 <div className="flex items-center gap-1.5">
@@ -83,14 +83,14 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                 </div>
                                 
                             </div>
-                            <ul className="w-full">
+                            <div className="w-full">
                                 {item?.orderDetails?.map((product, index) => (
-                                    <li key={index} className="w-full order_items border-b border-[#cbd0dd] py-5">
+                                    <div key={index} className="w-full order_items border-b border-[#cbd0dd] py-5">
                                         <div className="w-full flex items-center justify-between">
                                             <div className="flex gap-2.5 w-[70%]">
-                                                <div className="w-[100px] h-[100px] border border-[#cbd0dd]">
+                                                <div className="w-[100px] h-[100px] border border-[#cbd0dd] flex-none">
                                                     <img src={product.product.thumbnail_main} alt="ảnh sản phẩm"
-                                                    className='w-full object-cover' />
+                                                    className='w-full h-full object-cover' />
                                                 </div>
                                                 <div className="max-w-[70%]">
                                                     <h5 className="text-[17px] line-clamp-1">
@@ -114,9 +114,9 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                             </div>
                                         </div>
                                         
-                                    </li>
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                         <div className="w-full bg-[rgba(192,247,195,0.445)]">
                             <div className="pt-5 px-5 pb-3 text-right">
@@ -168,8 +168,8 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                 </div>
                             </div>
                         </div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             )) : (
                 <div className="w-full bg-white p-[10%] flex flex-col justify-center items-center mt-5 gap-5"
                 style={{boxShadow : '0 1px 1px 0 rgba(0, 0, 0, 0.05)'}}>

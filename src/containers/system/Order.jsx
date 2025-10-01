@@ -81,11 +81,13 @@ const Order = () => {
     }, [dispatch, navigate]);
 
     return (
-        <div className="ml-8 flex-1">
-            <div className="flex items-center justify-between bg-white w-full">
+        <div className="ml-8 max-[750px]:ml-0">
+            <div className="flex items-center justify-between bg-white">
                 {tab.map((item, index) => (
                     <div key={index} 
-                    className={`text-center py-2.5 px-[25px] flex whitespace-nowrap border-b-[2px] border-transparent cursor-pointer hover:border-[#2f904b] transition duration-300 ease-linear ${active === index ? "!border-b-[#2f904b] text-[#2f904b]" : "text-[#888]"}`}
+                    className={`text-center py-2.5 px-[25px] flex whitespace-nowrap border-b-[2px] 
+                        border-transparent cursor-pointer hover:border-[#2f904b] transition duration-300 
+                        ease-linear ${active === index ? "!border-b-[#2f904b] text-[#2f904b]" : "text-[#888]"}`}
                     onClick={() => setActive(index)}>
                         {item.title}
                         <span className='ml-1'>({item.length})</span>

@@ -7,13 +7,13 @@ const Banking = () => {
         toast.warning("Chức năng đang được bảo trì. Vui lòng quay lại sau")
     }
     return (
-        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem]">
+        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem] max-[750px]:ml-0">
             <div className="py-[15px] border-b border-b-[#cbd0dd] flex items-center justify-between">
-                <h5 className='text-[22px] capitalize'>
+                <h5 className='text-[22px] capitalize max-[750px]:text-lg'>
                     thẻ tín dụng/ghi nợ
                 </h5>
                 <Button onClick={handleButton}
-                className={"flex items-center gap-1"}>
+                className={"flex items-center gap-1 max-[750px]:text-sm"}>
                     <GoPlus className='text-[20px] -mt-[2px]'/>
                     thêm thẻ mới
                 </Button>
@@ -24,12 +24,12 @@ const Banking = () => {
                 </p>
             </div>
             <div className="py-[15px] border-b border-b-[#cbd0dd] flex items-center justify-between">
-                <h5 className='text-[22px] capitalize'>
+                <h5 className='text-[22px] capitalize max-[750px]:text-lg'>
                     Tài khoản ngân hàng của tôi
                 </h5>
                 <Button onClick={handleButton}
-                className={"flex items-center gap-1"}>
-                    <GoPlus className='text-[20px] -mt-[2px]'/>
+                className={"flex items-center gap-1 max-[750px]:text-sm"}>
+                    <GoPlus className='text-[20px] -mt-[2px] '/>
                     thêm tài khoản ngân hàng liên kết
                 </Button>
             </div>
