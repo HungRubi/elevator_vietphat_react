@@ -81,19 +81,31 @@ const Order = () => {
     }, [dispatch, navigate]);
 
     return (
-        <div className="ml-8 max-[750px]:ml-0">
-            <div className="flex items-center justify-between bg-white">
-                {tab.map((item, index) => (
-                    <div key={index} 
-                    className={`text-center py-2.5 px-[25px] flex whitespace-nowrap border-b-[2px] 
+        <div className="ml-8 max-[750px]:ml-0 w-full mb-10">
+            <div 
+                className="w-full bg-white max-[1121px]:overflow-x-auto
+                [&::-webkit-scrollbar]:h-1 
+                [&::-webkit-scrollbar-track]:bg-transparent 
+                [&::-webkit-scrollbar-thumb]:bg-[#0000001a] 
+                [&::-webkit-scrollbar-thumb]:rounded-full 
+                hover:[&::-webkit-scrollbar-thumb]:bg-[#00000033]"
+            >
+                <div className="flex items-center justify-between max-[750px]:flex-nowrap max-[750px]:min-w-max">
+                    {tab.map((item, index) => (
+                    <div
+                        key={index}
+                        className={`text-center py-2.5 px-[25px] flex border-b-[2px] max-[1183px]:text-sm max-[1183px]:px-2.5
                         border-transparent cursor-pointer hover:border-[#2f904b] transition duration-300 
                         ease-linear ${active === index ? "!border-b-[#2f904b] text-[#2f904b]" : "text-[#888]"}`}
-                    onClick={() => setActive(index)}>
+                        onClick={() => setActive(index)}
+                    >
                         {item.title}
-                        <span className='ml-1'>({item.length})</span>
+                        <span className="ml-1">({item.length})</span>
                     </div>
-                ))}
+                    ))}
+                </div>
             </div>
+
             <SearchProperty>search</SearchProperty>
             {active === 0 && orders && orders?.length > 0 && (
                 <ListOrder orders={sortedOrders} handleBuyAgain={handleBuyAgain} hanleCanCelOrder={hanleCanCelOrder}/>

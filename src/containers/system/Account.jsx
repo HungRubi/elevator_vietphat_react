@@ -104,17 +104,15 @@ const Account = () => {
                     ))}
                 </ul>
             </div>
-            <div className="flex-1">
-                <Routes>
-                    <Route path="profile" element={<Profile/>}/>   
-                    <Route path="banking" element={<Banking/>}/>   
-                    <Route path="address" element={<Address/>}/>   
-                    <Route path="password" element={<Password/>}/>   
-                    <Route path="notification" element={<Notification/>}/>   
-                    <Route path="order" element={<Order/>}/>   
-                    <Route path="voucher" element={<Voucher/>}/>   
-                </Routes>
-            </div>
+            <Routes>
+                <Route path="profile" element={<Profile/>}/>   
+                <Route path="banking" element={<Banking/>}/>   
+                <Route path="address" element={<Address/>}/>   
+                <Route path="password" element={<Password/>}/>   
+                <Route path="notification" element={<Notification/>}/>   
+                <Route path="order" element={<Order/>}/>   
+                <Route path="voucher" element={<Voucher/>}/>   
+            </Routes>
         </div>
     );
 }

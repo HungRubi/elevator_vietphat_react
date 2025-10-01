@@ -22,7 +22,7 @@ const ModelContact = () => {
         <>
             <Button
                 onClick={() => setIsOpen(true)}
-                className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
+                className={"bg-[rgba(255,255,255,0.925)] !text-[#888] max-[600px]:!text-sm border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                 Trả hàng
             </Button>
             <div className={`fixed flex top-0 right-0 left-0 bottom-0 z-100  bg-black/10 ${isOpen ? "" : "hidden"}`}>

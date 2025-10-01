@@ -111,7 +111,7 @@ const ModalQuestion = ({products}) => {
     }
     return (
         <>
-            <Button type="button" onClick={() => setIsOpen(true)}>
+            <Button type="button" onClick={() => setIsOpen(true)} className={'max-[600px]:!text-sm'}>
                 đánh giá
             </Button>
             <div 

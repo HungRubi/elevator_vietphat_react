@@ -65,7 +65,8 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                 <div className="w-full mt-5" key={item._id}>
                     <div className="w-full mb-5" >
                         <div className="bg-white w-full px-5">
-                            <div className="py-5 border-b border-b-[#cbd0dd] flex items-center justify-between">
+                            <div className="py-5 border-b border-b-[#cbd0dd] flex items-center justify-between
+                            max-[570px]:flex-col max-[570px]:items-start max-[570px]:gap-4">
                                 <div className="flex items-center gap-1.5">
                                     <LoveButton/>
                                     <h5 className="text-[14px] font-[600] leading-8 line-clamp-1">
@@ -87,8 +88,9 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                 {item?.orderDetails?.map((product, index) => (
                                     <div key={index} className="w-full order_items border-b border-[#cbd0dd] py-5">
                                         <div className="w-full flex items-center justify-between">
-                                            <div className="flex gap-2.5 w-[70%]">
-                                                <div className="w-[100px] h-[100px] border border-[#cbd0dd] flex-none">
+                                            <div className="flex gap-2.5 w-[70%] max-[520px]:w-full">
+                                                <div className="w-[100px] h-[100px] border border-[#cbd0dd] flex-none
+                                                max-[650px]:h-[70px] max-[650px]:w-[70px]">
                                                     <img src={product.product.thumbnail_main} alt="ảnh sản phẩm"
                                                     className='w-full h-full object-cover' />
                                                 </div>
@@ -104,11 +106,11 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                                     </h5>
                                                 </div>
                                             </div>
-                                            <div className="flex-1 flex justify-end items-center gap-2.5">
-                                                <h6 className='line-through text-[17px] text-[#888]'>
+                                            <div className="flex-1 flex justify-end items-center gap-2.5 max-[520px]:hidden">
+                                                <h6 className='line-through text-[17px] text-[#888] max-[650px]:text-sm'>
                                                     {formatMoney(product.quantity * product.product.price)}đ
                                                 </h6>
-                                                <h6 className='text-[25px] text-[#2f904b]'>
+                                                <h6 className='text-[25px] text-[#2f904b] max-[650px]:text-[17px]'>
                                                     {formatMoney(product.quantity * product.product.price)}đ
                                                 </h6>
                                             </div>
@@ -124,32 +126,33 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                     Tổng tiền: <span className='text-[25px] text-[#2f904b]'>{formatMoney(item.total_price)}đ</span>
                                 </h5>
                             </div>
-                            <div className="flex items-center gap-10 pt-3 px-6 pb-6">
-                                <div className="w-1/2 ">
-                                    <p className='text-justify line-clamp-3 leading-[1.5] text-[#888] text-[14px]'>
+                            <div className="flex items-center gap-10 pt-3 px-6 pb-6 max-[650px]:flex-col max-[650px]:items-start max-[650px]:gap-4">
+                                <div className="w-1/2 max-[650px]:!w-full">
+                                    <p className='text-justify leading-[1.5] text-[#888] text-[14px]'>
                                         Ngày đặt hàng: <span className="text-gray-600">{item.createdAtFormatted}</span>. 
                                         <br></br>Đơn hàng sẽ giao cho bạn trong vòng 5 ngày kể từ khi đặt hàng. 
                                         <br></br>Vui lòng chú ý điện thoại để nhận hàng từ người giao
                                     </p>                            
                                 </div>
-                                <div className="w-1/2 flex items-center justify-end gap-2.5">
-                                    <Button onClick={buttonContact}>
+                                <div className="w-1/2 flex items-center justify-end gap-2.5 
+                                max-[650px]:w-full max-[650px]:justify-start max-[650px]:flex-wrap">
+                                    <Button onClick={buttonContact} className={'max-[650px]:!text-sm'}>
                                         liên hệ ngay
                                     </Button>
                                     {item.status === 'Đang xử lý' && (
                                         <>
                                             <Button onClick={() => {handleExportInvoice(item)}}
-                                            className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
+                                            className={"bg-[rgba(255,255,255,0.925)] !text-[#888] max-[650px]:!text-sm border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                                                 xuất hóa đơn
                                             </Button>
                                             <Button onClick={hanleCanCelOrder(item._id)}
-                                            className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
+                                            className={"bg-[rgba(255,255,255,0.925)] !text-[#888] max-[650px]:!text-sm border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}>
                                                 hủy đơn
                                             </Button>
                                         </>
                                     )}
                                     {item.status === 'Thất bại' && (
-                                        <Button onClick={() => handleBuyAgain(item)}>
+                                        <Button onClick={() => handleBuyAgain(item)} className={'max-[650px]:!text-sm'}>
                                             mua lại
                                         </Button>
                                     )}
@@ -157,7 +160,7 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                         <>
                                             <Button 
                                                 onClick={() => {handleExportInvoice(item)}}
-                                                className={"bg-[rgba(255,255,255,0.925)] !text-[#888] border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}
+                                                className={"bg-[rgba(255,255,255,0.925)] !text-[#888] max-[650px]:!text-sm border border-[#cbd0dd] hover:bg-[#2f904b] hover:!text-white hover:border-transparent transition duration-500 ease-linear"}
                                             >
                                                 xuất hóa đơn
                                             </Button>
