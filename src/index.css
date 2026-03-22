@@ -141,12 +141,6 @@ input{
 }
 
 
-.login_form{
-    box-shadow: 0 3px 10px 0 rgba(0, 0, 0, .14);
-    top: 50%;
-    left: 10%;
-    transform: translateY(-50%);
-}
 .hover_bg_li:hover{
     background: rgba(136, 136, 136, 0.1019607843);
     transition: .3s linear;

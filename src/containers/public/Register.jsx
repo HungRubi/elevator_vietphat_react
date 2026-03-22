@@ -87,7 +87,7 @@ const Register = () => {
                 <link rel="canonical" href="https://vmu.com.vn/register" />
             </Helmet>
 
-            <div className="fixed w-full bg-[#f3f3f3] max-[1892px]:bg-white top-0 z-[49] h-screen overflow-y-auto max-[1892px]:relative ">
+            <div className="w-full bg-[#f3f3f3] max-[1892px]:bg-white min-h-screen">
                 <div className="w-full h-1/7 flex items-center justify-between px-[10%] max-[1892px]:hidden">
                     <div className="flex items-center gap-5">
                         <img src="/img/logo.png" alt="" className="h-[110px] w-auto mb-4"/>
@@ -98,12 +98,10 @@ const Register = () => {
                         Bạn cần giúp đỡ?
                     </NavLink>
                 </div>
-                <div className="w-full relative mb-8">
-                    <img src="/img/slider/background_login.png" alt="" 
-                    className="max-[1892px]:hidden"/>
+                <div className="w-full py-8 flex items-center justify-center max-[1892px]:py-0">
                     <form onSubmit={handleSubmit}
-                    className="w-[700px] !bg-white rounded-[4px] login_form absolute 
-                    max-[1892px]:w-full max-[1892px]:h-full max-[1892px]:!left-0">
+                    className="w-[700px] !bg-white rounded-[4px] shadow-lg
+                    max-[1892px]:w-full max-[1892px]:h-full">
                         <div className="px-[30px] py-[1.375rem] w-full">
                             <div className="text-[1.8rem] text-center capitalize text-[#2f904b]">
                                 đăng ký

@@ -1,5 +1,7 @@
 import actionTypes from './actionTypes';
 import * as apis from '../../apis/user';
+import * as authApis from '../../apis/auth';
+import { clearStoredAccessToken } from '../../util/token';
 
 export const setCurrentUser = (user, cart, productCart, orders, myNotifi) => {
     return {
@@ -63,8 +65,16 @@ export const clearCart = (productIds = []) => {
 }
 
 export const logout = () => {
-    return {
-        type: actionTypes.LOGOUT,
+    return async (dispatch) => {
+        try {
+            await authApis.logout();
+        } catch (error) {
+            // Always clear local auth state even if server logout fails.
+        }
+        clearStoredAccessToken();
+        dispatch({
+            type: actionTypes.LOGOUT,
+        });
     }
 }
 

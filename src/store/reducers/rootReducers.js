@@ -15,6 +15,7 @@ const userConfig = {
     key: 'userElevator',
     whitelist: [
         'currentUser', 
+        'accessToken',
         'cart', 
         'productCart',
         'selectedProducts',

@@ -1,7 +1,9 @@
 import  actionType from '../actions/actionTypes';
+import { getStoredAccessToken } from '../../util/token';
 
 const initialState = {
     currentUser: null,
+    accessToken: getStoredAccessToken(),
     cart: [],
     productCart: [],
     selectedProducts: [],
@@ -56,11 +58,18 @@ const userReducer = (state = initialState, action) => {
                     
                 myNotifi: action.myNotifi,
             }
+
+        case actionType.SET_ACCESS_TOKEN:
+            return {
+                ...state,
+                accessToken: action.payload || null,
+            }
         
         case actionType.LOGOUT:
             return {
                 ...state,
                 currentUser: null,
+                accessToken: null,
                 cart: [],
                 productCart: [],
                 selectedProducts: [],
