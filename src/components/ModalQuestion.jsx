@@ -144,7 +144,7 @@ const ModalQuestion = ({products}) => {
                                         </NavLink>
                                         <div className="ml-2.5 line-clamp-1 text-gray-600">
                                             <div className="flex mb-1">
-                                                <LoveButton/> 
+                                                <LoveButton tone="accent" />
                                                 <span className="font-[600]">Thang máy Việt Phát</span>
                                             </div>
                                             <span className=" text-gray-600">

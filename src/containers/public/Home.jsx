@@ -1,7 +1,9 @@
 import { NavLink } from 'react-router-dom';
-import {Button, ListProduct, Form, ListVideo} from '../../components/index'
-import { useState } from 'react';
-import { useSelector } from "react-redux";
+import { Button, ListProduct, Form, HomeVideoSection } from '../../components/index'
+import { useState, useEffect, useMemo } from 'react';
+import { useSelector, useDispatch } from "react-redux";
+import * as actions from '../../store/actions';
+import { sortArticlesNewestFirst } from '../../util/articleUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/autoplay';
@@ -9,10 +11,23 @@ import "swiper/css/navigation";
 import "swiper/css/effect-fade";
 import { Autoplay, Navigation } from 'swiper/modules';
 import { Helmet } from 'react-helmet';
+import icons from '../../util/icons';
+
+const { FiTruck, IoShieldCheckmarkOutline, AiOutlineMessage, MdEmail, FaPhoneAlt } = icons;
 
 const Home = () => {
-    const {article, productsCategory, banner, video} = useSelector(state => state.app);
+    const dispatch = useDispatch();
+    const { article, articles, productsCategory, banner, video } = useSelector((state) => state.app);
     const [active, setActive] = useState(0);
+
+    useEffect(() => {
+        dispatch(actions.getArticles());
+    }, [dispatch]);
+
+    const latestArticles = useMemo(() => {
+        const src = Array.isArray(articles) && articles.length > 0 ? articles : article;
+        return sortArticlesNewestFirst(src || []).slice(0, 3);
+    }, [articles, article]);
     const tabs = [
         { label: "COP/LOP", category: "COP/LOP" },
         { label: "Linh kiện điện", category: "Linh kiện điện" },
@@ -28,9 +43,17 @@ const Home = () => {
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://vmu.com.vn/" />
             </Helmet>
-            <div >
+            <div className="bg-[#f6f8f7]">
                 
-                <Swiper
+                <div className="relative mx-auto w-full max-w-[1200px] px-4 pt-6 md:px-8 md:pt-8">
+                    {/* subtle mesh only for hero area */}
+                    <div aria-hidden className="pointer-events-none absolute -inset-x-10 -top-10 -bottom-24 -z-10 overflow-hidden">
+                        <div className="absolute -left-24 -top-24 h-[360px] w-[360px] rounded-full bg-emerald-400/16 blur-3xl" />
+                        <div className="absolute -right-28 -top-16 h-[420px] w-[420px] rounded-full bg-sky-400/12 blur-3xl" />
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(15,23,42,0.045)_1px,transparent_0)] [background-size:24px_24px] opacity-40" />
+                    </div>
+
+                    <Swiper
                     modules={[Autoplay, Navigation]}
                     navigation={true}
                     autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -39,178 +62,337 @@ const Home = () => {
                     effect="fade"
                     fadeEffect={{ crossFade: true }}
                     speed={1200} // Làm hiệu ứng mượt hơn
-                    className="flex flex-nowrap overflow-x-auto z-20 relative slider_home"
+                    className="relative z-20 overflow-hidden rounded-3xl border border-white/70 bg-white/80 shadow-[0_16px_46px_rgba(2,6,23,0.10)] slider_home"
 
                 >
                     {banner?.map(item => (
                         <SwiperSlide key={item._id}>
-                            <div  className="w-full aspect-[1600/670] flex-none">
-                                <img src={item.thumbnail} alt="silder" className="w-full"/>
+                            <div className="w-full aspect-[1600/670] flex-none">
+                                <img src={item.thumbnail} alt="slider" className="w-full object-cover"/>
                             </div>
                         </SwiperSlide>
                     ))}
                 </Swiper>
-                <div className="w-full px-[10%] pt-[65px] flex justify-between intro_company relative max-[1000px]:px-[15px]">
-                    <div className="w-[45%] max-[763px]:!w-full" data-aos="fade-right">
-                        <h1 className="text-[70px] text-[#2f904b] font-[700] uppercase" style={{fontFamily: "Impact"}}>
-                            viet phat
-                        </h1>
-                        <h2 className="text-[40px] max-[763px]:!text-[30px] mb-5 text-black font-[700] uppercase max-[1000px]:!text-[25px]" style={{fontFamily: "Impact"}}>
-                            Safe and quality <br /> elevator components
-                        </h2>
-                        <div className="w-[90%] text-justify mb-2.5 max-[600px]:!w-full">
-                            <p className="line-clamp-10 leading-9 text-[15px] mb-5 max-[1000px]:!leading-7">
-                                Công ty TNHH Phụ tùng thang máy Việt Phát là một công ty thương mại
-                                đã tham gia tích cực vào ngành thang máy trong nhiều năm. Công ty đặt
-                                tại Km8 + 93 đường 5 mới, xã Nam Sơn, huyện An Dương, Hải Phòng, Việt Nam. 
-                                Mục tiêu chính của chúng tôi là cung cấp phụ kiện thang máy chất lượng cao, 
-                                cải tạo kết nối điện, phụ kiện thang máy và các sản phẩm liên quan cho khách 
-                                hàng toàn Việt Nam.
-                            </p>
-                            <Button className="!py-[15px]">
-                                Xem thêm
-                            </Button>
-                            <div className="mb-[150px]"></div>
-                        </div>
-                    </div>
-                    <div className="w-[45%] mt-[90px] max-[1300px]:!mt-[25%] !z-50 max-[1100px]:!mt-[40%] max-[1000px]:!mt-[30%] max-[900px]:!mt-[60%] max-[763px]:!hidden" data-aos="fade-left">
-                        <img src="/img/slider/1.png" alt="" className=' relative'/>
-                    </div>
                 </div>
-                <div className="mt-[85px] max-[763px]:!mt-0 flex items-center justify-between w-full"
-                data-aos="fade-up">
-                    <div className="w-[80%] m-auto max-[600px]:!w-full max-[600px]:px-[15px]">
-                        <div className="flex gap-5 mb-5 flex-col-1100 max-[468px]:!w-full ">
-                            {tabs?.map((tab, index) => (
-                                <div 
-                                className={`tab_category w-1/4 border max-[468px]:!w-full text-center text-white uppercase cursor-pointer py-1.5 ${active === index ? "bg-[#2f904b]" : "bg-[black]"}`}
-                                onClick={() => setActive(index)}
-                                key={tab.label}>
-                                    {tab.label}
+
+                {/* Intro — typography-first, không ảnh */}
+                <section
+                    className="relative mx-auto w-full max-w-[1200px] px-4 pb-10 pt-8 md:px-8 md:pb-14 md:pt-12"
+                    aria-labelledby="home-hero-heading"
+                >
+                    <div
+                        className="pointer-events-none absolute -left-4 top-0 h-[min(100%,420px)] w-1 rounded-full bg-gradient-to-b from-[#2f904b] via-[#2f904b]/40 to-transparent md:left-0"
+                        aria-hidden
+                    />
+                    <div className="relative pl-5 md:pl-8">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <span className="inline-flex items-center rounded-md border border-slate-200/90 bg-white/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 shadow-sm backdrop-blur-sm">
+                                Việt Phát
+                            </span>
+                            <span className="hidden h-4 w-px bg-slate-200 sm:block" aria-hidden />
+                            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
+                                {'Safe & quality elevator components'}
+                            </p>
+                        </div>
+
+                        <h1
+                            id="home-hero-heading"
+                            className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-slate-900 sm:text-5xl lg:max-w-4xl lg:text-[3.25rem] lg:leading-[1.06]"
+                        >
+                            Phụ tùng thang máy{' '}
+                            <span className="bg-gradient-to-r from-[#1a6b34] via-[#2f904b] to-[#3daa5c] bg-clip-text text-transparent">
+                                chất lượng cao
+                            </span>
+                            <span className="text-[#2f904b]">.</span>
+                        </h1>
+
+                        <p className="mt-6 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg sm:leading-8">
+                            Công ty TNHH Phụ tùng thang máy Việt Phát cung cấp phụ kiện thang máy chất lượng cao,
+                            linh kiện và giải pháp liên quan cho khách hàng trên toàn Việt Nam.
+                        </p>
+
+                        <div
+                            className="mt-8 grid gap-3 sm:grid-cols-3 sm:gap-4"
+                            role="list"
+                            aria-label="Cam kết dịch vụ"
+                        >
+                            {[
+                                {
+                                    t: 'Bảo hành rõ ràng',
+                                    d: 'Chính sách minh bạch, hỗ trợ khiếu nại nhanh.',
+                                    Icon: IoShieldCheckmarkOutline,
+                                },
+                                {
+                                    t: 'Giao hàng toàn quốc',
+                                    d: 'Đóng gói cẩn thận, phối hợp vận chuyển linh hoạt.',
+                                    Icon: FiTruck,
+                                },
+                                {
+                                    t: 'Hỗ trợ kỹ thuật',
+                                    d: 'Tư vấn lắp đặt, tương thích model và tiêu chuẩn.',
+                                    Icon: AiOutlineMessage,
+                                },
+                            ].map(({ t, d, Icon }, i) => (
+                                <div
+                                    key={t}
+                                    role="listitem"
+                                    className="group relative flex gap-3 rounded-lg border border-slate-200/80 bg-white/70 p-4 shadow-[0_1px_0_rgba(15,23,42,0.04)] transition hover:border-[#2f904b]/25 hover:shadow-md"
+                                >
+                                    <span
+                                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-slate-100 bg-slate-50 text-slate-600 transition group-hover:border-[#2f904b]/20 group-hover:text-[#2f904b]"
+                                        aria-hidden
+                                    >
+                                        <Icon className="text-lg" />
+                                    </span>
+                                    <div className="min-w-0">
+                                        <p className="text-[10px] font-bold tabular-nums text-slate-400">0{i + 1}</p>
+                                        <p className="mt-0.5 font-semibold text-slate-900">{t}</p>
+                                        <p className="mt-1 text-xs leading-relaxed text-slate-500">{d}</p>
+                                    </div>
                                 </div>
                             ))}
                         </div>
+
+                        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                            <NavLink to="/products" className="inline-flex">
+                                <Button className="!rounded-lg !px-7 !py-3.5 !text-[15px] !font-semibold !normal-case !shadow-sm">
+                                    Xem sản phẩm
+                                </Button>
+                            </NavLink>
+                            <NavLink
+                                to="/contact"
+                                className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-slate-900/90 bg-transparent px-6 py-3 text-[15px] font-semibold text-slate-900 transition hover:bg-slate-900 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                            >
+                                Liên hệ tư vấn
+                                <span aria-hidden className="text-lg leading-none">
+                                    →
+                                </span>
+                            </NavLink>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="mx-auto w-full max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+                    <div className="grid grid-cols-1 gap-8 border-t border-slate-200/80 pt-10 md:grid-cols-3">
+                        <div>
+                            <h3 className="text-base font-bold text-slate-900">Tư vấn chọn linh kiện</h3>
+                            <p className="mt-2 text-sm leading-7 text-slate-600">
+                                Đồng hành chọn đúng model, tiêu chuẩn và phụ kiện phù hợp dự án của bạn.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 className="text-base font-bold text-slate-900">Đồng bộ giải pháp</h3>
+                            <p className="mt-2 text-sm leading-7 text-slate-600">
+                                Kết nối linh kiện — vận hành — bảo trì theo một quy trình rõ ràng, ít rủi ro.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 className="text-base font-bold text-slate-900">Hỗ trợ sau bán</h3>
+                            <p className="mt-2 text-sm leading-7 text-slate-600">
+                                Phản hồi nhanh, hỗ trợ kỹ thuật và báo giá minh bạch khi bạn cần.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Products */}
+                <section className="mx-auto w-full max-w-[1200px] px-4 py-10 md:px-8" data-aos="fade-up">
+                    <div className="flex items-end justify-between gap-4">
+                        <div>
+                            <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Danh mục nổi bật
+                            </div>
+                            <h2 className="mt-2 text-2xl font-extrabold text-slate-900 sm:text-3xl">
+                                Sản phẩm
+                                <span className="text-[#2f904b]">.</span>
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 flex flex-wrap gap-2">
+                        {tabs?.map((tab, index) => (
+                            <button
+                                type="button"
+                                key={tab.label}
+                                onClick={() => setActive(index)}
+                                className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                                    active === index
+                                        ? "border-white/60 bg-white/70 text-slate-900 shadow-sm"
+                                        : "border-white/40 bg-white/35 text-slate-600 hover:bg-white/55 hover:text-slate-900"
+                                }`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="mt-6">
                         {tabs?.map((tab, index) => (
                             <div
-                                
                                 key={index}
-                                className={`transition-opacity duration-500 ease-in-out ${
-                                    active === index ? "opacity-100 scale-100 block" : "opacity-0 scale-95 hidden"
+                                className={`transition-opacity duration-300 ease-out ${
+                                    active === index ? "opacity-100 block" : "opacity-0 hidden"
                                 }`}
                             >
                                 <ListProduct data={productsCategory} category={tab.category} />
                             </div>
                         ))}
+                    </div>
+                </section>
 
-                    </div>
-                </div>
-                <div className="w-[80%] m-auto mt-[70px] max-[1000px]:w-full max-[1000px]:px-[15px]" data-aos="fade-up">
-                    <div 
-                    className="text-center text-[50px] text-[#2f904b]"
-                    style={{ fontFamily: "Impact, sans-serif" }}>
-                        Featured Articles
-                    </div>
-                    {article?.map((item, index) => (
-                        <div key={item._id} className="article_home flex items-center justify-between mt-6 gap-8 max-[950px]:!flex-col">
-                            {index === 1 ? (
-                                <>
-                                    <div className="w-full-1100 max-[950px]:!justify-start flex w-1/2 overflow-hidden items-center justify-center max-[950px]:!items-start max-[950px]:mt-10" title={item.subject}>
-                                        <div className="transform !skew-x-[29deg] px-[15px] pb-[15px] block max-[1100px]:!skew-x-0" data-aos="flip-left">
-                                            <NavLink title={item.subject}
-                                            to={`/news/detail/${item.slug}`} 
-                                            className="frame_skew flex items-center justify-center dis_skew frame_article overflow-hidden">
-                                                <img src={item.thumbnail} alt={item.subject}
-                                                className="h-[300px] w-[300px] transform scale-[0.9] mx-[90px] skew-x-[-29deg] max-[1100px]:!skew-x-0" />
-                                            </NavLink>
-                                        </div>
-                                    </div>
-                                    <div className="w-full-1100 text-left w-1/2 ">
-                                        <h5 className="font-bold text-[25px]">Feb 02, 2025</h5>
-                                        <h4 className="underline text-[#2f904b] text-[20px] font-[500] line-clamp-1">
-                                            <NavLink to={`/news/detail/${item.slug}`} >
-                                                {item.subject}
-                                            </NavLink>
-                                        </h4>
-                                        <p className="line-clamp-6 text-[16px] leading-8 max-[950px]:!text-justify">
-                                            {item.content}
-                                        </p>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="text-right w-1/2 order-2-1100 w-full-1100 max-[950px]:!text-left" >
-                                        <h5 className="font-bold text-[25px]">Feb 02, 2025</h5>
-                                        <h4 className="underline text-[#2f904b] text-[20px] font-[500] line-clamp-1">
-                                            <NavLink to={`/news/detail/${item.slug}`} >
-                                                {item.subject}
-                                            </NavLink>
-                                        </h4>
-                                        <p className="line-clamp-6 text-[16px] leading-8 max-[950px]:!text-justify">
-                                            {item.content}
-                                        </p>
-                                    </div>
-                                    <div className="order-1-1100 flex w-1/2 w-full-1100 overflow-hidden items-center justify-center max-[950px]:!justify-start" title={item.subject}>
-                                        <div className="transform !-skew-x-[29deg] px-[15px] pb-[15px] block max-[1100px]:!skew-x-0" data-aos="flip-right">
-                                            <NavLink title={item.subject}
-                                            className="frame_skew flex items-center justify-center frame_article -frame_article overflow-hidden max-[1100px]:!skew-x-0"
-                                            to={`/news/detail/${item.slug}`}>
-                                                <img src={item.thumbnail} alt="" className="h-[300px] w-[300px] transform scale-[0.9] mx-[90px] skew-x-[29deg] max-[1100px]:!skew-x-0" />
-                                            </NavLink>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
+                {/* Articles */}
+                <section className="mx-auto w-full max-w-[1200px] px-4 py-10 md:px-8" data-aos="fade-up">
+                    <div className="flex items-end justify-between gap-4">
+                        <div>
+                            <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Cập nhật mới
+                            </div>
+                            <h2 className="mt-2 text-2xl font-extrabold text-slate-900 sm:text-3xl">
+                                Bài viết nổi bật
+                                <span className="text-[#2f904b]">.</span>
+                            </h2>
                         </div>
-                    ))}
+                        <NavLink to="/news" className="hidden text-sm font-semibold text-slate-700 hover:text-slate-900 sm:inline-flex">
+                            Xem tất cả →
+                        </NavLink>
+                    </div>
 
-                </div>
-                <div className="w-[80%] m-auto mt-[70px]">
-                    <div
-                    data-aos="fade-up" 
-                    className="text-center text-[50px] text-[#2f904b] capitalize"
-                    style={{ fontFamily: "Impact, sans-serif" }}>
-                        Trending Now – Don’t Miss Out!
+                    <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+                        {latestArticles.length > 0 ? (
+                            latestArticles.map((item) => (
+                                <NavLink
+                                    key={item._id}
+                                    to={`/news/detail/${item.slug}`}
+                                    className="group overflow-hidden rounded-2xl border border-white/60 bg-white/55 shadow-[0_20px_60px_rgba(2,6,23,0.10)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:shadow-[0_28px_80px_rgba(2,6,23,0.14)]"
+                                >
+                                    <div className="relative overflow-hidden">
+                                        <img src={item.thumbnail} alt={item.subject} className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
+                                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/0" />
+                                    </div>
+                                    <div className="p-4">
+                                        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                            {item.dateFormat || "Tin tức"}
+                                        </div>
+                                        <div className="mt-2 line-clamp-2 text-base font-semibold leading-6 text-slate-900 transition group-hover:text-[#2f904b]">
+                                            {item.subject}
+                                        </div>
+                                        <div className="mt-2 line-clamp-2 text-sm text-slate-600">
+                                            {item.content}
+                                        </div>
+                                        <div className="mt-4 text-sm font-semibold text-slate-700">
+                                            Đọc thêm →
+                                        </div>
+                                    </div>
+                                </NavLink>
+                            ))
+                        ) : (
+                            <p className="col-span-full py-8 text-center text-sm text-slate-500">
+                                Đang tải hoặc chưa có bài viết.{" "}
+                                <NavLink to="/news" className="font-semibold text-[#2f904b] hover:underline">
+                                    Xem trang tin tức
+                                </NavLink>
+                            </p>
+                        )}
                     </div>
-                </div>
-                <div className="w-full px-[10%] max-[1000px]:px-[15px]">
-                    <ListVideo data={video}/>
-                </div>
-                <div className="w-[80%] m-auto mt-[70px]">
-                    <div
-                    data-aos="fade-up" 
-                    className="text-center text-[50px] text-[#2f904b] capitalize"
-                    style={{ fontFamily: "Impact, sans-serif" }}>
-                        contact
+                </section>
+
+                <HomeVideoSection videos={video} />
+
+                {/* Liên hệ — tư vấn nhanh */}
+                <section
+                    id="tu-van-nhanh"
+                    className="mx-auto w-full max-w-[1200px] px-4 py-12 md:px-8"
+                    data-aos="fade-up"
+                >
+                    <div className="mx-auto max-w-2xl text-center">
+                        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            Liên hệ
+                        </div>
+                        <h2 className="mt-2 text-2xl font-extrabold text-slate-900 sm:text-3xl">
+                            Tư vấn nhanh
+                            <span className="text-[#2f904b]">.</span>
+                        </h2>
+                        <p className="mt-3 text-sm text-slate-600 md:text-base">
+                            Gửi nhu cầu — đội ngũ sẽ gọi lại hoặc báo giá qua email trong thời gian sớm nhất.
+                        </p>
                     </div>
-                </div>
-                <Form/>
-                <div className="w-full mt-10">
-                    <div className="w-full relative">
-                        <div className="top-0 bottom-0 w-full h-auto relative">
-                            <img src="/img/slider/5.png" alt="" className='w-full object-contain max-[750px]:!h-[300px] max-[750px]:object-cover'/>
-                            <div className="absolute left-[10%] right-[10%] 
-                            flex justify-between z-20 top-[20%] font-bold items-center
-                            max-[630px]:flex-col max-[630px]:items-start max-[630px]:gap-5">
-                                <div className="text-white w-1/2 leading-20 max-[630px]:w-[90%]">
-                                    <h3 className="text-[#6BE455] uppercase max-[1055px]:!leading-10">
-                                        luôn hoạt động 24/7
-                                    </h3>
-                                    <h2 className='line-clamp-2 text-5xl leading-16 
-                                        max-[1488px]:text-3xl max-[1488px]:leading-10 
-                                        max-[931px]:text-2xl max-[931px]:leading-8
-                                        max-[750px]:line-clamp-3 w-full'>
-                                        Hãy liện hệ ngay cho chúng tôi để được tư vấn
-                                    </h2>
+
+                    <div className="mt-10 grid items-start gap-8 lg:grid-cols-12 lg:gap-10">
+                        <aside className="flex flex-col gap-4 lg:col-span-4">
+                            <div className="rounded-3xl border border-white/60 bg-white/70 p-6 shadow-[0_20px_60px_rgba(2,6,23,0.08)] backdrop-blur-xl">
+                                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#2f904b]">
+                                    <FaPhoneAlt className="size-4" aria-hidden />
+                                    Gọi trực tiếp
                                 </div>
-                                <NavLink to={"tel:0924113113"}>
-                                    <Button className={"!px-8 !py-4 font-medium text-lg"}>
-                                        hãy gọi ngay
+                                <NavLink
+                                    to="tel:0924113113"
+                                    className="mt-3 block text-2xl font-extrabold tabular-nums text-slate-900 transition hover:text-[#2f904b]"
+                                >
+                                    0924 113 113
+                                </NavLink>
+                                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                                    Hotline hỗ trợ nhanh theo giờ làm việc của công ty.
+                                </p>
+                            </div>
+                            <div className="rounded-3xl border border-white/60 bg-white/70 p-6 shadow-[0_20px_60px_rgba(2,6,23,0.08)] backdrop-blur-xl">
+                                <div className="flex items-start gap-3">
+                                    <MdEmail className="mt-0.5 size-5 shrink-0 text-[#2f904b]" aria-hidden />
+                                    <div className="min-w-0 text-left">
+                                        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                            Email
+                                        </div>
+                                        <a
+                                            href="mailto:infor@phukienthangmay.vn"
+                                            className="mt-1 block break-all text-sm font-semibold text-slate-900 transition hover:text-[#2f904b]"
+                                        >
+                                            infor@phukienthangmay.vn
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul className="space-y-3 rounded-3xl border border-slate-200/80 bg-slate-50/90 p-5 text-left text-sm text-slate-700">
+                                <li className="flex gap-3">
+                                    <IoShieldCheckmarkOutline className="mt-0.5 size-5 shrink-0 text-[#2f904b]" aria-hidden />
+                                    <span>Thông tin chỉ dùng để tư vấn, được xử lý bảo mật.</span>
+                                </li>
+                                <li className="flex gap-3">
+                                    <AiOutlineMessage className="mt-0.5 size-5 shrink-0 text-[#2f904b]" aria-hidden />
+                                    <span>Thường phản hồi trong vòng 24 giờ làm việc.</span>
+                                </li>
+                            </ul>
+                        </aside>
+                        <div className="lg:col-span-8">
+                            <Form variant="embedded" className="!mt-0" />
+                        </div>
+                    </div>
+                </section>
+
+                {/* CTA */}
+                <section className="mx-auto w-full max-w-[1200px] px-4 pb-14 md:px-8">
+                    <div className="overflow-hidden rounded-3xl border border-white/60 bg-gradient-to-br from-[#2f904b] to-emerald-700 shadow-[0_20px_60px_rgba(2,6,23,0.12)]">
+                        <div className="grid grid-cols-1 items-center gap-6 p-6 md:grid-cols-2 md:p-10">
+                            <div className="text-white">
+                                <div className="text-xs font-semibold uppercase tracking-wide text-white/80">Luôn hoạt động 24/7</div>
+                                <div className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
+                                    Hãy liên hệ ngay để được tư vấn nhanh chóng
+                                </div>
+                                <div className="mt-3 text-sm text-white/90">
+                                    Đội ngũ hỗ trợ sẵn sàng giải đáp và báo giá theo nhu cầu.
+                                </div>
+                            </div>
+                            <div className="flex flex-col items-start gap-3 md:items-end">
+                                <NavLink to={"tel:0924113113"} className="w-full md:w-auto">
+                                    <Button className={"w-full md:w-auto !px-8 !py-4 font-semibold text-base rounded-2xl"}>
+                                        Gọi ngay
                                     </Button>   
                                 </NavLink>
+                                <div className="text-xs text-white/80">
+                                    Hotline: <span className="font-semibold text-white">0924 113 113</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
                 
             </div>
         </>

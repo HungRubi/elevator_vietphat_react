@@ -6,8 +6,6 @@ export {default as Contact} from './Contact';
 export {default as Public} from './Public';
 export {default as ProductDetail} from './ProductDetail';
 export {default as NewsDetail} from './NewsDetail';
-export {default as Login} from './Login';
-export {default as Register} from './Register';
 export {default as VideoDetail} from './VideoDetail';
 export {default as Page404} from './Page404';
 export {default as TuyenDung} from './TuyenDung';

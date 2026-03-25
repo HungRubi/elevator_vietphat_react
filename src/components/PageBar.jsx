@@ -1,31 +1,24 @@
-import { Button } from '../components/index';
-import { NavLink } from 'react-router-dom';
 import icons from '../util/icons';
 import PropTypes from 'prop-types';
 
-const {AiOutlineLeft, AiOutlineRight} = icons
+const { AiOutlineLeft, AiOutlineRight } = icons;
 
 const PageBar = ({ currentPage, totalPage, onPageChange, className }) => {
-    // Tính toán các trang sẽ hiển thị
     const getVisiblePages = () => {
         const maxVisible = 3;
         let startPage = 1;
         let endPage = Math.min(totalPage, maxVisible);
 
         if (totalPage > maxVisible) {
-            // Tính toán startPage dựa trên currentPage
             const middle = Math.floor(maxVisible / 2);
-            
+
             if (currentPage <= middle) {
-                // Nếu currentPage ở đầu
                 startPage = 1;
                 endPage = maxVisible;
             } else if (currentPage >= totalPage - middle) {
-                // Nếu currentPage ở cuối
                 startPage = totalPage - maxVisible + 1;
                 endPage = totalPage;
             } else {
-                // Nếu currentPage ở giữa
                 startPage = currentPage - middle;
                 endPage = currentPage + middle;
             }
@@ -35,91 +28,81 @@ const PageBar = ({ currentPage, totalPage, onPageChange, className }) => {
     };
 
     const visiblePages = getVisiblePages();
+    const safeTotal = Math.max(1, totalPage);
+
+    const pageBtn =
+        'inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-slate-200 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#2f904b]/25';
+    const pageBtnActive = 'border-[#2f904b] bg-[#2f904b] text-white hover:bg-[#268a42] hover:border-[#268a42]';
 
     return (
-        <div className={`flex items-center justify-center mt-7 gap-2 ${className}`}>
-            <Button className={`bg-transparent !px-0 !py-0 ${currentPage === 1 ? "hidden" : ""}`}>
-                <NavLink
-                    onClick={() => onPageChange(currentPage - 1)} 
-                    className="w-[33px] h-[33px] text-[#393939] rounded-[5px] border border-[#d2d2d2] flex items-center justify-center">
-                    <AiOutlineLeft className='text-[12px]'/>
-                </NavLink>
-            </Button>
+        <nav
+            className={`mt-10 flex flex-wrap items-center justify-center gap-2 ${className || ''}`}
+            aria-label="Phân trang"
+        >
+            <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => onPageChange(currentPage - 1)}
+                className={`${pageBtn} disabled:cursor-not-allowed disabled:opacity-40`}
+                aria-label="Trang trước"
+            >
+                <AiOutlineLeft className="text-sm" />
+            </button>
 
-            {/* Hiển thị trang đầu và dấu ... nếu cần */}
             {visiblePages[0] > 1 && (
                 <>
-                    <Button className="bg-transparent !px-0 !py-0">
-                        <NavLink
-                            onClick={() => onPageChange(1)}
-                            className="w-[33px] h-[33px] rounded-[5px] border border-[#d2d2d2] flex items-center justify-center text-[#393939]"
-                        >
-                            1
-                        </NavLink>
-                    </Button>
-                    {visiblePages[0] > 2 && (
-                        <span className="px-2 text-[#393939]">...</span>
-                    )}
+                    <button type="button" onClick={() => onPageChange(1)} className={pageBtn}>
+                        1
+                    </button>
+                    {visiblePages[0] > 2 && <span className="px-1 text-slate-400">…</span>}
                 </>
             )}
 
-            {/* Hiển thị các trang visible */}
             {visiblePages.map((page) => (
-                <Button key={page} className="bg-transparent !px-0 !py-0">
-                    <NavLink
-                        onClick={() => onPageChange(page)}
-                        className={`w-[33px] h-[33px] rounded-[5px] border border-[#d2d2d2] flex items-center justify-center ${
-                            currentPage === page ? 'bg-[#2f904b] text-white' : 'text-[#393939]'
-                        }`}
-                    >
-                        {page}
-                    </NavLink>
-                </Button>
+                <button
+                    key={page}
+                    type="button"
+                    onClick={() => onPageChange(page)}
+                    className={`${pageBtn} ${currentPage === page ? pageBtnActive : ''}`}
+                    aria-current={currentPage === page ? 'page' : undefined}
+                >
+                    {page}
+                </button>
             ))}
 
-            {/* Hiển thị dấu ... và trang cuối nếu cần */}
-            {visiblePages[visiblePages.length - 1] < totalPage && (
+            {visiblePages[visiblePages.length - 1] < safeTotal && (
                 <>
-                    {visiblePages[visiblePages.length - 1] < totalPage - 1 && (
-                        <span className="px-2 text-[#393939]">...</span>
+                    {visiblePages[visiblePages.length - 1] < safeTotal - 1 && (
+                        <span className="px-1 text-slate-400">…</span>
                     )}
-                    <Button className="bg-transparent !px-0 !py-0">
-                        <NavLink
-                            onClick={() => onPageChange(totalPage)}
-                            className="w-[33px] h-[33px] rounded-[5px] border border-[#d2d2d2] flex items-center justify-center text-[#393939]"
-                        >
-                            {totalPage}
-                        </NavLink>
-                    </Button>
+                    <button type="button" onClick={() => onPageChange(safeTotal)} className={pageBtn}>
+                        {safeTotal}
+                    </button>
                 </>
             )}
 
-            <Button className={`bg-transparent !px-0 !py-0 ${currentPage === totalPage ? "hidden" : ""}`}>
-                <NavLink
-                    onClick={() => onPageChange(currentPage + 1)}
-                    className={`w-[33px] h-[33px] rounded-[5px] border border-[#d2d2d2] flex items-center justify-center ${
-                        currentPage === totalPage ? 'text-gray-400 cursor-not-allowed' : 'text-[#393939]'
-                    }`}
-                >
-                    <AiOutlineRight className='text-[12px]' />
-                </NavLink>
-            </Button>
+            <button
+                type="button"
+                disabled={currentPage === safeTotal}
+                onClick={() => onPageChange(currentPage + 1)}
+                className={`${pageBtn} disabled:cursor-not-allowed disabled:opacity-40`}
+                aria-label="Trang sau"
+            >
+                <AiOutlineRight className="text-sm" />
+            </button>
 
-            <Button className="bg-transparent !px-0 !py-0">
-                <NavLink 
-                    className="w-auto h-[33px] text-[#393939] rounded-[5px] border border-[#d2d2d2] flex items-center justify-center px-2.5 capitalize">
-                    Page {currentPage}/{totalPage}
-                </NavLink>
-            </Button>
-        </div>
-    )
-}
+            <span className="ml-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600">
+                Trang {currentPage} / {safeTotal}
+            </span>
+        </nav>
+    );
+};
 
 PageBar.propTypes = {
     className: PropTypes.string,
     currentPage: PropTypes.number.isRequired,
     totalPage: PropTypes.number.isRequired,
     onPageChange: PropTypes.func.isRequired,
-}
+};
 
-export default PageBar
+export default PageBar;

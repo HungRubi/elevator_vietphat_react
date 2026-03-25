@@ -34,6 +34,7 @@ import { GoPlus } from "react-icons/go";
 import { FiSearch } from "react-icons/fi";
 import { FaCaretDown } from "react-icons/fa6";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import { FaRegNewspaper } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
 import { FaCirclePlay } from "react-icons/fa6";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
@@ -58,6 +59,7 @@ const icons = {
     FaCirclePlay,
     FaRegEye,
     FaRegCalendarAlt,
+    FaRegNewspaper,
     FaLongArrowAltUp,
     FiSearch,
     FaCaretDown,

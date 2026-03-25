@@ -1,74 +1,71 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import icons from '../util/icons';
 import { useDispatch } from 'react-redux';
 import * as actions from '../store/actions';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-const {FiSearch} = icons;
 
-const Search = ({className}) => {
+const { FiSearch } = icons;
+
+const Search = ({ className }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    
-    const [fromData, setFromData] = useState({
-        s: ''
-    });
+    const [query, setQuery] = useState('');
+    const debouncedRef = useRef();
 
-    const [isFocused, setIsFocused] = useState(false);
-
-    const handleChange = (e) => {
-        const {name, value} = e.target;
-        setFromData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-        debouncedSearch(value);
-    }
-
-    const debouncedSearch = useCallback(
-        debounce((value) => {
+    useEffect(() => {
+        debouncedRef.current = debounce((value) => {
             if (value.trim()) {
                 dispatch(actions.querySearch(value));
             }
-        }, 500),
-        []
-    );
+        }, 500);
+        return () => debouncedRef.current?.cancel();
+    }, [dispatch]);
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        setQuery(value);
+        debouncedRef.current?.(value);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (fromData.s.trim()) {
-            dispatch(actions.querySearch(fromData.s));
-            navigate('/timkiem');
+        const q = query.trim();
+        if (!q) {
+            return;
         }
-    }
+        dispatch(actions.querySearch(q));
+        navigate(`/products?q=${encodeURIComponent(q)}`);
+    };
 
     return (
-        <form onSubmit={handleSubmit} className={`relative ${className}`}>
-            <input 
-                type="text"
+        <form onSubmit={handleSubmit} className={`relative w-full max-w-md ${className || ''}`}>
+            <label htmlFor="header-search" className="sr-only">
+                Tìm sản phẩm
+            </label>
+            <input
+                id="header-search"
+                type="search"
+                value={query}
                 onChange={handleChange}
-                value={fromData.s} 
-                name='s' 
-                className={`w-full pt-[3px] pr-[0px] pb-[3px] pl-[30px] outline-0 border-1 border-[#ffffffb4] text-[#ffffffb4] rounded-[8px] transition-all duration-300 ${
-                    isFocused ? 'bg-white/10' : ''
-                }`}
-                placeholder='Enter name product'
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
+                name="s"
+                placeholder="Tìm sản phẩm…"
+                className="h-11 w-full rounded-full border border-slate-200 bg-white/90 py-2 pl-11 pr-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#2f904b]/40 focus:ring-2 focus:ring-[#2f904b]/20"
             />
-            <button 
+            <button
                 type="submit"
-                className='absolute left-0 top-[50%] -translate-y-1/2 flex items-center justify-center w-[30px] hover:opacity-80 transition-opacity'
+                className="absolute left-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#2f904b]/25"
+                aria-label="Tìm kiếm"
             >
-                <FiSearch className='size-[20px] text-[#ffffffb4]'/>
+                <FiSearch className="size-[18px]" />
             </button>
         </form>
-    )
-}
+    );
+};
 
 Search.propTypes = {
-    className: PropTypes.string
-}
+    className: PropTypes.string,
+};
 
-export default Search
+export default Search;

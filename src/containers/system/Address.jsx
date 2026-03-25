@@ -1,48 +1,72 @@
-import { toast } from 'react-toastify';
-import {Button, ModalAddress} from '../../components';
-import icons from '../../util/icons';
-import { useSelector } from 'react-redux';
-const {GoPlus} = icons;
+import { toast } from "react-toastify";
+import { Button, ModalAddress } from "../../components";
+import icons from "../../util/icons";
+import { useSelector } from "react-redux";
+import { Helmet } from "react-helmet";
+
+const { GoPlus, FaMapMarkerAlt } = icons;
 
 const Address = () => {
-    const {currentUser} = useSelector(state => state.user);
-    const handleButton = () => {
-        toast.warning("Button này chỉ để trang trí");
-    }
+    const { currentUser } = useSelector((state) => state.user);
+
+    const handlePlaceholder = () => {
+        toast.warning("Chức năng đang được cập nhật.");
+    };
+
     return (
-        <div className="ml-8 flex-1 bg-white px-[1.875rem] pb-[0.625rem] max-[750px]:ml-0">
-            <div className="py-[15px] border-b border-b-[#cbd0dd] flex items-center justify-between">
-                <h5 className='text-[22px] capitalize max-[750px]:text-lg'>
-                    địa chỉ của tôi
-                </h5>
-                <Button onClick={handleButton}
-                className={"flex items-center gap-1 max-[750px]:text-sm"}>
-                    <GoPlus className='text-[20px] -mt-[2px] '/>
-                    thêm địa chỉ mới
-                </Button>
-            </div>
-            <div className="w-full flex justify-between py-[15px] border-b border-b-[#cbd0dd] items-center max-[500px]:flex-col max-[500px]:gap-2">
-                <div className='max-[500px]:w-full'>
-                    <h5 className='text-[18px] capitalize '>
-                        {currentUser?.name}
-                        <span className='ml-2.5 pl-2.5 border-l border-[#cbd0dd] text-[#888]'>
-                            {currentUser?.phone}
-                        </span>
-                    </h5>
-                    <address className='max-w-[70%] line-clamp-2 my-2 max-[500px]:max-w-full'>
-                        {currentUser?.address}
-                    </address>
+        <>
+            <Helmet>
+                <title>Địa chỉ - Tài khoản | Thang máy Việt Phát</title>
+            </Helmet>
+            <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-emerald-50/30 px-6 py-5 md:px-8">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h1 className="text-xl font-extrabold tracking-tight text-slate-900 md:text-2xl">Địa chỉ giao hàng</h1>
+                        <p className="mt-1 text-sm text-slate-600">Địa chỉ mặc định dùng cho đơn hàng.</p>
+                    </div>
                     <Button
-                    className="!bg-[inherit] !text-[#2f904b] border border-[#2f904b] !py-[2px] text-[12px]">
-                        mặc định
+                        type="button"
+                        onClick={handlePlaceholder}
+                        className="!inline-flex !w-full !items-center !justify-center !gap-2 !rounded-xl !normal-case sm:!w-auto"
+                    >
+                        <GoPlus className="size-5" aria-hidden />
+                        Thêm địa chỉ
                     </Button>
                 </div>
-                <div className="text-right max-[500px]:text-left max-[500px]:w-full">
-                    <ModalAddress/>
-                    <p className='cursor-pointer'>Thiết lập làm mặc định</p>
+            </div>
+
+            <div className="p-6 md:p-8">
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex gap-4">
+                            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-[#2f904b] ring-1 ring-emerald-100">
+                                <FaMapMarkerAlt className="size-6" aria-hidden />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-lg font-extrabold text-slate-900">{currentUser?.name || "Khách hàng"}</p>
+                                <p className="mt-1 text-sm font-medium text-slate-500">{currentUser?.phone}</p>
+                                <address className="mt-3 text-sm not-italic leading-relaxed text-slate-700">
+                                    {currentUser?.address || "Chưa cập nhật địa chỉ — vui lòng chỉnh trong hồ sơ hoặc liên hệ hỗ trợ."}
+                                </address>
+                                <span className="mt-3 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-[#1b5e35]">
+                                    Mặc định
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2 sm:items-end">
+                            <ModalAddress />
+                            <button
+                                type="button"
+                                onClick={handlePlaceholder}
+                                className="text-left text-xs font-semibold text-[#2f904b] underline decoration-emerald-200 underline-offset-2 hover:decoration-[#2f904b] sm:text-right"
+                            >
+                                Thiết lập mặc định
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

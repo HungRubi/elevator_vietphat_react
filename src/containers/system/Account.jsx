@@ -1,120 +1,37 @@
-import { NavLink } from 'react-router-dom';
-import {CircleButton} from '../../components';
-import icons  from '../../util/icons';
-import { Route, Routes } from 'react-router-dom';
-import {Profile, Banking, Address, Password, Notification, Order, Voucher} from './index'
-import { useSelector } from 'react-redux';
-const {CiEdit, FaRegBell, BsPerson, RiBillLine, BsTag} = icons;
-const active = '!text-[#2f904b] capitalize flex items-center';
-const notActive = 'text-[#000] capitalize flex items-center';
+import { Route, Routes, useLocation } from "react-router-dom";
+import { Profile, Banking, Address, Password, Notification, Order, Voucher } from "./index";
+
 const Account = () => {
-    const {currentUser} = useSelector(state => state.user);
-    const account = [
-        {
-            label: 'Thông báo', 
-            icon: <FaRegBell className='text-[16px] mr-2.5 mb-1'/>,
-            path: '/account/notification'
-        },
-        {
-            label: 'Thông tin tài khoản', 
-            icon: <BsPerson className='text-[18px] mr-2 mb-1'/>,
-            path: '/account/profile',
-            children: [
-                {
-                    label: 'Hồ sơ',
-                    path: '/account/profile'
-                },
-                {
-                    label: 'Ngân hàng',
-                    path: '/account/banking'
-                },
-                {
-                    label: 'Địa chỉ',
-                    path: '/account/address'
-                },
-                {
-                    label: 'Đổi mật khẩu',
-                    path: '/account/password'
-                }
-            ]
-        },
-        {
-            label: 'Đơn hàng', 
-            icon: <RiBillLine className='text-[16px] mr-2.5 mb-1'/>,
-            path: '/account/order'
-        },
-        {
-            label: 'Voucher', 
-            icon: <BsTag className='text-[16px] mr-2.5 mb-1'/>,
-            path: '/account/voucher'
-        },
-    ]
+    const { pathname } = useLocation();
+    const isOrderPage = pathname === "/account/order";
+
+    const accountRoutes = (
+        <Routes>
+            <Route path="profile" element={<Profile />} />
+            <Route path="banking" element={<Banking />} />
+            <Route path="address" element={<Address />} />
+            <Route path="password" element={<Password />} />
+            <Route path="notification" element={<Notification />} />
+            <Route path="order" element={<Order />} />
+            <Route path="voucher" element={<Voucher />} />
+        </Routes>
+    );
+
     return (
-        <div
-        className="w-full px-[10%] pt-8 flex justify-between max-[1000px]:px-[15px] max-[750px]:flex-col">
-            <div className="w-[200px] max-[750px]:w-full flex-none">
-                <div className="flex w-full items-center">
-                    <CircleButton
-                    className="mr-3">
-                        <img 
-                            src={
-                                currentUser?.avatar?.startsWith('/uploads')
-                                ? `${import.meta.env.VITE_SERVER_URL}${currentUser.avatar}`
-                                : currentUser.avatar
-                            } 
-                            alt="avatar" 
-                            className='rounded-[50%]'
-                        />
-                    </CircleButton>
-                    <div className="cursor-default text-[15px]">
-                    <div className="font-[600]">
-                        {currentUser?.account}
+        <div className="min-h-screen bg-[#f4f7f5] pb-16 pt-6 md:pt-10">
+            <div className="mx-auto max-w-[1200px] px-4 md:px-8">
+                <main className="min-w-0">
+                    <div
+                        className={`min-w-0 rounded-2xl border border-slate-200/90 shadow-[0_16px_48px_rgba(2,6,23,0.06)] ${
+                            isOrderPage ? "bg-transparent overflow-visible" : "overflow-hidden bg-white"
+                        }`}
+                    >
+                        {accountRoutes}
                     </div>
-                    <div className="flex text-[#888] cursor-pointer gap-2 mt-[2px]">
-                        <CiEdit className='text-[20px]'/>
-                        <span>Sửa hồ sơ</span>
-                    </div>
-                </div>
-                </div>
-                <div className="my-4 w-full h-[1px] border-t border-t-[#cbd0dd]"></div>
-                <ul className="w-full ">
-                    {account.map((item, index) => (
-                        <li key={index}
-                        className={`px-3 py-[7px] text-[14px] line-clamp-1 cursor-pointer w-full`}>
-                                
-                                <NavLink className={({isActive}) => isActive ? active : notActive}
-                                to={`${item.path}`}>
-                                    {item.icon}
-                                    {item.label}
-                                </NavLink>
-                            {item.children && (
-                                <ul className="w-full mt-2">
-                                    {item.children.map((child, index) => (
-                                        <li key={index} className="py-[7px] px-7 line-clamp-1 cursor-pointer w-full text-[14px] capitalize">
-                                            <NavLink
-                                            className={({isActive}) => isActive ? active : notActive}
-                                            to={`${child.path}`}>
-                                                {child.label}
-                                            </NavLink>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </li>
-                    ))}
-                </ul>
+                </main>
             </div>
-            <Routes>
-                <Route path="profile" element={<Profile/>}/>   
-                <Route path="banking" element={<Banking/>}/>   
-                <Route path="address" element={<Address/>}/>   
-                <Route path="password" element={<Password/>}/>   
-                <Route path="notification" element={<Notification/>}/>   
-                <Route path="order" element={<Order/>}/>   
-                <Route path="voucher" element={<Voucher/>}/>   
-            </Routes>
         </div>
     );
-}
+};
 
 export default Account;

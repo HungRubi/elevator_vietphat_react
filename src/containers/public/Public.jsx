@@ -1,6 +1,5 @@
-import {CircleButton, Footer, HeaderBar} from '../../components'
+import { CircleButton, Footer, HeaderBar } from '../../components'
 import { NavLink, Outlet } from "react-router-dom"
-import { useLocation } from 'react-router-dom';
 import icons from '../../util/icons';
 import { useCallback, useEffect, useState } from 'react';
 import {Button} from '../../components'
@@ -12,11 +11,9 @@ const { FaLongArrowAltUp, BiSolidPhoneCall, IoCloseSharp } = icons
 
 
 const Public = () => {
-    const location = useLocation();
     const dispatch = useDispatch();
     const [isShow, setIsShow] = useState(false);
     const { menu_mobie } = useSelector(state => state.app);
-    console.log("menu_mobie", menu_mobie);
     const handleScroll = useCallback(() => {
         const scrollY = window.scrollY;
         if (scrollY > 400) { 
@@ -41,8 +38,7 @@ const Public = () => {
     };
     return (
         <div className="w-full relative">
-            <div className={`top-0 left-0 right-0 z-50 ${location.pathname !== '/' ? "relative" : "absolute"}
-            max-[600px]:relative max-[600px]:bg-[#2f904b]`}>
+            <div className="sticky top-0 left-0 right-0 z-50">
                 <HeaderBar />
             </div>
             <div className="w-full relative">
@@ -54,13 +50,12 @@ const Public = () => {
             {isShow ? (
                 <>
                     <CircleButton onClick={handleToTop}
-                        className="fixed bottom-4 left-10 z-100 max-[1000px]:left-[15px]
-                        bg-gradient-to-br from-[#FFD700] to-[#FFA500] 
-                        text-[#8B4513] font-bold shadow-xl !w-14 !h-14
-                        hover:from-[#FFE066] hover:to-[#FFBB33] max-[1000px]:!w-10 max-[1000px]:!h-10
-                        transform hover:scale-110 transition-all duration-400 ease-in-out group "
+                        className="fixed bottom-4 left-10 z-[1200] max-[1000px]:left-[15px]
+                        border border-slate-200/80 bg-white text-slate-700 shadow-lg !w-14 !h-14
+                        hover:bg-slate-50 max-[1000px]:!w-10 max-[1000px]:!h-10
+                        transition-all duration-200 ease-out group"
                     >
-                        <FaLongArrowAltUp className='text-[28px] group-hover:animate-bounce-up text-white'/>
+                        <FaLongArrowAltUp className='text-[22px] text-[#2f904b]'/>
                         <span 
                             className="absolute top-0 left-0 w-full h-full 
                             bg-white opacity-0 
@@ -69,22 +64,31 @@ const Public = () => {
                             pointer-events-none"
                         ></span>
                     </CircleButton>
-                    <NavLink to={"tel:0924113113"}>
-                        <CircleButton className="fixed bottom-20 left-10 z-100
-                            bg-gradient-to-br from-[#FFD700] to-[#FFA500] 
-                            text-[#8B4513] font-bold shadow-xl !w-14 !h-14 max-[1000px]:!w-10 max-[1000px]:!h-10
-                            hover:from-[#FFE066] hover:to-[#FFBB33] max-[1000px]:left-[15px]
-                            transform hover:scale-110 transition-all duration-400 ease-in-out group ">
-                                <BiSolidPhoneCall className='text-3xl text-white'/>
-                        </CircleButton>
+                    <NavLink
+                        to="tel:0924113113"
+                        className="group fixed bottom-20 left-10 z-[1200] flex h-14 w-14 max-[1000px]:left-[15px] max-[1000px]:h-10 max-[1000px]:w-10 items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b] focus-visible:ring-offset-2"
+                        aria-label="Gọi hotline 0924 113 113"
+                    >
+                        <span
+                            className="pointer-events-none absolute left-1/2 top-1/2 h-14 w-14 max-[1000px]:h-10 max-[1000px]:w-10 -translate-x-1/2 -translate-y-1/2"
+                            aria-hidden
+                        >
+                            <span className="vp-call-fab__ring" />
+                            <span className="vp-call-fab__ring vp-call-fab__ring--delay" />
+                        </span>
+                        <span
+                            className="relative z-[1] flex h-full w-full items-center justify-center rounded-full border-2 border-white/35 bg-[#2f904b] text-white shadow-[0_10px_30px_rgba(47,144,75,0.45)] transition duration-200 ease-out group-hover:scale-105 group-hover:bg-[#268a42] group-hover:shadow-[0_14px_36px_rgba(47,144,75,0.55)] group-active:scale-95"
+                        >
+                            <BiSolidPhoneCall className="relative z-[1] text-2xl text-white max-[1000px]:text-xl" />
+                        </span>
                     </NavLink>
                 </>
             ) : ("")}
             <div
-                className={`fixed top-0 left-0 right-0 bottom-0 z-[1000] bg-[#00000054] 
+                className={`fixed top-0 left-0 right-0 bottom-0 z-[1400] bg-[#00000054] 
                             transition-opacity duration-600 ease-in-out
-                            ${menu_mobie ? "opacity-100 visible" : "opacity-0 invisible"}`}
-                onClick={() => dispatch.actions.toggleMenuMobie(false)} 
+                            ${menu_mobie ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
+                onClick={() => dispatch(actions.toggleMenuMobie(false))}
                 >
                 <div
                     className={`w-[70%] h-full bg-white relative transition-transform duration-600 ease-in-out
@@ -98,7 +102,7 @@ const Public = () => {
                     <ul className="w-full px-2.5 h-full">
                         {menuBar.map((item, index) => (
                             <li key={index} className="border-b border-b-[#cbd0dd]">
-                                <NavLink to={`${item.path}`} onClick={() => dispatch.actions.toggleMenuMobie(false)}
+                                <NavLink to={`${item.path}`} onClick={() => dispatch(actions.toggleMenuMobie(false))}
                                 className="block py-2 px-4 hover:bg-[#f5f5f5] uppercase font-medium text-lg cursor-pointer">
                                     {item.text}
                                 </NavLink>
@@ -106,7 +110,7 @@ const Public = () => {
                                     <ul className="pl-4">
                                         {item.subMenu.map((subItem, subIndex) => (  
                                             <li key={subIndex}>
-                                                <NavLink to={`${subItem.path}`} onClick={() => dispatch.actions.toggleMenuMobie(false)}
+                                                <NavLink to={`${subItem.path}`} onClick={() => dispatch(actions.toggleMenuMobie(false))}
                                                 className="block py-2 px-4 hover:bg-[#f5f5f5] text-[14px] cursor-pointer">
                                                     {subItem.text}
                                                 </NavLink>

@@ -1,12 +1,13 @@
 import { ToastContainer } from 'react-toastify';
 import {
     Home, Public, Products, News, AboutUs, 
-    Contact, ProductDetail, NewsDetail,Login, 
-    Register, VideoDetail, Page404,
+    Contact, ProductDetail, NewsDetail,
+    VideoDetail, Page404,
     TuyenDung,
     TimKiem
 } from './containers/public/';
-import { ProtectedRoute } from './components';
+import { Login, Register } from './containers/auth';
+import { ProtectedRoute, ScrollToTop } from './components';
 import { Routes, Route } from 'react-router-dom';
 import { Account, Cart, Pay, PaymentReturn } from './containers/system'
 import path from './util/path';
@@ -61,11 +62,12 @@ function App() {
 
   return(
     <>
+      <ScrollToTop />
       <Routes>
+        <Route path={path.LOGIN} element={<Login/>}/>
+        <Route path={path.REGISTER} element={<Register/>}/>
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />}/>
-          <Route path={path.LOGIN} element={<Login/>}/>
-          <Route path={path.REGISTER} element={<Register/>}/>
           <Route path={path.VIDEO} element={<VideoDetail/>}/>
           <Route path={path.PRODUCTS} element={<Products />}/>
           <Route path={path.PRODUCT_DETAIL} element={<ProductDetail/>} key={location.pathname}/>

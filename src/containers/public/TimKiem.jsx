@@ -8,7 +8,7 @@ const TimKiem = () => {
         "Tất cả",
         "Sản phẩm",
         "Bài viết",
-        "Video",``
+        "Video",
     ]
     const [isTab, setIsTab] = useState(0);
     return (
