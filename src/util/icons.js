@@ -19,7 +19,7 @@ import { FaGem } from "react-icons/fa";
 import { HiUserGroup } from "react-icons/hi2";
 import { FaHeart } from "react-icons/fa";
 import { BsArrowRightSquareFill } from "react-icons/bs";
-import { FiTruck } from "react-icons/fi";
+import { FiTruck, FiBriefcase, FiMail, FiMapPin } from "react-icons/fi";
 import { IoShieldCheckmarkOutline } from "react-icons/io5";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { BiSolidLike } from "react-icons/bi";
@@ -73,6 +73,9 @@ const icons = {
     FcGoogle,
     FaMapMarkerAlt,
     IoShieldCheckmarkOutline,
+    FiBriefcase,
+    FiMail,
+    FiMapPin,
     FiTruck,
     FaPhoneAlt,
     MdEmail,

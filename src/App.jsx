@@ -17,22 +17,48 @@ import { useEffect } from 'react';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { toast } from 'react-toastify';
+import { formatReduxMessage, messageLooksLikeError } from './util/toastMessage';
 
 function App() {
   const dispatch = useDispatch();
-  const {currentUser, cartUser, productCart, orders, message, notification} = useSelector(state => state.app);
+  const {currentUser, cartUser, productCart, orders, message, notification, loginError, registerError} = useSelector(state => state.app);
   const {messageUser} = useSelector(state => state.user);
-  // Handle all messages in one useEffect
+  /**
+   * Toast từ Redux: phân loại success/error; reset message sau 1 tick để effect con (Đăng ký/…) kịp đọc state.
+   */
   useEffect(() => {
       if (message) {
-          toast.success(message);
-          dispatch(actions.resetMessage());
+          const text =
+              formatReduxMessage(message) ||
+              (typeof message === 'object' ? 'Đã có lỗi xảy ra. Vui lòng thử lại.' : String(message));
+          const authErr = Boolean(loginError || registerError);
+          const asError = authErr || messageLooksLikeError(text);
+          if (asError) {
+              toast.error(text);
+          } else {
+              toast.success(text);
+          }
+          const t = setTimeout(() => dispatch(actions.resetMessage()), 0);
+          return () => clearTimeout(t);
       }
-      if (messageUser) {
-          toast.success(messageUser);
+      return undefined;
+    }, [message, loginError, registerError, dispatch]);
+
+  useEffect(() => {
+      if (!messageUser) return undefined;
+      const text = typeof messageUser === 'string' ? messageUser : formatReduxMessage(messageUser);
+      if (!text) {
           dispatch(actions.resetMessageUser());
+          return undefined;
       }
-    }, [message, messageUser, dispatch]);
+      if (messageLooksLikeError(text)) {
+          toast.error(text);
+      } else {
+          toast.success(text);
+      }
+      const t = setTimeout(() => dispatch(actions.resetMessageUser()), 0);
+      return () => clearTimeout(t);
+  }, [messageUser, dispatch]);
 
   useEffect(() => {
     Aos.init({

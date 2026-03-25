@@ -74,6 +74,10 @@ const Register = () => {
   }, [isSubmitting]);
 
   useEffect(() => {
+    dispatch(actions.clearAuthErrors());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (!isSubmitting) return;
     if (registerError) setIsSubmitting(false);
     if (message && !registerError) {

@@ -108,8 +108,16 @@ const userReducer = (state = initialState, action) => {
         case actionType.DELETE_CART_ITEM_ERR:
             return {
                 ...state,
-                message: action.payload.message || null
-            }
+                messageUser:
+                    action.payload?.message || 'Không xóa được sản phẩm khỏi giỏ hàng. Vui lòng thử lại.',
+            };
+
+        case actionType.UPDATE_CART_ERR:
+            return {
+                ...state,
+                messageUser:
+                    action.payload?.message || 'Cập nhật giỏ hàng thất bại. Vui lòng thử lại.',
+            };
 
         case actionType.SELECT_VOUCHER:
             return {

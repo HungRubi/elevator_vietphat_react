@@ -1,211 +1,188 @@
-import icons from "../../util/icons";
-import {NavLink} from "react-router-dom";
-import {formatMoney} from "../../util/formatMoney";
-import {useSelector, useDispatch} from "react-redux";
-import {useEffect} from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 import * as actions from '../../store/actions';
-import { Helmet } from "react-helmet";
-const {FaRegCalendarAlt} = icons
+import { Helmet } from 'react-helmet';
+import icons from '../../util/icons';
+import { PublicDetailSidebar } from '../../components';
+
+const { FiBriefcase, FiMail, FiMapPin } = icons;
+
+const HIGHLIGHTS = [
+    { label: 'Số lượng', value: '05 nhân sự' },
+    { label: 'Kinh nghiệm', value: 'Không bắt buộc — có đào tạo' },
+    { label: 'Thu nhập', value: 'Trên 15.000.000đ / tháng' },
+];
 
 const TuyenDung = () => {
     const dispatch = useDispatch();
-    const slug = "bang-dieu-khien-cabin-cop-mat-kinh-cuong-luc-tich-hop-van-tay-va-sac-dien-thoai-thong-minh"
+    const { productNewLast, articleSuggest } = useSelector((state) => state.app);
+
+    const format = (money) => money?.toLocaleString('vi-VN');
+
+    /* Sidebar tin/sp: reducer chỉ hydrate từ getVideoDetail (cùng pattern trang cũ) */
+    const sidebarVideoSlug =
+        'bang-dieu-khien-cabin-cop-mat-kinh-cuong-luc-tich-hop-van-tay-va-sac-dien-thoai-thong-minh';
+
     useEffect(() => {
-        dispatch(actions.getVideoDetail(slug))
-    }, [dispatch, slug])
-    const {productNewLast, articleSuggest} = useSelector(state => state.app);
+        dispatch(actions.getVideoDetail(sidebarVideoSlug));
+    }, [dispatch]);
+
     return (
         <>
             <Helmet>
                 <title>Tuyển dụng - Thang máy Việt Phát</title>
-                <meta name="description" content="Cơ hội việc làm tại Thang máy Việt Phát. Tìm hiểu các vị trí tuyển dụng và gia nhập đội ngũ chuyên nghiệp của chúng tôi." />
-                <meta name="keywords" content="tuyển dụng thang máy, việc làm thang máy, cơ hội nghề nghiệp, tuyển nhân viên kỹ thuật, Thang máy Việt Phát" />
+                <meta
+                    name="description"
+                    content="Cơ hội việc làm tại Thang máy Việt Phát — môi trường chuyên nghiệp, đãi ngộ rõ ràng."
+                />
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://vmu.com.vn/tuyen-dung" />
             </Helmet>
 
-            <div className="w-full px-[10%] my-10 flex justify-between">
-                <div className="w-7/10">
-                    <h2 className="capitalize text-lg text-[#4ca52f] ">tuyển dụng</h2>
-                    <h1 className="capitalize text-4xl text-gray-700 mt-5 font-[600]">tuyển dụng</h1>
-                    <content className="mt-10 w-full px-[10%] my-10">
-                        <p>Do nhu cầu phát triển và mở rộng quy mô, Công ty thang máy Hybrid thông báo về việc cần tuyển dụng vị trí sau:</p>
-                        <ol className="ml-4">
-                            <li className="mt-1.5">
-                                1. Nhân viên sản xuất: <span className="font-[600]">05 người</span>
-                            </li>
-                            <li className="mt-1.5">
-                                2. Kinh nghiệm: <span className="font-[600]">không yêu cầu kinh nghiệm</span>
-                            </li>
-                            <li className="mt-1.5">
-                                3. Lương cơ bản + % doanh số + lương + thưởng: <span className="font-[600]">(trên 15.000.000đ)</span>
-                            </li>
-                        </ol>
-                        <h3 className="mt-5 text-2xl text-gray-700 font-[600]">
-                            Mô tả công việc
-                        </h3>
-                        <p className="mt-2">
-                            Chúng tôi đang tìm kiếm ứng viên sản xuất có miềm đam mê về thang máy:
+            <div className="min-h-screen bg-[var(--color-bg)]">
+                <header className="relative overflow-hidden border-b border-emerald-900/20 bg-gradient-to-br from-slate-950 via-[#0f2918] to-[#0c1f18]">
+                    <div className="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-[var(--color-primary)]/25 blur-3xl" />
+                    <div className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-teal-400/10 blur-3xl" />
+                    <div className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-200">
+                            <FiBriefcase className="size-4" aria-hidden />
+                            Tuyển dụng
+                        </div>
+                        <h1 className="mt-4 max-w-3xl text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                            Gia nhập đội ngũ{' '}
+                            <span className="bg-gradient-to-r from-emerald-300 to-lime-200 bg-clip-text text-transparent">
+                                Việt Phát
+                            </span>
+                        </h1>
+                        <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
+                            Chúng tôi mở rộng sản xuất và cần đồng đội gắn bó, học hỏi nhanh và làm việc an toàn trong
+                            môi trường thang máy &amp; cơ khí.
                         </p>
-                        <ol className="ml-4 list-disc">
-                            <li className="mt-2">
-                                Tham gia trực tiếp vào quy trình sản xuất, lắp ráp các linh kiện và bộ phận thang máy theo bản vẽ kỹ thuật và hướng dẫn.
-                            </li>
-                            <li className="mt-2">
-                                Vận hành máy móc, thiết bị phục vụ sản xuất (máy cắt, máy hàn, máy uốn…).
-                            </li>
-                            <li className="mt-2">
-                                Đảm bảo đúng tiến độ và chất lượng theo yêu cầu sản xuất.
-                            </li>
-                            <li className="mt-2">
-                                Kiểm tra, bảo trì định kỳ các công cụ, thiết bị trong dây chuyền sản xuất.
-                            </li>
-                            <li className="mt-2">
-                                Phối hợp với các bộ phận liên quan để xử lý sự cố trong quá trình sản xuất.
-                            </li>
-                            <li className="mt-2">
-                                Thực hiện các công việc khác theo phân công của cấp trên.
-                            </li>
-                        </ol>
-                        <h3 className="mt-5 text-2xl text-gray-700 font-[600]">
-                            Yêu cầu ứng viên
-                        </h3>
-                        <ol className="ml-4 list-disc">
-                            <li className="mt-2">
-                                Nam, độ tuổi từ 20 – 40, có sức khỏe tốt. Am hiểu lĩnh vực liên quan đến xây dựng, thang máy là một lợi thế.
-                            </li>
-                            <li className="mt-2">
-                                Có thể đọc hiểu bản vẽ kỹ thuật (ưu tiên).
-                            </li>
-                            <li className="mt-2">
-                                Chịu khó, cẩn thận, có tinh thần trách nhiệm trong công việc.
-                            </li>
-                            <li className="mt-2">
-                                Sẵn sàng tăng ca khi có yêu cầu.
-                            </li>
-                        </ol>
-                        <h3 className="mt-5 text-2xl text-gray-700 font-[600]">
-                            Quyền lợi
-                        </h3>
-                        <ol className="ml-4 list-disc">
-                            <li className="mt-2">
-                                Thu nhập: [15.000.000đ - 20.000.000đ].
-                            </li>
-                            <li className="mt-2">
-                                Thưởng hoa hồng theo doanh số sản xuất.
-                            </li>
-                            <li className="mt-2">
-                                Được đào tạo nếu chưa có kinh nghiệm.
-                            </li>
-                            <li className="mt-2">
-                                Hưởng đầy đủ các chế độ BHXH, BHYT, BHTN theo quy định nhà nước.
-                            </li>
-                        </ol>
-                        <h3 className="mt-5 text-2xl text-gray-700 font-[600]">
-                            Thời gian làm việc
-                        </h3>
-                        <ol className="ml-4 list-disc">
-                            <li className="mt-2">
-                                Từ thứ 2 đến thứ 7 (giờ hành chính hoặc theo ca).
-                            </li>
-                        </ol>
-                        <h3 className="mt-5 text-2xl text-gray-700 font-[600]">
-                            Thời gian làm việc
-                        </h3>
-                        <ol className="ml-4 list-disc">
-                            <li className="mt-2">
-                                Từ thứ 2 đến thứ 7 (giờ hành chính hoặc theo ca).
-                            </li>
-                        </ol>
-                        <h3 className="mt-5 text-2xl text-gray-700 font-[600]">
-                            Nơi nhận hồ sơ
-                        </h3>
-                        <ol className="ml-4 list-disc">
-                            <li className="mt-2">
-                                Gửi hồ sơ qua email: <span className="text-blue-600 cursor-pointer">infor@phukienthangmay.vn</span>
-                            </li>
-                            <li className="mt-2">
-                                Hoặc gửi hồ sơ qua email: 
-                                <span className="text-blue-600 cursor-pointer ml-1">
-                                    Km8 + 93 đường 5 mới, xã Nam Sơn, huyện An Dương, Hải Phòng, Việt Nam
-                                </span>
-                            </li>
-                        </ol>
-                    </content>
-                </div>
-                <nav className="w-[25%]">
-                    <div className="w-full bg-white shadow">
-                        <div className="w-full p-2 border-l-5 border-[#2f904b]">
-                            <h2 className="uppercase text-lg font-medium">
-                                tin tức mới
-                            </h2>
-                        </div>
-                        <ul className="w-full mt-2">
-                            {articleSuggest?.map(item => (
-                                <li key={item._id}
-                                className="px-2 py-4 flex gap-2.5 order_items border-b border-gray-200">
-                                    <NavLink to={`/news/detail/${item.slug}`}
-                                    className={"w-[100px] flex-none"}>
-                                        <img src={item.thumbnail} alt={item.subject} 
-                                        className="w-full object-cover"/>
-                                    </NavLink>
-                                    <div className="text-base leading-7">
-                                        <h5 className="font-medium capitalize text-gray-900 line-clamp-2">
-                                            {item.subject}
-                                        </h5>
-                                        <span className="text-sm text-gray-600">Tác giả: {item.author}</span>
-                                        <div className="text-sm text-gray-600 flex gap-1.5">
-                                            <FaRegCalendarAlt className="text-base"/> 
-                                            <span className="leading-4">
-                                                Ngày đăng: {item.formatedDate}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </li>
+                        <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                            {HIGHLIGHTS.map((h) => (
+                                <div
+                                    key={h.label}
+                                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm"
+                                >
+                                    <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-200/80">
+                                        {h.label}
+                                    </p>
+                                    <p className="mt-1 text-sm font-semibold text-white">{h.value}</p>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </div>
+                </header>
 
-                    <div className="w-full bg-white shadow mt-10">
-                        <div className="w-full p-2 border-l-5 border-[#2f904b]">
-                            <h2 className="uppercase text-lg font-medium">
-                                Sản phẩm nổi bật
+                <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 lg:flex-row lg:gap-10 lg:py-10">
+                    <article className="min-w-0 flex-1 space-y-6">
+                        <section className="rounded-2xl border border-slate-200/90 bg-[var(--color-surface)] p-6 shadow-sm sm:p-8">
+                            <h2 className="text-lg font-extrabold text-slate-900 sm:text-xl">
+                                Thông báo tuyển dụng
                             </h2>
-                        </div>
-                        <ul className="w-full mt-2">
-                            {productNewLast?.map(item => (
-                                <li key={item._id}
-                                className="px-2 py-4 flex gap-2.5 order_items border-b border-gray-200">
-                                    <NavLink to={`/products/detail/${item.slug}`}
-                                    className={"w-[100px] flex-none"}>
-                                        <img src={item.thumbnail_main} alt={item.name} 
-                                        className="w-full object-cover"/>
-                                    </NavLink>
-                                    <div className="text-base leading-7">
-                                        <h5 className="font-medium capitalize text-gray-900 line-clamp-2">
-                                            {item.name}
-                                        </h5>
-                                        <span className="text-sm text-gray-600">
-                                            đ 
-                                            <span className="ml-1 text-lg text-main font-medium">
-                                                {formatMoney(item.price)}
-                                            </span>
-                                        </span>
-                                        <div className="text-sm text-gray-600 flex gap-1.5">
-                                            <FaRegCalendarAlt className="text-base"/> 
-                                            <span className="leading-4">
-                                                Ngày đăng: {item.formatedDate}
-                                            </span>
-                                        </div>
+                            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                                Do nhu cầu phát triển và mở rộng quy mô, Công ty thang máy Hybrid thông báo tuyển dụng
+                                vị trí sau:
+                            </p>
+                            <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-slate-700">
+                                <li>
+                                    <strong className="text-slate-900">Nhân viên sản xuất:</strong> 05 người
+                                </li>
+                                <li>
+                                    <strong className="text-slate-900">Kinh nghiệm:</strong> không yêu cầu — sẽ đào tạo
+                                </li>
+                                <li>
+                                    <strong className="text-slate-900">Đãi ngộ:</strong> lương cơ bản + % doanh số +
+                                    thưởng (trên 15.000.000đ)
+                                </li>
+                            </ol>
+                        </section>
+
+                        <section className="rounded-2xl border border-slate-200/90 bg-[var(--color-surface)] p-6 shadow-sm sm:p-8">
+                            <h2 className="text-lg font-extrabold text-slate-900 sm:text-xl">Mô tả công việc</h2>
+                            <p className="mt-3 text-sm text-slate-600">
+                                Chúng tôi tìm ứng viên sản xuất có đam mê với thang máy:
+                            </p>
+                            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
+                                <li>
+                                    Tham gia sản xuất, lắp ráp linh kiện theo bản vẽ và hướng dẫn kỹ thuật.
+                                </li>
+                                <li>Vận hành máy cắt, hàn, uốn và thiết bị dây chuyền.</li>
+                                <li>Đảm bảo tiến độ và chất lượng theo yêu cầu.</li>
+                                <li>Kiểm tra, bảo trì định kỳ công cụ và thiết bị.</li>
+                                <li>Phối hợp xử lý sự cố với các bộ phận liên quan.</li>
+                                <li>Thực hiện công việc khác theo phân công.</li>
+                            </ul>
+                        </section>
+
+                        <section className="rounded-2xl border border-slate-200/90 bg-[var(--color-surface)] p-6 shadow-sm sm:p-8">
+                            <h2 className="text-lg font-extrabold text-slate-900 sm:text-xl">Yêu cầu ứng viên</h2>
+                            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
+                                <li>Nam, 20–40 tuổi, sức khỏe tốt; am hiểu xây dựng / thang máy là lợi thế.</li>
+                                <li>Ưu tiên đọc hiểu bản vẽ kỹ thuật.</li>
+                                <li>Chịu khó, cẩn thận, trách nhiệm.</li>
+                                <li>Sẵn sàng tăng ca khi cần.</li>
+                            </ul>
+                        </section>
+
+                        <section className="rounded-2xl border border-slate-200/90 bg-emerald-50/40 p-6 ring-1 ring-emerald-100 sm:p-8">
+                            <h2 className="text-lg font-extrabold text-slate-900 sm:text-xl">Quyền lợi</h2>
+                            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700">
+                                <li>Thu nhập 15.000.000đ – 20.000.000đ.</li>
+                                <li>Thưởng hoa hồng theo doanh số sản xuất.</li>
+                                <li>Đào tạo nếu chưa có kinh nghiệm.</li>
+                                <li>BHXH, BHYT, BHTN theo quy định.</li>
+                            </ul>
+                        </section>
+
+                        <section className="rounded-2xl border border-slate-200/90 bg-[var(--color-surface)] p-6 shadow-sm sm:p-8">
+                            <h2 className="text-lg font-extrabold text-slate-900 sm:text-xl">Thời gian làm việc</h2>
+                            <p className="mt-3 text-sm text-slate-600">
+                                Thứ Hai đến thứ Bảy — giờ hành chính hoặc theo ca (thỏa thuận khi phỏng vấn).
+                            </p>
+                        </section>
+
+                        <section className="rounded-2xl border border-dashed border-[var(--color-primary)]/35 bg-[var(--color-primary)]/5 p-6 sm:p-8">
+                            <h2 className="text-lg font-extrabold text-slate-900 sm:text-xl">Nộp hồ sơ</h2>
+                            <ul className="mt-4 space-y-4 text-sm">
+                                <li className="flex gap-3">
+                                    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-[var(--color-primary)] shadow-sm ring-1 ring-slate-200">
+                                        <HiOutlineMail className="size-5" aria-hidden />
+                                    </span>
+                                    <div>
+                                        <p className="font-bold text-slate-900">Email</p>
+                                        <a
+                                            href="mailto:infor@phukienthangmay.vn"
+                                            className="mt-1 inline-block font-semibold text-[var(--color-primary)] underline-offset-2 hover:underline"
+                                        >
+                                            infor@phukienthangmay.vn
+                                        </a>
                                     </div>
                                 </li>
-                            ))}
-                        </ul>
-                    </div>
-                </nav>
+                                <li className="flex gap-3">
+                                    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-[var(--color-primary)] shadow-sm ring-1 ring-slate-200">
+                                        <FiMapPin className="size-5" aria-hidden />
+                                    </span>
+                                    <div>
+                                        <p className="font-bold text-slate-900">Địa chỉ nộp trực tiếp</p>
+                                        <p className="mt-1 leading-relaxed text-slate-700">
+                                            Km8 + 93 đường 5 mới, xã Nam Sơn, huyện An Dương, Hải Phòng, Việt Nam
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </section>
+                    </article>
+
+                    <PublicDetailSidebar
+                        articleSuggest={articleSuggest}
+                        productNewLast={productNewLast}
+                        formatPrice={format}
+                    />
+                </div>
             </div>
         </>
     );
-}
+};
 
 export default TuyenDung;

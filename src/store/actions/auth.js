@@ -8,6 +8,10 @@ const extractAccessToken = (responseData) => {
         || null;
 };
 
+export const clearAuthErrors = () => ({
+    type: actionTypes.CLEAR_AUTH_ERRORS,
+});
+
 export const login = (data, isAdmin = false) => async (dispatch) => {
     try {
         const response = await apis.login(data, isAdmin);

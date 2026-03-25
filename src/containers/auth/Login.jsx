@@ -36,6 +36,10 @@ const Login = () => {
   };
 
   useEffect(() => {
+    dispatch(actions.clearAuthErrors());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (message === "Login successful") {
       setIsSubmitting(false);
       navigate("/");

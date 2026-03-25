@@ -1,5 +1,18 @@
 import actionType from "../actions/actionTypes";
 
+/** Lấy chuỗi hiển thị từ payload API / axios (nhiều dạng) */
+function normalizeAppMessage(payload) {
+    if (payload == null) return '';
+    if (typeof payload === 'string') return payload;
+    if (typeof payload === 'object') {
+        if (typeof payload.message === 'string') return payload.message;
+        if (payload.data != null && typeof payload.data === 'object') {
+            if (typeof payload.data.message === 'string') return payload.data.message;
+        }
+    }
+    return '';
+}
+
 const initState = {
     articles: [],
     productsCategory: [],
@@ -28,6 +41,8 @@ const initState = {
     paymentUrl: "",
     dataPayment: [],
     menu_mobie: false,
+    loginError: null,
+    registerError: null,
 }
 
 const appReducer = (state = initState, action) => {
@@ -59,8 +74,10 @@ const appReducer = (state = initState, action) => {
         case actionType.CREATE_PAYMENT_URL_ERR:
             return {
                 ...state,
-                message: action.payload.message || null,
-            }
+                message:
+                    normalizeAppMessage(action.payload) ||
+                    'Không tạo được liên kết thanh toán. Vui lòng thử lại.',
+            };
         case actionType.ADD_ORDER:
             return {
                 ...state,
@@ -70,8 +87,9 @@ const appReducer = (state = initState, action) => {
         case actionType.ADD_ORDER_ERR:
             return {
                 ...state,
-                message: action.payload.message || null,
-            }
+                message:
+                    normalizeAppMessage(action.payload) || 'Đặt hàng không thành công. Vui lòng thử lại.',
+            };
 
         case actionType.UPDATE_PROFILE_USER: 
             return {
@@ -85,17 +103,19 @@ const appReducer = (state = initState, action) => {
                 message: action.payload.message || null
             }
 
-        case actionType.UPDATE_PROFILE_USER_ERR: 
+        case actionType.UPDATE_PROFILE_USER_ERR:
             return {
                 ...state,
-                message: action.payload.message || null
-            }
+                message:
+                    normalizeAppMessage(action.payload) || 'Cập nhật hồ sơ không thành công.',
+            };
 
         case actionType.CHANGE_PASSWORD_ERR:
             return {
                 ...state,
-                message: action.payload.message || null
-            }
+                message:
+                    normalizeAppMessage(action.payload) || 'Đổi mật khẩu không thành công.',
+            };
 
         case actionType.GET_CATEGORY:
             return {
@@ -103,17 +123,17 @@ const appReducer = (state = initState, action) => {
                 categoryProduct: action.payload.data?.categoryProduct || []
             }
 
-        case actionType.IS_READ_NOTIFI_ERR: 
+        case actionType.IS_READ_NOTIFI_ERR:
             return {
                 ...state,
-                message: action.payload.message || null
-            }
-            
-        case actionType.GET_NOTIFI_USER_ERR: 
+                message: normalizeAppMessage(action.payload) || 'Không cập nhật được thông báo.',
+            };
+
+        case actionType.GET_NOTIFI_USER_ERR:
             return {
                 ...state,
-                message: action.payload.message || null
-            }
+                message: normalizeAppMessage(action.payload) || 'Không tải được thông báo.',
+            };
 
         case actionType.GET_PRODUCT_BY_CATEGORY:
             return {
@@ -202,12 +222,18 @@ const appReducer = (state = initState, action) => {
             }
         
         case actionType.RESET_MESSAGE:
+            /* Chỉ xóa message — giữ loginError/registerError để form auth vẫn hiện lỗi */
             return {
                 ...state,
                 message: null,
+            };
+
+        case actionType.CLEAR_AUTH_ERRORS:
+            return {
+                ...state,
                 loginError: null,
                 registerError: null,
-            }
+            };
         case actionType.GET_DISCOUNT:
             return {
                 ...state,

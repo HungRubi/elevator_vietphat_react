@@ -136,8 +136,30 @@ const Products = () => {
                 <link rel="canonical" href="https://vmu.com.vn/products" />
             </Helmet>
 
-            <div className="min-w-0 bg-slate-100/95">
-            <div className="mx-auto w-full max-w-[1200px] px-4 pb-12 pt-8 md:px-8">
+            <div className="min-w-0 bg-[var(--color-bg)]">
+                <header className="relative overflow-hidden border-b border-white/10 bg-gradient-to-br from-slate-950 via-[#0f172a] to-[#0c1f18]">
+                    <div className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-[var(--color-primary)]/20 blur-3xl" />
+                    <div className="pointer-events-none absolute bottom-0 left-0 h-48 w-48 rounded-full bg-cyan-500/10 blur-3xl" />
+                    <div className="relative mx-auto max-w-[1200px] px-4 py-10 md:px-8 md:py-12">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-300/90">
+                            Cửa hàng
+                        </p>
+                        <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                            Sản phẩm &amp; phụ kiện
+                        </h1>
+                        {q ? (
+                            <p className="mt-3 max-w-xl text-sm text-slate-400">
+                                Kết quả cho “<span className="font-semibold text-white">{q}</span>”
+                            </p>
+                        ) : (
+                            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-400">
+                                Phụ tùng, COP/LOP, linh kiện điện — lọc danh mục hoặc tìm nhanh theo từ khóa.
+                            </p>
+                        )}
+                    </div>
+                </header>
+
+            <div className="mx-auto w-full max-w-[1200px] px-4 pb-12 pt-6 md:px-8">
                 <nav className="text-sm text-slate-500" aria-label="Breadcrumb">
                     <NavLink to="/" className="hover:text-slate-800">
                         Trang chủ
@@ -148,18 +170,12 @@ const Products = () => {
 
                 <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-                            Sản phẩm
-                        </h1>
-                        {q ? (
-                            <p className="mt-2 text-sm text-slate-600">
-                                Kết quả cho “<span className="font-semibold text-slate-900">{q}</span>”
-                            </p>
-                        ) : (
-                            <p className="mt-2 text-sm text-slate-600">
-                                Phụ tùng & linh kiện thang máy — chọn danh mục hoặc tìm nhanh.
-                            </p>
-                        )}
+                        <h2 className="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">
+                            {q ? 'Kết quả tìm kiếm' : 'Danh sách sản phẩm'}
+                        </h2>
+                        <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+                            {searchLoading ? 'Đang tải…' : `${sortedList.length} mặt hàng`}
+                        </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                         <div ref={sortWrapRef} className="relative">

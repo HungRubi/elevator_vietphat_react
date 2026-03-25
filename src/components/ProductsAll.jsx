@@ -9,7 +9,7 @@ const ProductsAll = ({ data }) => {
             {list.length > 0 ? (
                 list.map((item) => <ProductCard key={item._id} item={item} variant="mosaic" />)
             ) : (
-                <div className="col-span-full flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-slate-200 bg-white py-16">
+                <div className="col-span-full flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 py-16">
                     <img src="/img/products_empty.png" alt="" className="w-64 max-w-full opacity-50" />
                     <p className="text-slate-500">Không có sản phẩm nào ở đây.</p>
                 </div>
