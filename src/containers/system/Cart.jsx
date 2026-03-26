@@ -3,14 +3,23 @@ import { QuantityButton, Button } from '../../components';
 import icons from '../../util/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { formatMoney } from '../../util/formatMoney';
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import * as actions from '../../store/actions';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import {
+    deleteCartItem,
+    fetchUserCart,
+    setSelectedProducts as setSelectedProductsAction,
+    updateCart,
+} from "../../store/slices/userSlice";
+import { fetchSelectedProducts } from "../../store/slices/productsSlice";
+import { getWarehouseStockNumber } from "../../util/stock";
+import PropTypes from "prop-types";
 
 const {
     PiShoppingCartBold,
     FiTruck,
     IoShieldCheckmarkOutline,
     AiOutlineLeft,
+    MdError,
 } = icons;
 
 /* Cùng kích thước mọi chỗ: chọn tất cả + từng dòng */
@@ -18,7 +27,7 @@ const checkboxBoxClass =
     'flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 border-slate-300 bg-white shadow-[inset_0_1px_2px_rgba(15,23,42,0.06)] transition peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--color-primary)] peer-focus-visible:ring-offset-2 peer-checked:border-[var(--color-primary)] peer-checked:bg-[var(--color-primary)] peer-checked:shadow-none peer-checked:[&>svg]:opacity-100';
 
 /** Checkbox tùy chỉnh — đồng bộ nền sáng, có tick SVG */
-function CartCheckbox({ id, checked, onChange, label, ariaLabel, checkboxOnly }) {
+function CartCheckbox({ id, checked, onChange, label, ariaLabel, checkboxOnly, disabled }) {
     const control = (
         <span className="relative inline-flex">
             <input
@@ -26,10 +35,14 @@ function CartCheckbox({ id, checked, onChange, label, ariaLabel, checkboxOnly })
                 type="checkbox"
                 checked={checked}
                 onChange={onChange}
+                disabled={disabled}
                 className="peer sr-only"
                 aria-label={ariaLabel}
             />
-            <span className={checkboxBoxClass} aria-hidden>
+            <span
+                className={`${checkboxBoxClass} ${disabled ? 'opacity-40 peer-disabled:opacity-40' : ''}`}
+                aria-hidden
+            >
                 <svg
                     className="h-3 w-3 text-white opacity-0 transition"
                     viewBox="0 0 12 12"
@@ -53,7 +66,7 @@ function CartCheckbox({ id, checked, onChange, label, ariaLabel, checkboxOnly })
         return (
             <label
                 htmlFor={id}
-                className="inline-flex cursor-pointer select-none"
+                className={`inline-flex select-none ${disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
             >
                 {control}
             </label>
@@ -63,7 +76,7 @@ function CartCheckbox({ id, checked, onChange, label, ariaLabel, checkboxOnly })
     return (
         <label
             htmlFor={id}
-            className="inline-flex cursor-pointer items-center gap-3 select-none text-sm font-medium text-slate-700"
+            className={`inline-flex items-center gap-3 select-none text-sm font-medium text-slate-700 ${disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
         >
             {control}
             {label != null ? <span>{label}</span> : null}
@@ -71,13 +84,124 @@ function CartCheckbox({ id, checked, onChange, label, ariaLabel, checkboxOnly })
     );
 }
 
+CartCheckbox.propTypes = {
+    id: PropTypes.string.isRequired,
+    checked: PropTypes.bool.isRequired,
+    onChange: PropTypes.func.isRequired,
+    label: PropTypes.node,
+    ariaLabel: PropTypes.string,
+    checkboxOnly: PropTypes.bool,
+    disabled: PropTypes.bool,
+};
+
 const Cart = () => {
     const dispatch = useDispatch();
     const { productCart, cart, currentUser } = useSelector((state) => state.user);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [quantities, setQuantities] = useState({});
+    const [stockMeta, setStockMeta] = useState({ status: 'idle', byId: {} });
+    const lastClampSigRef = useRef('');
 
     const cartItems = useMemo(() => cart?.[0]?.items ?? [], [cart]);
+
+    useEffect(() => {
+        if (!currentUser?._id) return;
+        dispatch(fetchUserCart(currentUser._id));
+    }, [dispatch, currentUser?._id]);
+
+    const cartProductIdsKey = useMemo(
+        () => cartItems.map((c) => c.productId).filter(Boolean).sort().join(','),
+        [cartItems]
+    );
+
+    useEffect(() => {
+        if (!cartProductIdsKey) {
+            setStockMeta({ status: 'idle', byId: {} });
+            return;
+        }
+        const ids = cartProductIdsKey.split(',');
+        let cancelled = false;
+        setStockMeta((prev) => ({ ...prev, status: 'loading' }));
+        dispatch(fetchSelectedProducts(ids))
+            .unwrap()
+            .then((res) => {
+                if (cancelled) return;
+                const list = res?.product ?? [];
+                const byId = {};
+                list.forEach((p) => {
+                    byId[p._id] = Number(p.warehouseStock ?? p.warehouse?.stock ?? 0);
+                });
+                setStockMeta({ status: 'done', byId });
+            })
+            .catch(() => {
+                if (!cancelled) setStockMeta({ status: 'error', byId: {} });
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [dispatch, cartProductIdsKey]);
+
+    const resolveLineStock = useCallback(
+        (item) => {
+            if (stockMeta.status === 'done') {
+                return stockMeta.byId[item._id] ?? 0;
+            }
+            return getWarehouseStockNumber(item);
+        },
+        [stockMeta.status, stockMeta.byId]
+    );
+
+    const lineIsUnavailable = useCallback(
+        (item) => {
+            const s = resolveLineStock(item);
+            return s !== null && s <= 0;
+        },
+        [resolveLineStock]
+    );
+
+    const selectableIds = useMemo(
+        () => productCart.filter((item) => !lineIsUnavailable(item)).map((p) => p._id),
+        [productCart, lineIsUnavailable]
+    );
+
+    useEffect(() => {
+        if (stockMeta.status !== 'done') return;
+        setSelectedProducts((prev) => prev.filter((id) => (stockMeta.byId[id] ?? 0) > 0));
+    }, [stockMeta.status, stockMeta.byId]);
+
+    useEffect(() => {
+        if (stockMeta.status !== 'done' || !currentUser?._id || cartItems.length === 0) return;
+        const updatedItems = cartItems.map((row) => {
+            const st = stockMeta.byId[row.productId];
+            if (st == null || st <= 0) return row;
+            if (row.quantity > st) return { ...row, quantity: st };
+            return row;
+        });
+        const changed = updatedItems.some((row, i) => row.quantity !== cartItems[i].quantity);
+        if (!changed) return;
+        const sig = `${cartProductIdsKey}|${updatedItems.map((r) => `${r.productId}:${r.quantity}`).join(',')}`;
+        if (lastClampSigRef.current === sig) return;
+        lastClampSigRef.current = sig;
+        const totalPrice = updatedItems.reduce((t, item) => t + item.price * item.quantity, 0);
+        setQuantities((prev) => {
+            const next = { ...prev };
+            updatedItems.forEach((r) => {
+                next[r.productId] = r.quantity;
+            });
+            return next;
+        });
+        dispatch(
+            updateCart({
+                data: {
+                    productId: updatedItems[0]?.productId,
+                    quantity: updatedItems[0]?.quantity,
+                    items: updatedItems,
+                    totalPrice,
+                },
+                userId: currentUser._id,
+            })
+        );
+    }, [stockMeta.status, stockMeta.byId, cartItems, cartProductIdsKey, currentUser?._id, dispatch]);
 
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -106,15 +230,15 @@ const Cart = () => {
         );
 
         dispatch(
-            actions.updateCart(
-                {
+            updateCart({
+                data: {
                     productId,
                     quantity: newQuantity,
                     items: updatedItems,
                     totalPrice,
                 },
-                currentUser?._id
-            )
+                userId: currentUser?._id,
+            })
         );
     };
 
@@ -127,11 +251,13 @@ const Cart = () => {
     };
 
     const handleSelectAll = () => {
-        const isAllSelected = selectedProducts.length === productCart.length;
-        if (isAllSelected) {
+        const allOn =
+            selectableIds.length > 0 &&
+            selectableIds.every((id) => selectedProducts.includes(id));
+        if (allOn) {
             setSelectedProducts([]);
         } else {
-            setSelectedProducts(productCart.map((item) => item._id));
+            setSelectedProducts([...selectableIds]);
         }
     };
 
@@ -157,16 +283,16 @@ const Cart = () => {
                 quantity: quantities[productId] || 1,
             };
         });
-        dispatch(actions.setSelectedProducts(selectedProductsWithQuantity));
+        dispatch(setSelectedProductsAction(selectedProductsWithQuantity));
     };
 
     const handleDeleteSelected = useCallback(() => {
         if (selectedProducts.length > 0) {
             dispatch(
-                actions.deleteCartItem(
-                    { productId: selectedProducts },
-                    currentUser?._id
-                )
+                deleteCartItem({
+                    data: { productId: selectedProducts },
+                    userId: currentUser?._id,
+                })
             );
             setSelectedProducts([]);
         }
@@ -174,15 +300,21 @@ const Cart = () => {
 
     const handleDeleteItem = (itemId) => {
         dispatch(
-            actions.deleteCartItem({ productId: itemId }, currentUser?._id)
+            deleteCartItem({ data: { productId: itemId }, userId: currentUser?._id })
         );
         setSelectedProducts((prev) => prev.filter((id) => id !== itemId));
     };
 
     const hasItems = productCart && productCart.length > 0;
     const allSelected =
-        hasItems && selectedProducts.length === productCart.length;
+        selectableIds.length > 0 &&
+        selectableIds.every((id) => selectedProducts.includes(id));
     const someSelected = selectedProducts.length > 0;
+
+    const unavailableCount = useMemo(
+        () => productCart.filter((item) => lineIsUnavailable(item)).length,
+        [productCart, lineIsUnavailable]
+    );
 
     return (
         <div className="min-h-[calc(100vh-80px)] bg-[var(--color-bg)] pb-28 text-[var(--color-text)] lg:pb-10">
@@ -217,6 +349,44 @@ const Cart = () => {
                     </div>
                 </header>
 
+                {hasItems && unavailableCount > 0 ? (
+                    <div
+                        className="mb-6 flex flex-col gap-3 rounded-2xl border border-red-200/80 bg-gradient-to-br from-red-50 via-white to-amber-50/50 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5"
+                        role="alert"
+                    >
+                        <div className="flex min-w-0 items-start gap-3">
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-700">
+                                <MdError className="text-xl" aria-hidden />
+                            </span>
+                            <div>
+                                <p className="font-bold text-red-900">
+                                    {unavailableCount} sản phẩm đã hết hàng
+                                </p>
+                                <p className="mt-1 text-sm leading-relaxed text-red-800/90">
+                                    Các dòng này không thể chọn thanh toán. Gỡ khỏi giỏ hoặc chọn sản phẩm
+                                    thay thế — tồn kho được đồng bộ theo kho thực tế.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
+
+                {hasItems && stockMeta.status === 'loading' ? (
+                    <p className="mb-4 text-center text-xs font-medium text-slate-500" role="status">
+                        Đang đồng bộ tồn kho…
+                    </p>
+                ) : null}
+
+                {hasItems && stockMeta.status === 'error' ? (
+                    <div
+                        className="mb-4 rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-900"
+                        role="status"
+                    >
+                        Không kiểm tra được tồn kho lúc này. Bạn vẫn xem được giỏ; hãy tải lại trang sau vài
+                        giây.
+                    </div>
+                ) : null}
+
                 {!hasItems ? (
                     <div
                         className="flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-[var(--color-surface)] px-6 py-14 text-center shadow-sm"
@@ -246,15 +416,16 @@ const Cart = () => {
                                     id="cart-select-all"
                                     checked={allSelected}
                                     onChange={handleSelectAll}
+                                    disabled={selectableIds.length === 0}
                                     ariaLabel="Chọn tất cả sản phẩm"
                                 />
                             </div>
                             <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
                                 <label
                                     htmlFor="cart-select-all"
-                                    className="cursor-pointer select-none text-sm font-medium text-slate-700"
+                                    className={`select-none text-sm font-medium text-slate-700 ${selectableIds.length === 0 ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
                                 >
-                                    Chọn tất cả ({productCart.length})
+                                    Chọn tất cả ({selectableIds.length}/{productCart.length})
                                 </label>
                                 {someSelected && (
                                     <button
@@ -297,40 +468,84 @@ const Cart = () => {
                                 const qty =
                                     quantities[item._id] ?? initialQuantity;
                                 const lineTotal = qty * item.price;
-                                const selected = selectedProducts.includes(
-                                    item._id
-                                );
+                                const lineStock = resolveLineStock(item);
+                                const unavailable = lineIsUnavailable(item);
+                                const qtyMax =
+                                    unavailable || lineStock == null
+                                        ? undefined
+                                        : lineStock > 0
+                                          ? lineStock
+                                          : undefined;
+                                const selected =
+                                    !unavailable && selectedProducts.includes(item._id);
                                 const itemCbId = `cart-item-${item._id}`;
 
                                 return (
                                     <li
                                         key={item._id}
                                         className={`overflow-hidden rounded-2xl border bg-[var(--color-surface)] transition-all duration-200 ${
-                                            selected
-                                                ? 'border-[var(--color-primary)]/40 shadow-[0_4px_20px_-4px_rgba(47,144,75,0.2)] ring-1 ring-[var(--color-primary)]/15'
-                                                : 'border-slate-200/90 shadow-[0_1px_3px_rgba(15,23,42,0.05)] hover:border-slate-300 hover:shadow-md'
+                                            unavailable
+                                                ? 'border-red-200/70 shadow-[0_2px_12px_-4px_rgba(220,38,38,0.12)] ring-1 ring-red-100/80'
+                                                : selected
+                                                  ? 'border-[var(--color-primary)]/40 shadow-[0_4px_20px_-4px_rgba(47,144,75,0.2)] ring-1 ring-[var(--color-primary)]/15'
+                                                  : 'border-slate-200/90 shadow-[0_1px_3px_rgba(15,23,42,0.05)] hover:border-slate-300 hover:shadow-md'
                                         }`}
                                     >
+                                        {unavailable ? (
+                                            <div className="flex flex-col gap-3 border-b border-red-100 bg-gradient-to-r from-red-50/95 via-white to-amber-50/30 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
+                                                <div className="flex min-w-0 items-center gap-2 text-sm font-semibold text-red-800">
+                                                    <MdError className="shrink-0 text-lg text-red-700" aria-hidden />
+                                                    <span>Hết hàng — không thể thanh toán</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleDeleteItem(item._id)
+                                                    }
+                                                    className="inline-flex shrink-0 items-center justify-center self-start rounded-xl border border-red-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-red-700 shadow-sm transition hover:bg-red-50 sm:self-auto"
+                                                    aria-label={`Gỡ ${item.name} khỏi giỏ`}
+                                                >
+                                                    Gỡ khỏi giỏ
+                                                </button>
+                                            </div>
+                                        ) : null}
+                                        {!unavailable &&
+                                        lineStock != null &&
+                                        lineStock > 0 &&
+                                        lineStock < 5 ? (
+                                            <div className="border-b border-amber-100 bg-amber-50/60 px-4 py-2 text-xs font-medium text-amber-900 sm:px-5">
+                                                Sắp hết: chỉ còn{' '}
+                                                <span className="tabular-nums font-bold">{lineStock}</span> trong
+                                                kho.
+                                            </div>
+                                        ) : null}
                                         <div className="flex flex-col lg:grid lg:grid-cols-[2.75rem_1fr_7rem_8.5rem_7rem_4rem] lg:items-center lg:gap-4 lg:p-5">
                                             {/* Hàng sản phẩm: checkbox + ảnh + tên */}
                                             <div className="flex gap-3 border-b border-slate-100 p-4 sm:p-5 lg:contents lg:border-b-0 lg:p-0">
                                                 <div className="flex w-11 shrink-0 items-center justify-center self-stretch lg:w-auto lg:self-center lg:justify-self-center">
-                                                    <CartCheckbox
-                                                        checkboxOnly
-                                                        id={itemCbId}
-                                                        checked={selected}
-                                                        onChange={() =>
-                                                            handleProductSelect(
-                                                                item._id
-                                                            )
-                                                        }
-                                                        ariaLabel={`Chọn ${item.name}`}
-                                                    />
+                                                    {unavailable ? (
+                                                        <span
+                                                            className="h-5 w-5 shrink-0"
+                                                            aria-hidden
+                                                        />
+                                                    ) : (
+                                                        <CartCheckbox
+                                                            checkboxOnly
+                                                            id={itemCbId}
+                                                            checked={selected}
+                                                            onChange={() =>
+                                                                handleProductSelect(
+                                                                    item._id
+                                                                )
+                                                            }
+                                                            ariaLabel={`Chọn ${item.name}`}
+                                                        />
+                                                    )}
                                                 </div>
                                                 <div className="flex min-w-0 flex-1 gap-4">
                                                     <NavLink
                                                         to={`/products/detail/${item.slug}`}
-                                                        className="relative h-[5.25rem] w-[5.25rem] shrink-0 overflow-hidden rounded-xl bg-slate-100 shadow-sm ring-1 ring-slate-200/90 transition hover:ring-[var(--color-primary)]/35 sm:h-24 sm:w-24"
+                                                        className={`relative h-[5.25rem] w-[5.25rem] shrink-0 overflow-hidden rounded-xl bg-slate-100 shadow-sm ring-1 ring-slate-200/90 transition hover:ring-[var(--color-primary)]/35 sm:h-24 sm:w-24 ${unavailable ? 'opacity-75 grayscale-[0.25]' : ''}`}
                                                     >
                                                         <img
                                                             src={
@@ -353,6 +568,16 @@ const Cart = () => {
                                                             )}
                                                             đ / sản phẩm
                                                         </p>
+                                                        {!unavailable &&
+                                                        lineStock != null &&
+                                                        lineStock > 0 ? (
+                                                            <p className="text-xs font-medium text-slate-500">
+                                                                Kho:{' '}
+                                                                <span className="tabular-nums text-slate-700">
+                                                                    {lineStock}
+                                                                </span>
+                                                            </p>
+                                                        ) : null}
                                                     </div>
                                                 </div>
                                             </div>
@@ -383,6 +608,8 @@ const Cart = () => {
                                                         )
                                                     }
                                                     price={item.price}
+                                                    max={qtyMax}
+                                                    disabled={unavailable}
                                                     onQuantityChange={(
                                                         newQuantity
                                                     ) =>
@@ -401,21 +628,6 @@ const Cart = () => {
                                                 <p className="text-lg font-bold tabular-nums text-slate-900 lg:text-base">
                                                     {formatMoney(lineTotal)}đ
                                                 </p>
-                                            </div>
-
-                                            <div className="flex justify-end border-t border-slate-100 px-4 py-2.5 sm:px-5 lg:border-t-0 lg:justify-center lg:px-0 lg:py-0">
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleDeleteItem(
-                                                            item._id
-                                                        )
-                                                    }
-                                                    className="rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition hover:bg-red-50 hover:text-red-600"
-                                                    aria-label={`Xóa ${item.name}`}
-                                                >
-                                                    Xóa
-                                                </button>
                                             </div>
                                         </div>
                                     </li>

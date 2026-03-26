@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { PageBar } from "../../components";
-import * as actions from "../../store/actions";
+import { isReadNotification } from "../../store/slices/userSlice";
 import { Helmet } from "react-helmet";
 import icons from "../../util/icons";
 
@@ -11,7 +11,7 @@ const LIMIT = 8;
 
 const Notification = () => {
     const dispatch = useDispatch();
-    const { myNotifi, currentUser } = useSelector((state) => state.user);
+    const { myNotifi } = useSelector((state) => state.user);
     const [current, setCurrent] = useState(1);
 
     const list = myNotifi || [];
@@ -20,10 +20,7 @@ const Notification = () => {
 
     const markRead = (id) => {
         dispatch(
-            actions.isReadNotification(id, {
-                user_id: currentUser?._id,
-                isRead: true,
-            })
+            isReadNotification(id)
         );
     };
 

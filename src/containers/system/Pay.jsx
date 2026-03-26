@@ -2,8 +2,18 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Button, ModalAddress, ModalDiscount } from '../../components';
 import icons from '../../util/icons';
 import { useSelector, useDispatch } from 'react-redux';
-import { useMemo, useEffect, useState, useRef } from 'react';
-import * as actions from '../../store/actions';
+import { useMemo, useEffect, useState, useRef, useCallback } from 'react';
+import { createPaymentUrl } from "../../store/slices/paymentSlice";
+import { fetchDiscounts } from "../../store/slices/discountSlice";
+import {
+    addOrder,
+    deleteCartItem,
+    getNotifiByUser,
+    setInforOrder,
+    setSelectedProducts,
+} from "../../store/slices/userSlice";
+import { CHECKOUT_STORAGE_KEY, clearCheckoutStorage } from "../../util/checkoutStorage";
+import { fetchSelectedProducts } from "../../store/slices/productsSlice";
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
@@ -18,6 +28,7 @@ const {
     RiBillLine,
     IoShieldCheckmarkOutline,
     FiTruck,
+    MdError,
 } = icons;
 
 const Pay = () => {
@@ -27,14 +38,119 @@ const Pay = () => {
     const { selectedProducts, currentUser, selectedVoucher } = useSelector(
         (state) => state.user
     );
-    const { message, paymentUrl } = useSelector((state) => state.app);
+    const sessionResolved = useSelector((state) => state.auth.sessionResolved);
+    const { paymentUrl, status: paymentApiStatus } = useSelector((state) => state.payment);
+    const [checkoutHydrated, setCheckoutHydrated] = useState(false);
 
     const [paymentMethod, setPaymentMethod] = useState('cod');
+    const [orderSubmitting, setOrderSubmitting] = useState(false);
     const [orderNote, setOrderNote] = useState('');
     const prevPaymentMethod = useRef(paymentMethod);
+    const [payStock, setPayStock] = useState({ status: 'idle', byId: {} });
+
+    const payIdsKey = useMemo(
+        () =>
+            (selectedProducts || [])
+                .map((x) => x?.product?._id)
+                .filter(Boolean)
+                .sort()
+                .join(','),
+        [selectedProducts]
+    );
+
+    useEffect(() => {
+        if (!payIdsKey) {
+            setPayStock({ status: 'idle', byId: {} });
+            return;
+        }
+        const ids = payIdsKey.split(',');
+        let cancelled = false;
+        setPayStock((s) => ({ ...s, status: 'loading' }));
+        dispatch(fetchSelectedProducts(ids))
+            .unwrap()
+            .then((res) => {
+                if (cancelled) return;
+                const list = res?.product ?? [];
+                const byId = {};
+                list.forEach((p) => {
+                    byId[p._id] = Number(p.warehouseStock ?? p.warehouse?.stock ?? 0);
+                });
+                setPayStock({ status: 'done', byId });
+            })
+            .catch(() => {
+                if (!cancelled) setPayStock({ status: 'error', byId: {} });
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [dispatch, payIdsKey]);
+
+    useEffect(() => {
+        if (!currentUser?._id) return;
+        if (!selectedProducts?.length) return;
+        try {
+            sessionStorage.setItem(
+                CHECKOUT_STORAGE_KEY,
+                JSON.stringify({
+                    userId: currentUser._id,
+                    items: selectedProducts,
+                })
+            );
+        } catch {
+            // ignore quota / private mode
+        }
+    }, [currentUser?._id, selectedProducts]);
+
+    useEffect(() => {
+        if (!sessionResolved || !currentUser?._id) return;
+        if (selectedProducts?.length > 0) {
+            setCheckoutHydrated(true);
+            return;
+        }
+        try {
+            const raw = sessionStorage.getItem(CHECKOUT_STORAGE_KEY);
+            if (!raw) {
+                setCheckoutHydrated(true);
+                return;
+            }
+            const parsed = JSON.parse(raw);
+            if (parsed.userId !== currentUser._id) {
+                sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
+                setCheckoutHydrated(true);
+                return;
+            }
+            if (Array.isArray(parsed.items) && parsed.items.length > 0) {
+                dispatch(setSelectedProducts(parsed.items));
+            }
+        } catch {
+            sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
+        }
+        setCheckoutHydrated(true);
+    }, [sessionResolved, currentUser?._id, selectedProducts?.length, dispatch]);
+
+    const payStockIssues = useMemo(() => {
+        if (payStock.status !== 'done') return [];
+        const out = [];
+        (selectedProducts || []).forEach((row) => {
+            const p = row?.product;
+            if (!p?._id) return;
+            const st = payStock.byId[p._id] ?? 0;
+            const q = Number(row.quantity) || 0;
+            if (st <= 0) out.push({ row, st, q, kind: 'oos' });
+            else if (q > st) out.push({ row, st, q, kind: 'over' });
+        });
+        return out;
+    }, [payStock.status, payStock.byId, selectedProducts]);
 
     const hasItems =
         Array.isArray(selectedProducts) && selectedProducts.length > 0;
+
+    const checkoutStockOk = useMemo(() => {
+        if (!hasItems) return false;
+        if (payStock.status === 'loading' || payStock.status === 'idle') return false;
+        if (payStock.status === 'error') return false;
+        return payStockIssues.length === 0;
+    }, [hasItems, payStock.status, payStockIssues.length]);
 
     const totalPrice = useMemo(
         () =>
@@ -91,7 +207,7 @@ const Pay = () => {
                 total_price: item.product.price * item.quantity,
             })),
             status: 'Đang xử lý',
-            discount_id: selectedVoucher?._id,
+            ...(selectedVoucher?._id ? { discount_id: selectedVoucher._id } : {}),
             ...(orderNote.trim()
                 ? { note: orderNote.trim() }
                 : {}),
@@ -107,13 +223,13 @@ const Pay = () => {
     );
 
     useEffect(() => {
-        if (!hasItems) {
-            navigate('/cart', { replace: true });
-        }
-    }, [hasItems, navigate]);
+        if (!checkoutHydrated) return;
+        if (hasItems) return;
+        navigate('/cart', { replace: true });
+    }, [checkoutHydrated, hasItems, navigate]);
 
     useEffect(() => {
-        dispatch(actions.getDiscounts());
+        dispatch(fetchDiscounts());
     }, [dispatch]);
 
     /* Chỉ khi vừa chuyển sang bank — tránh gọi API lặp khi total/orderData đổi */
@@ -131,8 +247,8 @@ const Pay = () => {
             setPaymentMethod('cod');
             return;
         }
-        dispatch(actions.setInforOrder(orderData));
-        dispatch(actions.createPaymentUrl({ amount: total }));
+        dispatch(setInforOrder(orderData));
+        dispatch(createPaymentUrl({ amount: total }));
     }, [paymentMethod, dispatch, total, orderData]);
 
     useEffect(() => {
@@ -140,29 +256,6 @@ const Pay = () => {
             window.location.href = paymentUrl;
         }
     }, [paymentMethod, paymentUrl]);
-
-    useEffect(() => {
-        if (message === 'Tạo đơn hàng thành công' && paymentMethod === 'cod') {
-            const orderedProductIds = selectedProducts.map(
-                (item) => item.product._id
-            );
-            dispatch(
-                actions.deleteCartItem(
-                    { productId: orderedProductIds },
-                    currentUser?._id
-                )
-            );
-            dispatch(actions.getNotifiByUser(currentUser?._id));
-            navigate('/account/order');
-        }
-    }, [
-        message,
-        navigate,
-        dispatch,
-        selectedProducts,
-        currentUser,
-        paymentMethod,
-    ]);
 
     const handleExportInvoice = async () => {
         try {
@@ -212,10 +305,89 @@ const Pay = () => {
         }
     };
 
-    const handleAddOrder = () => {
-        if (!hasItems) return;
-        dispatch(actions.addOrder(orderData));
-    };
+    const handlePlaceOrder = useCallback(async () => {
+        if (!hasItems || orderSubmitting) return;
+
+        if (!checkoutStockOk) {
+            alert(
+                'Tồn kho không đủ hoặc có sản phẩm hết hàng. Vui lòng quay lại giỏ hàng để chỉnh sửa.'
+            );
+            navigate('/cart');
+            return;
+        }
+
+        if (paymentMethod === 'bank') {
+            if (total <= 0) {
+                alert(
+                    'Tổng thanh toán không hợp lệ. Vui lòng kiểm tra giỏ hàng hoặc chọn COD.'
+                );
+                return;
+            }
+            if (paymentUrl) {
+                window.location.href = paymentUrl;
+                return;
+            }
+            if (paymentApiStatus === 'loading') return;
+
+            setOrderSubmitting(true);
+            try {
+                dispatch(setInforOrder(orderData));
+                const res = await dispatch(createPaymentUrl({ amount: total })).unwrap();
+                const url = res?.paymentUrl;
+                if (url) {
+                    window.location.href = url;
+                } else {
+                    alert('Không nhận được liên kết thanh toán. Vui lòng thử lại.');
+                }
+            } catch {
+                /* lỗi đã qua reject thunk / toast */
+            } finally {
+                setOrderSubmitting(false);
+            }
+            return;
+        }
+
+        setOrderSubmitting(true);
+        try {
+            await dispatch(addOrder(orderData)).unwrap();
+            clearCheckoutStorage();
+            const orderedProductIds = selectedProducts.map((item) => item.product._id);
+            dispatch(
+                deleteCartItem({
+                    data: { productId: orderedProductIds },
+                    userId: currentUser?._id,
+                    silent: true,
+                })
+            );
+            dispatch(getNotifiByUser(currentUser?._id));
+            navigate('/order-success');
+        } catch {
+            /* lỗi API: messageUser / toast */
+        } finally {
+            setOrderSubmitting(false);
+        }
+    }, [
+        hasItems,
+        orderSubmitting,
+        paymentMethod,
+        total,
+        paymentUrl,
+        paymentApiStatus,
+        dispatch,
+        orderData,
+        selectedProducts,
+        currentUser,
+        navigate,
+        checkoutStockOk,
+    ]);
+
+    if (!checkoutHydrated) {
+        return (
+            <div className="flex min-h-[40vh] items-center justify-center bg-[var(--color-bg)] px-4">
+                <p className="text-slate-500">Đang tải…</p>
+            </div>
+        );
+    }
 
     if (!hasItems) {
         return (
@@ -298,6 +470,59 @@ const Pay = () => {
 
             <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_340px] lg:items-start lg:gap-10">
                 <div className="space-y-6">
+                    {payStock.status === 'loading' ? (
+                        <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm text-slate-600" role="status">
+                            Đang kiểm tra tồn kho…
+                        </p>
+                    ) : null}
+
+                    {payStock.status === 'error' ? (
+                        <div
+                            className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950"
+                            role="alert"
+                        >
+                            Không kiểm tra được tồn kho. Vui lòng tải lại trang hoặc quay lại{' '}
+                            <NavLink to="/cart" className="font-bold underline">
+                                giỏ hàng
+                            </NavLink>
+                            .
+                        </div>
+                    ) : null}
+
+                    {payStock.status === 'done' && payStockIssues.length > 0 ? (
+                        <div
+                            className="rounded-2xl border border-red-200 bg-gradient-to-br from-red-50 to-white p-4 shadow-sm sm:p-5"
+                            role="alert"
+                        >
+                            <div className="flex gap-3">
+                                <MdError className="mt-0.5 shrink-0 text-2xl text-red-600" aria-hidden />
+                                <div className="min-w-0">
+                                    <p className="font-bold text-red-900">
+                                        Không thể thanh toán — tồn kho đã thay đổi
+                                    </p>
+                                    <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-red-800">
+                                        {payStockIssues.map((issue) => (
+                                            <li key={issue.row?.product?._id}>
+                                                <span className="font-medium">
+                                                    {issue.row?.product?.name}
+                                                </span>
+                                                {issue.kind === 'oos'
+                                                    ? ' đã hết hàng.'
+                                                    : ` — trong kho chỉ còn ${issue.st}, bạn đang chọn ${issue.q}.`}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <NavLink
+                                        to="/cart"
+                                        className="mt-3 inline-flex rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700"
+                                    >
+                                        Về giỏ hàng chỉnh sửa
+                                    </NavLink>
+                                </div>
+                            </div>
+                        </div>
+                    ) : null}
+
                     {/* Địa chỉ */}
                     <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-[var(--color-surface)] shadow-sm">
                         <div className="h-1 bg-gradient-to-r from-[var(--color-primary)] to-emerald-300" />
@@ -342,10 +567,19 @@ const Pay = () => {
                             </p>
                         </div>
                         <ul className="divide-y divide-slate-100">
-                            {selectedProducts.map((item) => (
+                            {selectedProducts.map((item) => {
+                                const st =
+                                    payStock.status === 'done'
+                                        ? payStock.byId[item.product._id] ?? 0
+                                        : null;
+                                const q = Number(item.quantity) || 0;
+                                const lineBad =
+                                    payStock.status === 'done' &&
+                                    (st <= 0 || q > st);
+                                return (
                                 <li
                                     key={item.product._id}
-                                    className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                                    className={`flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 ${lineBad ? 'bg-red-50/50' : ''}`}
                                 >
                                     <div className="flex min-w-0 gap-4">
                                         <NavLink
@@ -370,7 +604,20 @@ const Pay = () => {
                                                 <span className="font-medium text-slate-800">
                                                     {item.quantity}
                                                 </span>
+                                                {payStock.status === 'done' && st != null ? (
+                                                    <span className="ml-2 text-xs font-medium text-slate-500">
+                                                        · Kho:{' '}
+                                                        <span className="tabular-nums text-slate-700">{st}</span>
+                                                    </span>
+                                                ) : null}
                                             </p>
+                                            {lineBad ? (
+                                                <p className="mt-1 text-xs font-semibold text-red-700">
+                                                    {st <= 0
+                                                        ? 'Hết hàng'
+                                                        : `Vượt tồn (tối đa ${st})`}
+                                                </p>
+                                            ) : null}
                                         </div>
                                     </div>
                                     <div className="flex shrink-0 items-end justify-between gap-6 sm:flex-col sm:items-end sm:text-right">
@@ -390,7 +637,8 @@ const Pay = () => {
                                         </p>
                                     </div>
                                 </li>
-                            ))}
+                            );
+                            })}
                         </ul>
                     </section>
 
@@ -490,10 +738,18 @@ const Pay = () => {
                         </p>
                         <div className="mt-4 flex flex-wrap gap-3">
                             <Button
-                                onClick={handleAddOrder}
+                                onClick={handlePlaceOrder}
+                                disabled={orderSubmitting || !checkoutStockOk}
+                                aria-busy={orderSubmitting}
                                 className="!rounded-xl !px-8 !py-3.5 !normal-case !text-base !font-bold"
                             >
-                                Đặt hàng
+                                {orderSubmitting
+                                    ? paymentMethod === 'bank'
+                                        ? 'Đang mở cổng thanh toán…'
+                                        : 'Đang xử lý…'
+                                    : paymentMethod === 'bank'
+                                      ? 'Thanh toán & đặt hàng'
+                                      : 'Đặt hàng'}
                             </Button>
                             <Button
                                 type="button"
@@ -576,10 +832,16 @@ const Pay = () => {
                         </p>
                     </div>
                     <Button
-                        onClick={handleAddOrder}
+                        onClick={handlePlaceOrder}
+                        disabled={orderSubmitting || !checkoutStockOk}
+                        aria-busy={orderSubmitting}
                         className="!shrink-0 !rounded-xl !px-6 !py-3 !normal-case !font-bold"
                     >
-                        Đặt hàng
+                        {orderSubmitting
+                            ? '…'
+                            : paymentMethod === 'bank'
+                              ? 'Thanh toán'
+                              : 'Đặt hàng'}
                     </Button>
                 </div>
                 <p className="mx-auto mt-2 max-w-lg text-center text-[10px] text-slate-500">

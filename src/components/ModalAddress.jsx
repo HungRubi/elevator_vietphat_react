@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from './index';
-import * as actions from '../store/actions';
+import { updateAddress, updateProfileUser } from "../store/slices/userSlice";
+import { fetchSessionUser } from "../store/slices/authSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import icons from '../util/icons';
 
@@ -57,7 +58,7 @@ const ModalAddress = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (formData.name === '') {
@@ -77,14 +78,38 @@ const ModalAddress = () => {
 
         setErr(null);
         const combinedAddress = `${formData.specificAddress} ${formData.address}`.trim();
-        const formDataToSubmit = {
+
+        /** API: `PUT /user/profile/update/:id` — name, email, phone, birth; `PUT /user/update/address/:id` — chỉ `{ address }`. */
+        const profileData = {
             name: formData.name,
             phone: formData.phone,
-            address: combinedAddress,
         };
+        if (currentUser?.email != null && String(currentUser.email).trim() !== '') {
+            profileData.email = currentUser.email;
+        }
+        if (currentUser?.format != null && String(currentUser.format).trim() !== '') {
+            profileData.birth = currentUser.format;
+        }
 
-        dispatch(actions.updateAddress(formDataToSubmit, currentUser?._id));
-        setIsOpen(false);
+        try {
+            await dispatch(
+                updateProfileUser({
+                    data: profileData,
+                    userId: currentUser?._id,
+                    silent: true,
+                })
+            ).unwrap();
+            await dispatch(
+                updateAddress({
+                    data: { address: combinedAddress },
+                    userId: currentUser?._id,
+                })
+            ).unwrap();
+            setIsOpen(false);
+            dispatch(fetchSessionUser());
+        } catch {
+            setErr('Không cập nhật được thông tin nhận hàng. Vui lòng thử lại.');
+        }
     };
 
     const inputClass =

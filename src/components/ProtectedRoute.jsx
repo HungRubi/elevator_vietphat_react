@@ -4,11 +4,16 @@ import path from '../util/path';
 import PropTypes from 'prop-types';
 
 const ProtectedRoute = ({ children }) => {
-    const { currentUser } = useSelector(state => state.user);
-    if (!currentUser) {
-        return <Navigate to={path.PAGE404} replace />;
+    const { currentUser, accessToken } = useSelector((state) => state.user);
+    const sessionResolved = useSelector((state) => state.auth.sessionResolved);
+
+    if (currentUser) {
+        return children;
     }
-    return children;
+    if (accessToken && !sessionResolved) {
+        return null;
+    }
+    return <Navigate to={path.PAGE404} replace />;
 };
 
 ProtectedRoute.propTypes = {

@@ -3,7 +3,8 @@ import icons from '../util/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from './Button';
 import { VoucherEmpty } from '../util/iconSgv';
-import * as actions from '../store/actions';
+import { fetchDiscounts } from "../store/slices/discountSlice";
+import { selectVoucher } from "../store/slices/userSlice";
 
 const { AiOutlineQuestionCircle, IoCloseSharp } = icons;
 
@@ -27,7 +28,7 @@ const ModalDiscount = () => {
     const [localPick, setLocalPick] = useState(null);
     const modalRef = useRef(null);
     const dispatch = useDispatch();
-    const { discount } = useSelector((state) => state.app);
+    const { discount } = useSelector((state) => state.discount);
     const appliedVoucher = useSelector((state) => state.user.selectedVoucher);
 
     const validDiscounts = useMemo(() => {
@@ -39,6 +40,11 @@ const ModalDiscount = () => {
             return end != null && end >= today;
         });
     }, [discount]);
+
+    useEffect(() => {
+        // đảm bảo có dữ liệu voucher khi mở modal
+        dispatch(fetchDiscounts());
+    }, [dispatch]);
 
     useEffect(() => {
         const onDown = (e) => {
@@ -73,7 +79,7 @@ const ModalDiscount = () => {
 
     const handleApply = () => {
         if (localPick) {
-            dispatch(actions.selectVoucher(localPick));
+            dispatch(selectVoucher(localPick));
             setIsOpen(false);
         }
     };

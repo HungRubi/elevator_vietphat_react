@@ -2,7 +2,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import icons from "../../util/icons";
 import { useEffect, useId, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as actions from "../../store/actions";
+import { registerUser } from "../../store/slices/authSlice";
+import { clearAuthErrors } from "../../store/slices/uiSlice";
 import { Helmet } from "react-helmet";
 import path from "../../util/path";
 
@@ -10,13 +11,14 @@ const { FcGoogle, FaFacebook } = icons;
 
 const Register = () => {
   const [errors, setErrors] = useState({});
-  const { message, registerError } = useSelector((state) => state.app);
+  const { message, registerError } = useSelector((state) => state.ui);
+  const registerStatus = useSelector((state) => state.auth.registerStatus);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const formErrorId = useId();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmitting = registerStatus === "loading";
   const [formData, setFormData] = useState({
     frist: "",
     last: "",
@@ -65,8 +67,7 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    setIsSubmitting(true);
-    dispatch(actions.register(formData));
+    dispatch(registerUser(formData));
   };
 
   const canSubmit = useMemo(() => {
@@ -74,17 +75,15 @@ const Register = () => {
   }, [isSubmitting]);
 
   useEffect(() => {
-    dispatch(actions.clearAuthErrors());
+    dispatch(clearAuthErrors());
   }, [dispatch]);
 
   useEffect(() => {
-    if (!isSubmitting) return;
-    if (registerError) setIsSubmitting(false);
+    if (registerStatus !== "succeeded") return;
     if (message && !registerError) {
-      setIsSubmitting(false);
       navigate(path.LOGIN);
     }
-  }, [isSubmitting, message, registerError, navigate]);
+  }, [registerStatus, message, registerError, navigate]);
 
   const fieldClass =
     "mt-1 w-full rounded-xl border border-slate-200/70 bg-white/70 px-3 py-3 text-slate-900 outline-none transition focus:border-[#2f904b] focus:ring-2 focus:ring-[#2f904b]/20";

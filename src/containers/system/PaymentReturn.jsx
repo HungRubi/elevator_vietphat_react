@@ -1,46 +1,91 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { formatMoney } from '../../util/formatMoney';
-import * as actions from '../../store/actions';
 import icons from '../../util/icons';
+import { paymentCheckOut } from "../../store/slices/paymentSlice";
+import { addOrder, deleteCartItem, getNotifiByUser, resetInforOrder } from "../../store/slices/userSlice";
+import { clearCheckoutStorage } from "../../util/checkoutStorage";
 
 const { MdError } = icons;
+
+function pickVnpRecord(dataPayment) {
+    if (dataPayment == null) return null;
+    if (Array.isArray(dataPayment)) return dataPayment[0] ?? null;
+    if (typeof dataPayment === "object") return dataPayment;
+    return null;
+}
+
+function isPaymentSuccessMessage(message) {
+    if (message == null || typeof message !== "string") return false;
+    const t = message.trim().toLowerCase();
+    return t.includes("thành công") || t.includes("success");
+}
 
 const PaymentReturn = () => {
     const dispatch = useDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
     const hasOrdered = useRef(false);
 
-    const { dataPayment, message } = useSelector((state) => state.app);
+    const { dataPayment, message, status: paymentCheckoutStatus } = useSelector((state) => state.payment);
     const { inforOrder, currentUser } = useSelector((state) => state.user);
 
-    const ok = message === 'Thanh toán thành công';
+    const messageText = typeof message === "string" ? message : message?.message ?? "";
+    const vnpData = pickVnpRecord(dataPayment);
+    const ok = isPaymentSuccessMessage(messageText);
+
+    useEffect(() => {
+        hasOrdered.current = false;
+    }, [location.search]);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
-        dispatch(actions.paymentCheckOut(searchParams));
+        dispatch(paymentCheckOut(searchParams));
     }, [dispatch, location.search]);
 
     useEffect(() => {
-        if (dataPayment && inforOrder && !hasOrdered.current) {
+        if (hasOrdered.current) return;
+        if (!inforOrder?.items?.length) return;
+        if (paymentCheckoutStatus !== "succeeded" && paymentCheckoutStatus !== "failed") return;
+
+        if (paymentCheckoutStatus === "failed" && messageText === "") {
             hasOrdered.current = true;
+            dispatch(resetInforOrder());
+            return;
+        }
+
+        if (messageText === "") return;
+
+        hasOrdered.current = true;
+
+        const payOk = isPaymentSuccessMessage(messageText);
+        const vnp = vnpData || {};
+
+        if (payOk) {
+            clearCheckoutStorage();
             const orderData = {
                 ...inforOrder,
-                orderInfor: dataPayment.vnp_OrderInfo || 'N/A',
-                code_banking: dataPayment.vnp_BankTranNo || 'N/A',
+                orderInfor: vnp.vnp_OrderInfo || "N/A",
+                code_banking: vnp.vnp_BankTranNo || "N/A",
             };
-            const orderedProductIds = inforOrder.items?.map((item) => item.product_id);
-            dispatch(actions.resetInforOrder());
-            if (message === 'Thanh toán thành công') {
-                dispatch(actions.addOrder(orderData));
-                dispatch(
-                    actions.deleteCartItem({ productId: orderedProductIds }, currentUser?._id)
-                );
+            const orderedProductIds = inforOrder.items.map((item) => item.product_id);
+            dispatch(addOrder(orderData));
+            dispatch(
+                deleteCartItem({
+                    data: { productId: orderedProductIds },
+                    userId: currentUser?._id,
+                    silent: true,
+                })
+            );
+            if (currentUser?._id) {
+                dispatch(getNotifiByUser(currentUser._id));
             }
+            navigate('/order-success', { replace: true });
         }
-    }, [dataPayment, inforOrder, dispatch, currentUser, message]);
+        dispatch(resetInforOrder());
+    }, [vnpData, inforOrder, messageText, paymentCheckoutStatus, dispatch, currentUser, navigate]);
 
     return (
         <>
@@ -85,24 +130,24 @@ const PaymentReturn = () => {
                                     : 'Giao dịch có thể bị hủy hoặc lỗi cổng thanh toán. Bạn có thể thử lại hoặc chọn phương thức khác.'}
                             </p>
 
-                            {ok && (
+                            {ok && vnpData && (
                                 <dl className="mt-8 space-y-3 rounded-xl border border-slate-100 bg-slate-50/80 px-4 py-4 text-left text-sm">
                                     <div className="flex justify-between gap-4">
                                         <dt className="text-slate-500">Mã giao dịch</dt>
                                         <dd className="font-semibold text-slate-900">
-                                            {dataPayment?.vnp_TxnRef || '—'}
+                                            {vnpData?.vnp_TxnRef || '—'}
                                         </dd>
                                     </div>
                                     <div className="flex justify-between gap-4">
                                         <dt className="text-slate-500">Số tiền</dt>
                                         <dd className="font-bold tabular-nums text-[var(--color-primary)]">
-                                            {formatMoney((dataPayment?.vnp_Amount || 0) / 100)} đ
+                                            {formatMoney((vnpData?.vnp_Amount || 0) / 100)} đ
                                         </dd>
                                     </div>
                                     <div className="flex justify-between gap-4">
                                         <dt className="text-slate-500">Ngân hàng</dt>
                                         <dd className="font-semibold text-slate-900">
-                                            {dataPayment?.vnp_BankCode || '—'}
+                                            {vnpData?.vnp_BankCode || '—'}
                                         </dd>
                                     </div>
                                 </dl>

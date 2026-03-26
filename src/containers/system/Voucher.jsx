@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as actions from "../../store/actions";
+import { fetchDiscounts } from "../../store/slices/discountSlice";
 import { PageBar } from "../../components";
 import { Helmet } from "react-helmet";
 import icons from "../../util/icons";
@@ -10,11 +10,11 @@ const { BsTag, FaRegCalendarAlt } = icons;
 const LIMIT = 5;
 
 const Voucher = () => {
-    const { discount } = useSelector((state) => state.app);
+    const { discount } = useSelector((state) => state.discount);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(actions.getDiscounts());
+        dispatch(fetchDiscounts());
     }, [dispatch]);
 
     const [current, setCurrent] = useState(1);

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import * as actions from '../../store/actions';
+import { fetchArticleDetail } from "../../store/slices/articlesSlice";
 import icons from '../../util/icons';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -10,14 +10,14 @@ const { FaRegCalendarAlt, BsPerson } = icons;
 
 const NewsDetail = () => {
     const dispatch = useDispatch();
-    const { articleDetail, articleSuggest, productNewLast } = useSelector((state) => state.app);
+    const { articleDetail, articleSuggest, productNewLast } = useSelector((state) => state.articles);
     const { slug } = useParams();
 
     const format = (money) => money?.toLocaleString('vi-VN');
 
     useEffect(() => {
         if (slug) {
-            dispatch(actions.getArticleDetail(slug));
+            dispatch(fetchArticleDetail({ slug, limit_sidebar: 4 }));
         }
     }, [dispatch, slug]);
 

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import { toast } from "react-toastify";
 import icons from "../util/icons";
+import PropTypes from "prop-types";
 
 const { IoIosSend } = icons;
 
@@ -155,6 +156,11 @@ const Form = ({ className = "", variant = "standalone" }) => {
             </div>
         </div>
     );
+};
+
+Form.propTypes = {
+    className: PropTypes.string,
+    variant: PropTypes.oneOf(["standalone", "embedded"]),
 };
 
 export default Form;

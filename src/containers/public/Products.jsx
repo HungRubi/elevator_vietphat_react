@@ -1,7 +1,9 @@
 import { ProductsAll, PageBar } from '../../components/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import * as actions from '../../store/actions';
+import { fetchProducts, fetchProductsFilter } from "../../store/slices/productsSlice";
+import { fetchAllCategories } from "../../store/slices/categorySlice";
+import { clearSearch as clearSiteSearch, querySite } from "../../store/slices/searchSlice";
 import { Helmet } from 'react-helmet';
 import { NavLink, useSearchParams } from 'react-router-dom';
 
@@ -12,17 +14,17 @@ const SORT_OPTIONS = [
     { value: 'name', label: 'Tên A–Z' },
 ];
 
-function sortProducts(list, sortKey) {
-    const arr = [...list];
+/** Map UI sort → query listQuery (GET /products, /products/filter, /timkiem). */
+function mapSortKeyToApi(sortKey) {
     switch (sortKey) {
         case 'price-asc':
-            return arr.sort((a, b) => Number(a.price) - Number(b.price));
+            return { sort: 'price', order: 'asc' };
         case 'price-desc':
-            return arr.sort((a, b) => Number(b.price) - Number(a.price));
+            return { sort: 'price', order: 'desc' };
         case 'name':
-            return arr.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'vi'));
+            return { sort: 'name', order: 'asc' };
         default:
-            return arr;
+            return { sort: 'createdAt', order: 'desc' };
     }
 }
 
@@ -31,14 +33,30 @@ const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const q = (searchParams.get('q') || '').trim();
 
-    const { products, categoryProduct, productSearch } = useSelector((state) => state.app);
+    const {
+        products,
+        total,
+        totalPage,
+        status: productsStatus,
+        filterProducts,
+        filterTotal,
+        filterTotalPage,
+        filterStatus,
+    } = useSelector((state) => state.products);
+    const { categoryProduct } = useSelector((state) => state.category);
+    const {
+        productSearch,
+        totals: searchTotals,
+        searchTotalPage,
+        status: searchStatus,
+    } = useSelector((state) => state.search);
     const [activeId, setActiveId] = useState(null);
     const [sortKey, setSortKey] = useState('default');
     const [filterOpen, setFilterOpen] = useState(false);
     const [sortOpen, setSortOpen] = useState(false);
-    const [searchLoading, setSearchLoading] = useState(false);
     const sortWrapRef = useRef(null);
     const sortTriggerRef = useRef(null);
+    const productsListAnchorRef = useRef(null);
 
     const currentSort = useMemo(() => SORT_OPTIONS.find((o) => o.value === sortKey) ?? SORT_OPTIONS[0], [sortKey]);
 
@@ -59,64 +77,82 @@ const Products = () => {
     }, [sortOpen]);
 
     useEffect(() => {
-        dispatch(actions.getProducts());
-        dispatch(actions.getCategoryProduct());
+        dispatch(fetchAllCategories());
     }, [dispatch]);
 
     useEffect(() => {
-        if (!q) {
-            setSearchLoading(false);
-            return;
+        if (q && q.length < 2) {
+            dispatch(clearSiteSearch());
         }
-        let cancelled = false;
-        setSearchLoading(true);
-        (async () => {
-            try {
-                await dispatch(actions.querySearch(q));
-            } finally {
-                if (!cancelled) setSearchLoading(false);
-            }
-        })();
-        return () => {
-            cancelled = true;
-        };
-    }, [dispatch, q]);
-
-    const sourceList = useMemo(() => {
-        if (q) return Array.isArray(productSearch) ? productSearch : [];
-        return Array.isArray(products) ? products : [];
-    }, [q, productSearch, products]);
-
-    const sortedList = useMemo(() => sortProducts(sourceList, sortKey), [sourceList, sortKey]);
+    }, [q, dispatch]);
 
     const [current, setCurrent] = useState(1);
-    const limit = 12;
+    const sortParams = useMemo(() => mapSortKeyToApi(sortKey), [sortKey]);
 
     useEffect(() => {
         setCurrent(1);
-    }, [q, activeId, sortKey, sourceList.length]);
+    }, [q, activeId, sortKey]);
 
-    const lastProduct = current * limit;
-    const firstProduct = lastProduct - limit;
-    const currentProduct = sortedList.slice(firstProduct, lastProduct);
-    const totalPages = Math.max(1, Math.ceil(sortedList.length / limit));
+    useEffect(() => {
+        if (q) return;
+        if (activeId) {
+            dispatch(
+                fetchProductsFilter({
+                    category: activeId,
+                    page: current,
+                    limit: 12,
+                    ...sortParams,
+                })
+            );
+        } else {
+            dispatch(fetchProducts({ page: current, limit: 12, ...sortParams }));
+        }
+    }, [dispatch, q, activeId, current, sortParams]);
+
+    useEffect(() => {
+        if (!q || q.length < 2) return;
+        dispatch(querySite({ q, page: current, limit: 12, ...sortParams }));
+    }, [dispatch, q, current, sortParams]);
+
+    const catalogLoading = !q && (activeId ? filterStatus === 'loading' : productsStatus === 'loading');
+    const searchLoading = Boolean(q && q.length >= 2 && searchStatus === 'loading');
+
+    const displayProducts = useMemo(() => {
+        if (q) return Array.isArray(productSearch) ? productSearch : [];
+        if (activeId) return Array.isArray(filterProducts) ? filterProducts : [];
+        return Array.isArray(products) ? products : [];
+    }, [q, activeId, productSearch, filterProducts, products]);
+
+    const displayTotal = q ? searchTotals : activeId ? filterTotal : total;
+    const displayTotalPage = q ? searchTotalPage : activeId ? filterTotalPage : totalPage;
+
+    useEffect(() => {
+        setCurrent((c) => Math.min(Math.max(1, c), Math.max(1, displayTotalPage)));
+    }, [displayTotalPage]);
+
+    const listLoading = catalogLoading || searchLoading;
+
+    const handleProductsPageChange = useCallback((page) => {
+        setCurrent(page);
+        requestAnimationFrame(() => {
+            productsListAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    }, []);
 
     const handleCategory = useCallback(
         (id) => {
             setActiveId(id);
             setSearchParams({}, { replace: true });
-            dispatch(actions.getProductByCategory(id));
         },
-        [dispatch, setSearchParams]
+        [setSearchParams]
     );
 
     const handleAllCategories = useCallback(() => {
         setActiveId(null);
         setSearchParams({}, { replace: true });
-        dispatch(actions.getProducts());
-    }, [dispatch, setSearchParams]);
+    }, [setSearchParams]);
 
-    const clearSearch = useCallback(() => {
+    const clearProductsUrlQuery = useCallback(() => {
         setSearchParams({}, { replace: true });
     }, [setSearchParams]);
 
@@ -168,13 +204,16 @@ const Products = () => {
                     <span className="font-medium text-slate-800">Sản phẩm</span>
                 </nav>
 
-                <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div
+                    ref={productsListAnchorRef}
+                    className="mt-6 flex scroll-mt-24 flex-col gap-4 sm:flex-row sm:items-end sm:justify-between md:scroll-mt-28"
+                >
                     <div>
                         <h2 className="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">
                             {q ? 'Kết quả tìm kiếm' : 'Danh sách sản phẩm'}
                         </h2>
                         <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-                            {searchLoading ? 'Đang tải…' : `${sortedList.length} mặt hàng`}
+                            {listLoading ? 'Đang tải…' : `${displayTotal} mặt hàng`}
                         </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -302,7 +341,7 @@ const Products = () => {
                 </div>
 
                 <div className="mt-8">
-                    {searchLoading ? (
+                    {listLoading ? (
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {Array.from({ length: 8 }).map((_, i) => (
                                 <div
@@ -317,7 +356,7 @@ const Products = () => {
                                 </div>
                             ))}
                         </div>
-                    ) : sortedList.length === 0 ? (
+                    ) : displayProducts.length === 0 ? (
                         <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
                             <p className="text-lg font-semibold text-slate-900">Không có sản phẩm phù hợp</p>
                             <p className="mt-2 text-sm text-slate-600">
@@ -327,7 +366,7 @@ const Products = () => {
                                 {q ? (
                                     <button
                                         type="button"
-                                        onClick={clearSearch}
+                                        onClick={clearProductsUrlQuery}
                                         className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white"
                                     >
                                         Xoá tìm kiếm
@@ -343,12 +382,16 @@ const Products = () => {
                             </div>
                         </div>
                     ) : (
-                        <ProductsAll data={currentProduct} />
+                        <ProductsAll data={displayProducts} />
                     )}
                 </div>
 
-                {!searchLoading && sortedList.length > 0 ? (
-                    <PageBar currentPage={current} totalPage={totalPages} onPageChange={setCurrent} />
+                {!listLoading && displayTotal > 0 ? (
+                    <PageBar
+                        currentPage={current}
+                        totalPage={Math.max(1, displayTotalPage)}
+                        onPageChange={handleProductsPageChange}
+                    />
                 ) : null}
             </div>
             </div>

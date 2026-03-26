@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import * as actions from '../../store/actions';
+import { fetchVideoDetail } from "../../store/slices/videoSlice";
 import { Helmet } from 'react-helmet';
 import icons from '../../util/icons';
 import { PublicDetailSidebar } from '../../components';
@@ -15,7 +15,7 @@ const HIGHLIGHTS = [
 
 const TuyenDung = () => {
     const dispatch = useDispatch();
-    const { productNewLast, articleSuggest } = useSelector((state) => state.app);
+    const { productNewLast, articleSuggest } = useSelector((state) => state.video);
 
     const format = (money) => money?.toLocaleString('vi-VN');
 
@@ -24,7 +24,7 @@ const TuyenDung = () => {
         'bang-dieu-khien-cabin-cop-mat-kinh-cuong-luc-tich-hop-van-tay-va-sac-dien-thoai-thong-minh';
 
     useEffect(() => {
-        dispatch(actions.getVideoDetail(sidebarVideoSlug));
+        dispatch(fetchVideoDetail(sidebarVideoSlug));
     }, [dispatch]);
 
     return (
@@ -147,7 +147,7 @@ const TuyenDung = () => {
                             <ul className="mt-4 space-y-4 text-sm">
                                 <li className="flex gap-3">
                                     <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-[var(--color-primary)] shadow-sm ring-1 ring-slate-200">
-                                        <HiOutlineMail className="size-5" aria-hidden />
+                                        <FiMail className="size-5" aria-hidden />
                                     </span>
                                     <div>
                                         <p className="font-bold text-slate-900">Email</p>

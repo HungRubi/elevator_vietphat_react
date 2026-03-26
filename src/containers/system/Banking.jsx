@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import { Button } from "../../components";
 import icons from "../../util/icons";
 import { Helmet } from "react-helmet";
+import PropTypes from "prop-types";
 
 const { GoPlus, RiBillLine } = icons;
 
@@ -10,7 +11,7 @@ const Banking = () => {
         toast.warning("Chức năng đang được hoàn thiện. Vui lòng quay lại sau.");
     };
 
-    const EmptyBlock = ({ title, description, actionLabel }) => (
+    const EmptyBlock = ({ title, description }) => (
         <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/90 px-6 py-12 text-center">
             <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-white text-slate-300 shadow-sm ring-1 ring-slate-100">
                 <RiBillLine className="size-7" aria-hidden />
@@ -19,6 +20,11 @@ const Banking = () => {
             <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-slate-500">{description}</p>
         </div>
     );
+
+    EmptyBlock.propTypes = {
+        title: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+    };
 
     return (
         <>

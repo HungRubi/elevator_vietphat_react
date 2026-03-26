@@ -62,16 +62,22 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                 name: currentUser?.name || "",
                 phone: currentUser?.phone || "",
                 address: currentUser?.address || "",
-                p: item?.orderDetails?.map((product, index) => ({
-                    no: index + 1,
-                    productName: product.product.name || "",
-                    unit: product.product.unit || "",
-                    quantity: product.quantity || 0,
-                    price: formatMoney(product.product.price) || "0",
-                    purchers: formatMoney(product.product.price * product.quantity) || "0",
-                    shipping: formatMoney(product.product.shipping_cost) || 0,
-                })),
-                shipping: item.orderDetails.reduce((acc, product) => acc + (product.product.shipping_cost || 0), 0) || 0,
+                p: item?.orderDetails?.map((line, index) => {
+                    const pr = line?.product;
+                    const qty = line?.quantity || 0;
+                    const price = Number(pr?.price) || 0;
+                    return {
+                        no: index + 1,
+                        productName: pr?.name || "",
+                        unit: pr?.unit || "",
+                        quantity: qty,
+                        price: formatMoney(price) || "0",
+                        purchers: formatMoney(price * qty) || "0",
+                        shipping: formatMoney(pr?.shipping_cost) || 0,
+                    };
+                }),
+                shipping:
+                    item?.orderDetails?.reduce((acc, line) => acc + (line?.product?.shipping_cost || 0), 0) || 0,
                 vat: "10%",
                 discount: formatMoney(item?.discount_id?.value_discount) || 0,
                 totalPrice: formatMoney(item.total_price) || "0",
@@ -182,39 +188,58 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                         </tr>
                                     </thead>
                                     <tbody className="text-slate-800">
-                                        {lines.map((row, index) => (
-                                            <tr key={index} className="border-b border-slate-100 last:border-0">
-                                                <td className="px-2 py-3 pl-3 align-middle sm:px-3 sm:py-4 sm:pl-4">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="size-14 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white">
-                                                            <img
-                                                                src={row.product.thumbnail_main}
-                                                                alt=""
-                                                                className="size-full object-cover"
-                                                            />
+                                        {lines.map((row, index) => {
+                                            const p = row?.product;
+                                            const qty = Number(row?.quantity) || 0;
+                                            const price = Number(p?.price) || 0;
+                                            const lineTotal = qty * price;
+                                            const thumb = p?.thumbnail_main;
+                                            const slug = p?.slug;
+                                            const name = p?.name || "Sản phẩm (không còn dữ liệu)";
+                                            return (
+                                                <tr key={p?._id ?? index} className="border-b border-slate-100 last:border-0">
+                                                    <td className="px-2 py-3 pl-3 align-middle sm:px-3 sm:py-4 sm:pl-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="size-14 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white">
+                                                                {thumb ? (
+                                                                    <img
+                                                                        src={thumb}
+                                                                        alt=""
+                                                                        className="size-full object-cover"
+                                                                    />
+                                                                ) : (
+                                                                    <div className="flex size-full items-center justify-center bg-slate-100 text-[10px] font-medium text-slate-400">
+                                                                        —
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                {slug ? (
+                                                                    <NavLink
+                                                                        to={`/products/detail/${slug}`}
+                                                                        className="font-bold text-slate-900 hover:text-[#2f904b]"
+                                                                    >
+                                                                        {name}
+                                                                    </NavLink>
+                                                                ) : (
+                                                                    <span className="font-bold text-slate-700">{name}</span>
+                                                                )}
+                                                                {p?.unit ? (
+                                                                    <p className="mt-0.5 text-xs text-slate-500">Đơn vị: {p.unit}</p>
+                                                                ) : null}
+                                                            </div>
                                                         </div>
-                                                        <div className="min-w-0">
-                                                            <NavLink
-                                                                to={`/products/detail/${row.product.slug}`}
-                                                                className="font-bold text-slate-900 hover:text-[#2f904b]"
-                                                            >
-                                                                {row.product.name}
-                                                            </NavLink>
-                                                            {row.product.unit ? (
-                                                                <p className="mt-0.5 text-xs text-slate-500">Đơn vị: {row.product.unit}</p>
-                                                            ) : null}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-2 py-3 text-center align-middle tabular-nums text-slate-700 sm:px-3 sm:py-4">
-                                                    {formatMoney(row.product.price)}đ
-                                                </td>
-                                                <td className="px-2 py-3 text-center align-middle font-semibold sm:px-3 sm:py-4">{row.quantity}</td>
-                                                <td className="px-2 py-3 pr-3 text-right align-middle text-base font-extrabold tabular-nums text-[#2f904b] sm:px-3 sm:py-4 sm:pr-4">
-                                                    {formatMoney(row.quantity * row.product.price)}đ
-                                                </td>
-                                            </tr>
-                                        ))}
+                                                    </td>
+                                                    <td className="px-2 py-3 text-center align-middle tabular-nums text-slate-700 sm:px-3 sm:py-4">
+                                                        {formatMoney(price)}đ
+                                                    </td>
+                                                    <td className="px-2 py-3 text-center align-middle font-semibold sm:px-3 sm:py-4">{qty}</td>
+                                                    <td className="px-2 py-3 pr-3 text-right align-middle text-base font-extrabold tabular-nums text-[#2f904b] sm:px-3 sm:py-4 sm:pr-4">
+                                                        {formatMoney(lineTotal)}đ
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             </div>
@@ -275,7 +300,9 @@ const ListOrder = ({ orders, hanleCanCelOrder, handleBuyAgain }) => {
                                             >
                                                 Xuất hóa đơn
                                             </Button>
-                                            <ModalQuestion products={item.orderDetails?.map((d) => d.product)} />
+                                            <ModalQuestion
+                                                products={item.orderDetails?.map((d) => d?.product).filter(Boolean)}
+                                            />
                                             <ModelContact />
                                         </>
                                     )}

@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ListOrder } from "../../components";
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import * as actions from "../../store/actions";
+import { getOrderByUser, setSelectedProducts, updateOrder } from "../../store/slices/userSlice";
 import { Helmet } from "react-helmet";
 import icons from "../../util/icons";
 
@@ -50,7 +50,7 @@ const Order = () => {
     const [orderFail, setOrderFail] = useState([]);
 
     useEffect(() => {
-        dispatch(actions.getOrderByUser(currentUser?._id));
+        dispatch(getOrderByUser(currentUser?._id));
     }, [dispatch, currentUser]);
 
     useEffect(() => {
@@ -89,13 +89,15 @@ const Order = () => {
     const hanleCanCelOrder = useCallback(
         (orderId) => () => {
             dispatch(
-                actions.updateOrder(orderId, {
+                updateOrder({
+                    id: orderId,
+                    data: {
                     status: "Thất bại",
-                    userId: currentUser?._id,
+                    },
                 })
             );
         },
-        [dispatch, currentUser]
+        [dispatch]
     );
 
     const handleBuyAgain = useCallback(
@@ -104,7 +106,7 @@ const Order = () => {
                 product: item.product,
                 quantity: item.quantity,
             }));
-            dispatch(actions.setSelectedProducts(products));
+            dispatch(setSelectedProducts(products));
             navigate("/pay");
         },
         [dispatch, navigate]

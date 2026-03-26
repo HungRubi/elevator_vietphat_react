@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import icons from '../util/icons';
 import { useDispatch } from 'react-redux';
-import * as actions from '../store/actions';
+import { querySite } from "../store/slices/searchSlice";
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -17,7 +17,7 @@ const Search = ({ className }) => {
     useEffect(() => {
         debouncedRef.current = debounce((value) => {
             if (value.trim()) {
-                dispatch(actions.querySearch(value));
+                dispatch(querySite(value));
             }
         }, 500);
         return () => debouncedRef.current?.cancel();
@@ -35,7 +35,7 @@ const Search = ({ className }) => {
         if (!q) {
             return;
         }
-        dispatch(actions.querySearch(q));
+        dispatch(querySite(q));
         navigate(`/products?q=${encodeURIComponent(q)}`);
     };
 

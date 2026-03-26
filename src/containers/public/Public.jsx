@@ -5,15 +5,15 @@ import { useCallback, useEffect, useState } from 'react';
 import {Button} from '../../components'
 import {menuBar} from '../../util/menu';
 import { useSelector } from 'react-redux';
-import * as actions from '../../store/actions';
 import { useDispatch } from 'react-redux';
+import { toggleMenuMobie } from "../../store/slices/uiSlice";
 const { FaLongArrowAltUp, BiSolidPhoneCall, IoCloseSharp } = icons
 
 
 const Public = () => {
     const dispatch = useDispatch();
     const [isShow, setIsShow] = useState(false);
-    const { menu_mobie } = useSelector(state => state.app);
+    const { menu_mobie } = useSelector(state => state.ui);
     const handleScroll = useCallback(() => {
         const scrollY = window.scrollY;
         if (scrollY > 400) { 
@@ -88,7 +88,7 @@ const Public = () => {
                 className={`fixed top-0 left-0 right-0 bottom-0 z-[1400] bg-[#00000054] 
                             transition-opacity duration-600 ease-in-out
                             ${menu_mobie ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
-                onClick={() => dispatch(actions.toggleMenuMobie(false))}
+                onClick={() => dispatch(toggleMenuMobie(false))}
                 >
                 <div
                     className={`w-[70%] h-full bg-white relative transition-transform duration-600 ease-in-out
@@ -96,22 +96,40 @@ const Public = () => {
                     onClick={(e) => e.stopPropagation()} 
                 >
                     <Button className={'!bg-white !px-1.5 !py-1 absolute -right-12'}
-                        onClick={() => dispatch(actions.toggleMenuMobie(false))}>
+                        onClick={() => dispatch(toggleMenuMobie(false))}>
                         <IoCloseSharp className='size-[30px] text-black '/>
                     </Button>
                     <ul className="w-full px-2.5 h-full">
                         {menuBar.map((item, index) => (
                             <li key={index} className="border-b border-b-[#cbd0dd]">
-                                <NavLink to={`${item.path}`} onClick={() => dispatch(actions.toggleMenuMobie(false))}
-                                className="block py-2 px-4 hover:bg-[#f5f5f5] uppercase font-medium text-lg cursor-pointer">
+                                <NavLink
+                                    to={`${item.path}`}
+                                    onClick={() => dispatch(toggleMenuMobie(false))}
+                                    className={({ isActive }) =>
+                                        `block cursor-pointer px-4 py-2 text-lg font-medium uppercase ${
+                                            isActive
+                                                ? "bg-emerald-50 text-[#2f904b] hover:bg-emerald-100"
+                                                : "hover:bg-[#f5f5f5]"
+                                        }`
+                                    }
+                                >
                                     {item.text}
                                 </NavLink>
                                 {item.subMenu && (
                                     <ul className="pl-4">
                                         {item.subMenu.map((subItem, subIndex) => (  
                                             <li key={subIndex}>
-                                                <NavLink to={`${subItem.path}`} onClick={() => dispatch(actions.toggleMenuMobie(false))}
-                                                className="block py-2 px-4 hover:bg-[#f5f5f5] text-[14px] cursor-pointer">
+                                                <NavLink
+                                                    to={`${subItem.path}`}
+                                                    onClick={() => dispatch(toggleMenuMobie(false))}
+                                                    className={({ isActive }) =>
+                                                        `block cursor-pointer px-4 py-2 text-[14px] ${
+                                                            isActive
+                                                                ? "bg-emerald-50 font-semibold text-[#2f904b] hover:bg-emerald-100"
+                                                                : "hover:bg-[#f5f5f5]"
+                                                        }`
+                                                    }
+                                                >
                                                     {subItem.text}
                                                 </NavLink>
                                             </li>

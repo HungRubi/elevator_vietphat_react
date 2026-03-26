@@ -30,9 +30,11 @@ const PageBar = ({ currentPage, totalPage, onPageChange, className }) => {
     const visiblePages = getVisiblePages();
     const safeTotal = Math.max(1, totalPage);
 
+    const pageBtnBase =
+        "inline-flex h-9 min-w-9 items-center justify-center rounded-lg border text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-[#2f904b]/25";
     const pageBtn =
-        'inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-slate-200 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#2f904b]/25';
-    const pageBtnActive = 'border-[#2f904b] bg-[#2f904b] text-white hover:bg-[#268a42] hover:border-[#268a42]';
+        `${pageBtnBase} border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50`;
+    const pageBtnActive = `${pageBtnBase} border-[#2f904b] bg-[#2f904b] text-white hover:border-[#268a42] hover:bg-[#268a42] hover:text-white`;
 
     return (
         <nav
@@ -63,7 +65,7 @@ const PageBar = ({ currentPage, totalPage, onPageChange, className }) => {
                     key={page}
                     type="button"
                     onClick={() => onPageChange(page)}
-                    className={`${pageBtn} ${currentPage === page ? pageBtnActive : ''}`}
+                    className={currentPage === page ? pageBtnActive : pageBtn}
                     aria-current={currentPage === page ? 'page' : undefined}
                 >
                     {page}

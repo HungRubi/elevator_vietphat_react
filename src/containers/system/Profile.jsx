@@ -2,7 +2,7 @@ import { Button } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useRef } from "react";
 import { toast } from "react-toastify";
-import * as actions from "../../store/actions";
+import { updateProfileUser } from "../../store/slices/userSlice";
 import { Helmet } from "react-helmet";
 
 const inputClass =
@@ -50,7 +50,7 @@ const Profile = () => {
         if (dataToSend.avatar === currentUser?.avatar) {
             delete dataToSend.avatar;
         }
-        dispatch(actions.updateProfileUser(dataToSend, currentUser?._id));
+        dispatch(updateProfileUser({ data: dataToSend, userId: currentUser?._id }));
     };
 
     const previewSrc = formData?.avatar?.startsWith("/uploads")

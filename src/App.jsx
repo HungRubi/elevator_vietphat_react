@@ -8,20 +8,28 @@ import {
 } from './containers/public/';
 import { Login, Register } from './containers/auth';
 import { ProtectedRoute, ScrollToTop } from './components';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Account, Cart, Pay, PaymentReturn } from './containers/system'
+import OrderSuccess from './containers/system/OrderSuccess';
 import path from './util/path';
 import { useDispatch, useSelector } from 'react-redux';
-import * as actions from './store/actions'
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { toast } from 'react-toastify';
 import { formatReduxMessage, messageLooksLikeError } from './util/toastMessage';
+import { fetchHome } from "./store/slices/homeSlice";
+import { logoutUser, resetMessageUser } from "./store/slices/userSlice";
+import { clearMessage } from "./store/slices/uiSlice";
+import { fetchSessionUser } from "./store/slices/authSlice";
+import { registerSessionExpiredHandler, SESSION_EXPIRED_USER_MESSAGE } from "./util/sessionExpired";
 
 function App() {
   const dispatch = useDispatch();
-  const {currentUser, cartUser, productCart, orders, message, notification, loginError, registerError} = useSelector(state => state.app);
+  const navigate = useNavigate();
+  const sessionBootOnce = useRef(false);
+  const { message, loginError, registerError } = useSelector((state) => state.ui);
+  useSelector((state) => state.user);
   const {messageUser} = useSelector(state => state.user);
   /**
    * Toast từ Redux: phân loại success/error; reset message sau 1 tick để effect con (Đăng ký/…) kịp đọc state.
@@ -38,7 +46,7 @@ function App() {
           } else {
               toast.success(text);
           }
-          const t = setTimeout(() => dispatch(actions.resetMessage()), 0);
+          const t = setTimeout(() => dispatch(clearMessage()), 0);
           return () => clearTimeout(t);
       }
       return undefined;
@@ -48,7 +56,7 @@ function App() {
       if (!messageUser) return undefined;
       const text = typeof messageUser === 'string' ? messageUser : formatReduxMessage(messageUser);
       if (!text) {
-          dispatch(actions.resetMessageUser());
+          dispatch(resetMessageUser());
           return undefined;
       }
       if (messageLooksLikeError(text)) {
@@ -56,7 +64,7 @@ function App() {
       } else {
           toast.success(text);
       }
-      const t = setTimeout(() => dispatch(actions.resetMessageUser()), 0);
+      const t = setTimeout(() => dispatch(resetMessageUser()), 0);
       return () => clearTimeout(t);
   }, [messageUser, dispatch]);
 
@@ -80,11 +88,25 @@ function App() {
   }, []);
 
   useEffect(() => {
-    dispatch(actions.getHome())
-    if(currentUser) {
-      dispatch(actions.setCurrentUser(currentUser, cartUser, productCart, orders, notification))
+    if (!sessionBootOnce.current) {
+      sessionBootOnce.current = true;
+      dispatch(fetchSessionUser());
     }
-  }, [dispatch, currentUser, cartUser, productCart, orders, notification]);
+  }, [dispatch]);
+
+  /** Hết phiên (401/403 token sau refresh): toast thân thiện + xóa phiên + về /login */
+  useEffect(() => {
+    registerSessionExpiredHandler(() => {
+      toast.error(SESSION_EXPIRED_USER_MESSAGE);
+      dispatch(logoutUser());
+      navigate(path.LOGIN, { replace: true });
+    });
+    return () => registerSessionExpiredHandler(null);
+  }, [dispatch, navigate]);
+
+  useEffect(() => {
+    dispatch(fetchHome());
+  }, [dispatch]);
 
   return(
     <>
@@ -117,6 +139,11 @@ function App() {
           <Route path={path.PAYMENT_RETURN} element={
             <ProtectedRoute>
               <PaymentReturn />
+            </ProtectedRoute>
+          }/>
+          <Route path={path.ORDER_SUCCESS} element={
+            <ProtectedRoute>
+              <OrderSuccess />
             </ProtectedRoute>
           }/>
           <Route path={path.ABOUTUS} element={<AboutUs />}/>

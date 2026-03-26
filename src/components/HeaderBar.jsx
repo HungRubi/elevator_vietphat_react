@@ -4,8 +4,10 @@ import { CircleButton, Notification, Search, Button } from "./index";
 import icons from "../util/icons";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as actions from "../store/actions";
 import { IoChevronForward } from "react-icons/io5";
+import { toggleMenuMobie } from "../store/slices/uiSlice";
+import { logoutUser } from "../store/slices/userSlice";
+import PropTypes from "prop-types";
 
 const {
     FaRegBell,
@@ -92,7 +94,13 @@ function NavMegaDropdown({ menuKey, subMenu }) {
                                 <NavLink
                                     key={subItem.path}
                                     to={subItem.path}
-                                    className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b]/35 focus-visible:ring-offset-1"
+                                    className={({ isActive }) =>
+                                        `group flex items-center gap-3 rounded-xl px-3 py-2.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b]/35 focus-visible:ring-offset-1 ${
+                                            isActive
+                                                ? "bg-emerald-50 ring-1 ring-emerald-200/90 hover:bg-emerald-100"
+                                                : "hover:bg-emerald-50"
+                                        }`
+                                    }
                                 >
                                     <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-[#2f904b] transition group-hover:bg-[#2f904b] group-hover:text-white">
                                         <Icon className="size-[18px]" aria-hidden />
@@ -124,6 +132,16 @@ function NavMegaDropdown({ menuKey, subMenu }) {
         </div>
     );
 }
+
+NavMegaDropdown.propTypes = {
+    menuKey: PropTypes.string,
+    subMenu: PropTypes.arrayOf(
+        PropTypes.shape({
+            path: PropTypes.string,
+            text: PropTypes.string,
+        })
+    ),
+};
 
 const HeaderBar = () => {
     const { currentUser, productCart, myNotifi } = useSelector((state) => state.user);
@@ -164,14 +182,14 @@ const HeaderBar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const hanleLogout = () => {
-        dispatch(actions.logout());
+        dispatch(logoutUser());
         navigate("/");
         setOpenMenu(null);
     };
 
-    const { menu_mobie } = useSelector((state) => state.app);
+    const { menu_mobie } = useSelector((state) => state.ui);
     const clickMenuMobie = () => {
-        dispatch(actions.toggleMenuMobie(!menu_mobie));
+        dispatch(toggleMenuMobie(!menu_mobie));
     };
     const [isSearchMobie, setIsSearchMobie] = useState(false);
 
@@ -215,7 +233,7 @@ const HeaderBar = () => {
                                     className={({ isActive }) =>
                                         `${navPill} ${
                                             isActive
-                                                ? "bg-gradient-to-r from-emerald-600 to-[#2f904b] text-white shadow-[0_8px_24px_rgba(47,144,75,0.35)]"
+                                                ? "bg-gradient-to-r from-emerald-600 to-[#2f904b] text-white shadow-[0_8px_24px_rgba(47,144,75,0.35)] hover:from-emerald-700 hover:to-[#268a42] hover:text-white hover:shadow-[0_10px_28px_rgba(47,144,75,0.42)]"
                                                 : "text-slate-700 hover:bg-white/90 hover:text-slate-900"
                                         }`
                                     }

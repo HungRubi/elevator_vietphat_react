@@ -3,7 +3,7 @@ import { Button, LoveButton } from './index';
 import { NavLink, useNavigate } from 'react-router-dom';
 import icons from '../util/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import * as actions from '../store/actions';
+import { addComment } from "../store/slices/commentSlice";
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 
@@ -123,7 +123,19 @@ const ModalQuestion = ({ products }) => {
     };
 
     const handleSubmit = () => {
-        dispatch(actions.addComment(formData));
+        // đảm bảo payload đúng spec: user_id khớp user đang login, product_id là mảng
+        const productIds = Array.isArray(formData.product_id)
+            ? formData.product_id
+            : formData.product_id
+                ? [formData.product_id]
+                : [];
+        dispatch(
+            addComment({
+                ...formData,
+                user_id: currentUser?._id,
+                product_id: productIds,
+            })
+        );
         navigate('/');
     };
 

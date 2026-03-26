@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../../components";
 import { useState } from "react";
-import * as actions from "../../store/actions";
+import { changePasswordUser } from "../../store/slices/authSlice";
 import { Helmet } from "react-helmet";
 import icons from "../../util/icons";
 
@@ -13,6 +13,7 @@ const inputClass =
 const Password = () => {
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state) => state.user);
+    const changePasswordStatus = useSelector((state) => state.auth.changePasswordStatus);
     const [formData, setFormData] = useState({
         password: "",
         newPassword: "",
@@ -36,7 +37,7 @@ const Password = () => {
             return;
         }
         setCheckErr("");
-        dispatch(actions.changePassword(currentUser?._id, formData));
+        dispatch(changePasswordUser({ userId: currentUser?._id, body: formData }));
     };
 
     return (
@@ -108,7 +109,12 @@ const Password = () => {
                     {checkErr ? <p className="mt-3 text-sm font-semibold text-rose-600">{checkErr}</p> : null}
 
                     <div className="mt-8">
-                        <Button type="submit" className="!rounded-xl !px-10 !py-3 !normal-case">
+                        <Button
+                            type="submit"
+                            disabled={changePasswordStatus === "loading"}
+                            aria-busy={changePasswordStatus === "loading"}
+                            className="!rounded-xl !px-10 !py-3 !normal-case"
+                        >
                             Cập nhật mật khẩu
                         </Button>
                     </div>

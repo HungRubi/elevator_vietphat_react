@@ -1,6 +1,7 @@
 import LoveButton from './LoveButton';
 import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { getWarehouseStockNumber } from '../util/stock';
 
 export function formatProductPrice(money) {
     if (money == null || Number.isNaN(Number(money))) return '—';
@@ -27,11 +28,10 @@ function computePriceDisplay(price, sale) {
     return { current, original: p, percent: s };
 }
 
-function stockLabel(stock) {
-    const n = Number(stock);
-    if (Number.isNaN(n)) return { text: 'Liên hệ', tone: 'neutral' };
-    if (n <= 0) return { text: 'Liên hệ', tone: 'warn' };
-    if (n < 5) return { text: `Còn ${n}`, tone: 'low' };
+function stockLabelFromNumber(stockNumber) {
+    if (stockNumber === null) return { text: 'Liên hệ', tone: 'neutral' };
+    if (stockNumber <= 0) return { text: 'Hết hàng', tone: 'oos' };
+    if (stockNumber < 5) return { text: `Còn ${stockNumber}`, tone: 'low' };
     return { text: 'Còn hàng', tone: 'ok' };
 }
 
@@ -50,16 +50,18 @@ const ProductCard = ({ item, variant = 'elevated', categoryLabel }) => {
     const excerpt = stripDescriptionText(item?.description);
     const excerptShort = excerpt.length > 140 ? `${excerpt.slice(0, 137)}…` : excerpt;
     const { current, original, percent } = computePriceDisplay(item?.price, item?.sale);
-    const stock = stockLabel(item?.stock);
+    const stockNum = getWarehouseStockNumber(item);
+    const stock = stockLabelFromNumber(stockNum);
+    const isOOS = stockNum !== null && stockNum <= 0;
 
     const cardShell = isMosaic
-        ? 'group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200/95 bg-white shadow-sm transition-all duration-300 ease-out hover:z-[1] hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_12px_40px_-12px_rgba(15,23,42,0.18)]'
-        : 'group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200/95 bg-white shadow-[0_2px_8px_-2px_rgba(15,23,42,0.08)] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-emerald-900/10 hover:shadow-[0_20px_50px_-20px_rgba(15,23,42,0.22)]';
+        ? `group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200/95 bg-white shadow-sm transition-all duration-300 ease-out ${isOOS ? 'opacity-[0.92]' : 'hover:z-[1] hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_12px_40px_-12px_rgba(15,23,42,0.18)]'}`
+        : `group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200/95 bg-white shadow-[0_2px_8px_-2px_rgba(15,23,42,0.08)] transition-all duration-300 ease-out ${isOOS ? 'opacity-[0.92]' : 'hover:-translate-y-1 hover:border-emerald-900/10 hover:shadow-[0_20px_50px_-20px_rgba(15,23,42,0.22)]'}`;
 
     const stockStyles = {
         ok: 'bg-emerald-50 text-emerald-800 ring-emerald-600/15',
         low: 'bg-amber-50 text-amber-900 ring-amber-600/20',
-        warn: 'bg-slate-100 text-slate-700 ring-slate-400/20',
+        oos: 'bg-red-50 text-red-800 ring-red-600/25',
         neutral: 'bg-slate-50 text-slate-600 ring-slate-400/15',
     };
 
@@ -72,9 +74,19 @@ const ProductCard = ({ item, variant = 'elevated', categoryLabel }) => {
                 <img
                     src={item.thumbnail_main}
                     alt={item.name || 'Sản phẩm'}
-                    className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.04]"
+                    className={`h-full w-full object-cover transition duration-500 ease-out ${isOOS ? 'grayscale-[0.35]' : 'group-hover:scale-[1.04]'}`}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/20 via-transparent to-slate-900/5 opacity-80" />
+                {isOOS ? (
+                    <div
+                        className="pointer-events-none absolute inset-0 flex items-center justify-center bg-slate-950/35 backdrop-blur-[2px]"
+                        aria-hidden
+                    >
+                        <span className="rounded-lg border border-white/20 bg-white/95 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-red-700 shadow-lg">
+                            Hết hàng
+                        </span>
+                    </div>
+                ) : null}
 
                 <div className="absolute left-0 top-0 flex max-w-[85%] flex-wrap gap-1.5 p-2.5 sm:p-3">
                     {category ? (
@@ -142,9 +154,13 @@ const ProductCard = ({ item, variant = 'elevated', categoryLabel }) => {
                         </div>
                         <NavLink
                             to={`/products/detail/${item.slug}`}
-                            className="inline-flex items-center gap-1 rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                            className={`inline-flex items-center gap-1 rounded-md px-3 py-2 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 ${
+                                isOOS
+                                    ? 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                                    : 'bg-slate-900 text-white hover:bg-slate-800'
+                            }`}
                         >
-                            Chi tiết
+                            {isOOS ? 'Xem chi tiết' : 'Chi tiết'}
                             <span aria-hidden className="text-sm leading-none">
                                 →
                             </span>
@@ -165,6 +181,10 @@ ProductCard.propTypes = {
         price: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         sale: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         stock: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        warehouseStock: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        warehouse: PropTypes.shape({
+            stock: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        }),
         description: PropTypes.string,
         category: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
         categoryName: PropTypes.string,

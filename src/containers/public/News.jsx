@@ -1,33 +1,14 @@
 import { Helmet } from "react-helmet";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import * as actions from "../../store/actions";
+import { fetchArticlesPublicList } from "../../store/slices/articlesSlice";
 import { PageBar } from "../../components";
 import icons from "../../util/icons";
-import { sortArticlesNewestFirst } from "../../util/articleUtils";
+import { formatReduxMessage } from "../../util/toastMessage";
+import PropTypes from "prop-types";
 
 const { FiSearch, FaRegCalendarAlt, BsPerson, FaRegNewspaper } = icons;
-
-/** Trang 1: 1 bài tổng (hero) + 6 bài lưới = 2 hàng × 3 cột. Các trang sau: 9 bài (3×3), không lẻ ô. */
-const FIRST_PAGE_TOTAL = 7;
-const REST_PAGE_GRID = 9;
-
-function newsTotalPages(count) {
-    if (count <= 0) return 1;
-    if (count <= FIRST_PAGE_TOTAL) return 1;
-    return 1 + Math.ceil((count - FIRST_PAGE_TOTAL) / REST_PAGE_GRID);
-}
-
-function sliceNewsPage(list, page) {
-    const p = Math.max(1, page);
-    if (p === 1) {
-        const chunk = list.slice(0, FIRST_PAGE_TOTAL);
-        return { hero: chunk[0] ?? null, gridItems: chunk.slice(1) };
-    }
-    const offset = FIRST_PAGE_TOTAL + (p - 2) * REST_PAGE_GRID;
-    return { hero: null, gridItems: list.slice(offset, offset + REST_PAGE_GRID) };
-}
 
 function ArticleMeta({ author, dateFormat, className = "" }) {
     return (
@@ -125,40 +106,82 @@ function ArticleCard({ item, index }) {
     );
 }
 
+ArticleMeta.propTypes = {
+    author: PropTypes.string,
+    dateFormat: PropTypes.string,
+    className: PropTypes.string,
+};
+
+HeroArticle.propTypes = {
+    item: PropTypes.shape({
+        slug: PropTypes.string,
+        subject: PropTypes.string,
+        thumbnail: PropTypes.string,
+        author: PropTypes.string,
+        dateFormat: PropTypes.string,
+        content: PropTypes.string,
+    }),
+};
+
+ArticleCard.propTypes = {
+    item: PropTypes.shape({
+        slug: PropTypes.string,
+        subject: PropTypes.string,
+        thumbnail: PropTypes.string,
+        author: PropTypes.string,
+        dateFormat: PropTypes.string,
+        content: PropTypes.string,
+    }).isRequired,
+    index: PropTypes.number.isRequired,
+};
+
+const ARTICLE_PAGE_LIMIT = 9;
+
 const News = () => {
     const dispatch = useDispatch();
-    const { articles } = useSelector((state) => state.app);
+    const {
+        indexArticles,
+        indexTotal,
+        indexTotalPage,
+        indexStatus,
+        indexError,
+    } = useSelector((state) => state.articles);
     const [current, setCurrent] = useState(1);
     const [query, setQuery] = useState("");
+    const newsListAnchorRef = useRef(null);
 
-    useEffect(() => {
-        dispatch(actions.getArticles());
-    }, [dispatch]);
-
-    const filtered = useMemo(() => {
-        const sorted = sortArticlesNewestFirst(articles || []);
-        const q = query.trim().toLowerCase();
-        if (!q) return sorted;
-        return sorted.filter(
-            (a) =>
-                (a.subject || "").toLowerCase().includes(q) ||
-                (a.content || "").toLowerCase().includes(q) ||
-                (a.author || "").toLowerCase().includes(q)
-        );
-    }, [articles, query]);
+    const handleNewsPageChange = useCallback((page) => {
+        setCurrent(page);
+        requestAnimationFrame(() => {
+            newsListAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    }, []);
 
     useEffect(() => {
         setCurrent(1);
     }, [query]);
 
-    const totalPage = newsTotalPages(filtered.length);
+    useEffect(() => {
+        const q = query.trim();
+        const params = {
+            page: current,
+            limit: ARTICLE_PAGE_LIMIT,
+            sort: "createdAt",
+            order: "desc",
+            ...(q ? { timkiem: q, q } : {}),
+        };
+        dispatch(fetchArticlesPublicList(params));
+    }, [dispatch, current, query]);
 
     useEffect(() => {
-        setCurrent((c) => (c > totalPage ? totalPage : c));
-    }, [totalPage]);
+        setCurrent((c) => Math.min(Math.max(1, c), Math.max(1, indexTotalPage)));
+    }, [indexTotalPage]);
 
-    const effectivePage = Math.min(Math.max(1, current), totalPage);
-    const { hero, gridItems } = sliceNewsPage(filtered, effectivePage);
+    const effectivePage = Math.min(Math.max(1, current), Math.max(1, indexTotalPage));
+    const listLoading = indexStatus === "loading";
+    const hero = effectivePage === 1 && indexArticles[0] ? indexArticles[0] : null;
+    const gridItems = effectivePage === 1 ? indexArticles.slice(1) : indexArticles;
+    const errText = indexError ? formatReduxMessage(indexError) || "Không tải được danh sách bài viết." : "";
 
     return (
         <>
@@ -196,12 +219,12 @@ const News = () => {
                                 <span className="bg-gradient-to-r from-emerald-300 to-[#9ae6b4] bg-clip-text text-transparent"> thang máy</span>
                             </h1>
                             <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-400 md:text-lg">
-                                Công nghệ, lắp đặt, bảo trì và hoạt động công ty — cập nhật thường xuyên, đọc lọc theo từ khóa.
+                                Công nghệ, lắp đặt, bảo trì và hoạt động công ty — cập nhật thường xuyên, tìm kiếm theo từ khóa (server).
                             </p>
                             <div className="mt-8 flex flex-wrap items-center gap-4">
                                 <div className="inline-flex items-baseline gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 backdrop-blur-sm">
-                                    <span className="text-3xl font-black tabular-nums text-white">{filtered.length}</span>
-                                    <span className="text-sm font-medium text-slate-400">bài trong kho</span>
+                                    <span className="text-3xl font-black tabular-nums text-white">{indexTotal}</span>
+                                    <span className="text-sm font-medium text-slate-400">bài</span>
                                 </div>
                                 <NavLink
                                     to="/"
@@ -221,7 +244,7 @@ const News = () => {
                                 type="search"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Tìm theo tiêu đề, nội dung, tác giả…"
+                                placeholder="Tìm theo tiêu đề, nội dung…"
                                 className="w-full rounded-2xl border border-white/10 bg-white/10 py-3.5 pl-12 pr-4 text-sm text-white shadow-inner backdrop-blur-md placeholder:text-slate-500 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
                                 aria-label="Tìm kiếm bài viết"
                             />
@@ -229,8 +252,32 @@ const News = () => {
                     </div>
                 </div>
 
-                <div className="mx-auto max-w-[1200px] px-4 py-10 md:px-8 md:py-14">
-                    {filtered.length === 0 ? (
+                <div
+                    ref={newsListAnchorRef}
+                    className="mx-auto max-w-[1200px] scroll-mt-24 px-4 py-10 md:scroll-mt-28 md:px-8 md:py-14"
+                >
+                    {indexStatus === "failed" && errText ? (
+                        <div
+                            className="mb-8 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+                            role="alert"
+                        >
+                            {errText}
+                        </div>
+                    ) : null}
+
+                    {listLoading ? (
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <div key={i} className="animate-pulse overflow-hidden rounded-2xl border border-slate-100 bg-white">
+                                    <div className="aspect-[16/10] bg-slate-200" />
+                                    <div className="space-y-2 p-5">
+                                        <div className="h-4 w-2/3 rounded bg-slate-200" />
+                                        <div className="h-4 w-full rounded bg-slate-200" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : indexArticles.length === 0 ? (
                         <div
                             className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white/60 py-20 text-center backdrop-blur-sm"
                             data-aos="fade-up"
@@ -279,12 +326,14 @@ const News = () => {
                                 </div>
                             ) : hero ? null : null}
 
-                            <PageBar
-                                currentPage={effectivePage}
-                                totalPage={totalPage}
-                                onPageChange={setCurrent}
-                                className="mt-14"
-                            />
+                            {indexTotal > 0 ? (
+                                <PageBar
+                                    currentPage={effectivePage}
+                                    totalPage={Math.max(1, indexTotalPage)}
+                                    onPageChange={handleNewsPageChange}
+                                    className="mt-14"
+                                />
+                            ) : null}
                         </>
                     )}
                 </div>

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import * as actions from '../../store/actions';
+import { fetchVideoDetail } from "../../store/slices/videoSlice";
 import { useParams } from 'react-router-dom';
 import { ListVideo, PublicDetailSidebar } from '../../components';
 import { Helmet } from 'react-helmet';
@@ -9,14 +9,14 @@ const VideoDetail = () => {
     const dispatch = useDispatch();
     const { slug } = useParams();
     const { videoDetail, listVideo, articleSuggest, productNewLast } = useSelector(
-        (state) => state.app
+        (state) => state.video
     );
 
     const format = (money) => money?.toLocaleString('vi-VN');
 
     useEffect(() => {
         if (slug) {
-            dispatch(actions.getVideoDetail(slug));
+            dispatch(fetchVideoDetail(slug));
         }
     }, [dispatch, slug]);
 

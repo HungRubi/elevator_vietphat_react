@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { ListArticle, ListVideo, ProductsAll } from '../../components';
 import icons from '../../util/icons';
+import PropTypes from "prop-types";
 
 const { FiSearch } = icons;
 
@@ -26,8 +27,14 @@ function SectionCard({ title, subtitle, children }) {
     );
 }
 
+SectionCard.propTypes = {
+    title: PropTypes.string.isRequired,
+    subtitle: PropTypes.string,
+    children: PropTypes.node,
+};
+
 const TimKiem = () => {
-    const { productSearch, articleSearch, videoSearch } = useSelector((state) => state.app);
+    const { productSearch, articleSearch, videoSearch } = useSelector((state) => state.search);
     const [tab, setTab] = useState(0);
 
     return (

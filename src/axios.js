@@ -4,6 +4,10 @@ import {
     setStoredAccessToken,
     clearStoredAccessToken,
 } from "./util/token";
+import {
+    applySessionExpiredMessage,
+    notifySessionExpired,
+} from "./util/sessionExpired";
 
 const baseURL = import.meta.env.VITE_SERVER_URL;
 
@@ -37,17 +41,34 @@ instance.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+/** 401 hoặc 403 kèm message kiểu token không hợp lệ / chưa xác thực — không refresh khi 403 staff. */
+function shouldTryRefreshToken(status, data) {
+    if (status === 401) return true;
+    if (status !== 403) return false;
+    const msg = String(data?.message ?? "").toLowerCase();
+    if (!msg) return false;
+    if (msg.includes("staff") || msg.includes("admin role")) return false;
+    return (
+        msg.includes("token") ||
+        msg.includes("authenticated") ||
+        msg.includes("not valid") ||
+        msg.includes("expired")
+    );
+}
+
 instance.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
-        const isUnauthorized = error?.response?.status === 401;
+        const status = error?.response?.status;
+        const data = error?.response?.data;
+        const tryRefresh = shouldTryRefreshToken(status, data);
         const isRefreshUrl = originalRequest?.url?.includes("/auth/refresh");
         const isAuthAction = originalRequest?.url?.includes("/auth/login")
             || originalRequest?.url?.includes("/auth/register")
             || originalRequest?.url?.includes("/auth/logout");
 
-        if (!isUnauthorized || originalRequest?._retry || isRefreshUrl || isAuthAction) {
+        if (!tryRefresh || originalRequest?._retry || isRefreshUrl || isAuthAction) {
             return Promise.reject(error);
         }
 
@@ -82,6 +103,8 @@ instance.interceptors.response.use(
         } catch (refreshError) {
             clearStoredAccessToken();
             processQueue(refreshError, null);
+            applySessionExpiredMessage(refreshError);
+            notifySessionExpired();
             return Promise.reject(refreshError);
         } finally {
             isRefreshing = false;

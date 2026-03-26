@@ -10,7 +10,9 @@ import {
 import icons from '../../util/icons';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as actions from '../../store/actions/';
+import { fetchProductDetail } from "../../store/slices/productsSlice";
+import { updateCart } from "../../store/slices/userSlice";
+import { getWarehouseStockNumber } from '../../util/stock';
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
@@ -44,7 +46,7 @@ const ProductDetail = () => {
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state) => state.user);
     const { productDetail, productSuggest, comments } = useSelector(
-        (state) => state.app
+        (state) => state.products
     );
     const [oneStar, setOneStar] = useState([]);
     const [twoStar, setTwoStar] = useState([]);
@@ -122,7 +124,7 @@ const ProductDetail = () => {
 
     useEffect(() => {
         if (slug) {
-            dispatch(actions.getProductDetail(slug));
+            dispatch(fetchProductDetail({ slug, limit_suggest: 8 }));
         }
     }, [dispatch, slug]);
 
@@ -137,20 +139,40 @@ const ProductDetail = () => {
         return money?.toLocaleString('vi-VN');
     }
 
+    const warehouseStockNum = useMemo(
+        () => getWarehouseStockNumber(productDetail),
+        [productDetail]
+    );
+    const isOutOfStock = warehouseStockNum !== null && warehouseStockNum <= 0;
+    const maxOrderQty =
+        warehouseStockNum != null && warehouseStockNum > 0 ? warehouseStockNum : null;
+
+    useEffect(() => {
+        if (maxOrderQty != null && orderQty > maxOrderQty) {
+            setOrderQty(maxOrderQty);
+        }
+    }, [maxOrderQty, orderQty]);
+
     const handleAddToCart = useCallback(
         (product, userId) => {
+            if (!product?._id || !userId) return;
+            const cap =
+                warehouseStockNum != null && warehouseStockNum > 0
+                    ? Math.min(orderQty, warehouseStockNum)
+                    : orderQty;
+            if (warehouseStockNum !== null && warehouseStockNum <= 0) return;
             const cartData = {
                 items: [
                     {
                         productId: product._id,
-                        quantity: orderQty,
+                        quantity: Math.max(1, cap),
                         price: product.price,
                     },
                 ],
             };
-            dispatch(actions.updateCart(cartData, userId));
+            dispatch(updateCart({ data: cartData, userId }));
         },
-        [dispatch, orderQty]
+        [dispatch, orderQty, warehouseStockNum]
     );
 
     const [current, setCurrent] = useState(1);
@@ -474,13 +496,37 @@ const ProductDetail = () => {
                                     <span className="text-sm font-semibold text-slate-700 sm:w-28">
                                         Số lượng
                                     </span>
-                                    <QuantityButton
-                                        quantity={orderQty}
-                                        setQuantity={setOrderQty}
-                                        price={Number(productDetail?.price) || 0}
-                                        onQuantityChange={() => {}}
-                                        variant="default"
-                                    />
+                                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                                        <QuantityButton
+                                            quantity={orderQty}
+                                            setQuantity={setOrderQty}
+                                            price={Number(productDetail?.price) || 0}
+                                            onQuantityChange={() => {}}
+                                            variant="default"
+                                            max={maxOrderQty ?? undefined}
+                                            disabled={isOutOfStock}
+                                        />
+                                        {warehouseStockNum !== null ? (
+                                            <p
+                                                className={`text-xs font-semibold sm:text-sm ${
+                                                    isOutOfStock
+                                                        ? 'text-red-600'
+                                                        : warehouseStockNum < 5
+                                                          ? 'text-amber-700'
+                                                          : 'text-slate-500'
+                                                }`}
+                                                role="status"
+                                            >
+                                                {isOutOfStock
+                                                    ? 'Sản phẩm đã hết hàng — vui lòng liên hệ báo giá hoặc chọn model khác.'
+                                                    : `Tồn kho: ${warehouseStockNum} sản phẩm${warehouseStockNum < 5 ? ' (sắp hết)' : ''}.`}
+                                            </p>
+                                        ) : (
+                                            <p className="text-xs text-slate-500 sm:text-sm">
+                                                Số lượng tồn kho sẽ được xác nhận khi đặt hàng.
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="mt-8 space-y-3">
@@ -498,10 +544,15 @@ const ProductDetail = () => {
                                                 currentUser?._id
                                             )
                                         }
-                                        className="!flex !w-full !items-center !justify-center !gap-2 !border-2 !border-[var(--color-primary)] !bg-white !py-3.5 !normal-case !text-base !font-bold !text-[var(--color-primary)] hover:!bg-emerald-50"
+                                        disabled={isOutOfStock || !currentUser?._id}
+                                        className="!flex !w-full !items-center !justify-center !gap-2 !border-2 !border-[var(--color-primary)] !bg-white !py-3.5 !normal-case !text-base !font-bold !text-[var(--color-primary)] hover:!bg-emerald-50 disabled:!cursor-not-allowed disabled:!border-slate-200 disabled:!text-slate-400 disabled:!opacity-60"
                                     >
                                         <PiShoppingCartBold className="text-xl" />
-                                        Thêm vào giỏ hàng
+                                        {isOutOfStock
+                                            ? 'Hết hàng'
+                                            : !currentUser?._id
+                                              ? 'Đăng nhập để thêm giỏ'
+                                              : 'Thêm vào giỏ hàng'}
                                     </Button>
                                     <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
                                         <a
@@ -1066,9 +1117,10 @@ const ProductDetail = () => {
                                     currentUser?._id
                                 )
                             }
-                            className="!rounded-xl !px-4 !py-2.5 !normal-case !text-sm !font-bold !border-2 !border-[var(--color-primary)] !bg-emerald-50 !text-[var(--color-primary)]"
+                            disabled={isOutOfStock || !currentUser?._id}
+                            className="!rounded-xl !px-4 !py-2.5 !normal-case !text-sm !font-bold !border-2 !border-[var(--color-primary)] !bg-emerald-50 !text-[var(--color-primary)] disabled:!border-slate-200 disabled:!bg-slate-100 disabled:!text-slate-400"
                         >
-                            + Giỏ
+                            {isOutOfStock ? 'Hết' : '+ Giỏ'}
                         </Button>
                     </div>
                 </div>

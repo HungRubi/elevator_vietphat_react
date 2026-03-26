@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { Button, ListProduct, Form, HomeVideoSection } from '../../components/index'
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import * as actions from '../../store/actions';
+import { fetchLatestArticles } from "../../store/slices/articlesSlice";
 import { sortArticlesNewestFirst } from '../../util/articleUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -17,11 +17,12 @@ const { FiTruck, IoShieldCheckmarkOutline, AiOutlineMessage, MdEmail, FaPhoneAlt
 
 const Home = () => {
     const dispatch = useDispatch();
-    const { article, articles, productsCategory, banner, video } = useSelector((state) => state.app);
+    const { article, productsCategory, banner, video } = useSelector((state) => state.home);
+    const { articles } = useSelector((state) => state.articles);
     const [active, setActive] = useState(0);
 
     useEffect(() => {
-        dispatch(actions.getArticles());
+        dispatch(fetchLatestArticles(20));
     }, [dispatch]);
 
     const latestArticles = useMemo(() => {

@@ -2,7 +2,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import icons from "../../util/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useId, useMemo, useState } from "react";
-import * as actions from "../../store/actions";
+import { loginUser } from "../../store/slices/authSlice";
+import { clearAuthErrors } from "../../store/slices/uiSlice";
 import { Helmet } from "react-helmet";
 import path from "../../util/path";
 
@@ -10,14 +11,16 @@ const { FcGoogle, FaFacebook } = icons;
 
 const Login = () => {
   const dispatch = useDispatch();
-  const { message, loginError } = useSelector((state) => state.app);
+  const { message, loginError } = useSelector((state) => state.ui);
+  const loginStatus = useSelector((state) => state.auth.loginStatus);
   const navigate = useNavigate();
 
   const accountErrorId = useId();
   const passwordErrorId = useId();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ account: "", password: "" });
+
+  const isSubmitting = loginStatus === "loading";
 
   const canSubmit = useMemo(() => {
     return formData.account.trim() && formData.password && !isSubmitting;
@@ -31,22 +34,18 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.account.trim() || !formData.password) return;
-    setIsSubmitting(true);
-    dispatch(actions.login(formData));
+    dispatch(loginUser({ credentials: formData, isAdmin: false }));
   };
 
   useEffect(() => {
-    dispatch(actions.clearAuthErrors());
+    dispatch(clearAuthErrors());
   }, [dispatch]);
 
   useEffect(() => {
     if (message === "Login successful") {
-      setIsSubmitting(false);
       navigate("/");
-      return;
     }
-    if (loginError) setIsSubmitting(false);
-  }, [message, loginError, navigate]);
+  }, [message, navigate]);
 
   return (
     <>

@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import * as actions from "../store/actions";
+import { getNotifiByUser, isReadNotification } from "../store/slices/userSlice";
 import { NavLink } from "react-router-dom";
 import icons from "../util/icons";
+import PropTypes from "prop-types";
 
 const { FaRegBell, IoIosSend, FaRegNewspaper, FaCirclePlay, HiUserGroup } = icons;
 
@@ -20,15 +21,12 @@ const Notification = ({ onNavigate }) => {
     const currentNofiti = myNotifi?.slice(0, 10);
 
     const handleReadNotifi = (id) => {
-        const data = {
-            user_id: currentUser?._id,
-            isRead: true,
-        };
-        dispatch(actions.isReadNotification(id, data));
+        if (!id) return;
+        dispatch(isReadNotification(id));
     };
 
     const handleRefershNotification = () => {
-        dispatch(actions.getNotifiByUser(currentUser?._id));
+        dispatch(getNotifiByUser(currentUser?._id));
     };
 
     return (
@@ -135,6 +133,10 @@ const Notification = ({ onNavigate }) => {
             ) : null}
         </div>
     );
+};
+
+Notification.propTypes = {
+    onNavigate: PropTypes.func,
 };
 
 export default Notification;

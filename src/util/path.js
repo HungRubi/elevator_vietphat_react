@@ -3,6 +3,7 @@ const path = {
     HOME: '',
     CART: '/cart',
     PAY: '/pay',
+    ORDER_SUCCESS: '/order-success',
     PAGE404: '/404',
     TIMKIEM: '/timkiem',
     ACCOUNT: 'account/*',
