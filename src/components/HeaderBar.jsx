@@ -1,19 +1,18 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { menuBar } from "../util/menu";
-import { CircleButton, Notification, Search, Button } from "./index";
+import { CircleButton, Notification, Search } from "./index";
 import icons from "../util/icons";
-import { useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IoChevronForward } from "react-icons/io5";
-import { toggleMenuMobie } from "../store/slices/uiSlice";
 import { logoutUser } from "../store/slices/userSlice";
 import PropTypes from "prop-types";
+import { querySite } from "../store/slices/searchSlice";
 
 const {
     FaRegBell,
     RiMenuFill,
     PiShoppingCartBold,
-    IoCloseSharp,
     FiSearch,
     FaArrowRightFromBracket,
     BsPerson,
@@ -149,6 +148,10 @@ const HeaderBar = () => {
     const [openMenu, setOpenMenu] = useState(null);
     const [hoveredMenu, setHoveredMenu] = useState(null);
     const timeoutRef = useRef(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+    const [mobileSearchQuery, setMobileSearchQuery] = useState("");
+    const [mobileMenuExpanded, setMobileMenuExpanded] = useState({});
 
     const handleToggleMenu = (menu) => {
         setOpenMenu((prev) => (prev === menu ? null : menu));
@@ -186,12 +189,14 @@ const HeaderBar = () => {
         navigate("/");
         setOpenMenu(null);
     };
-
-    const { menu_mobie } = useSelector((state) => state.ui);
-    const clickMenuMobie = () => {
-        dispatch(toggleMenuMobie(!menu_mobie));
-    };
-    const [isSearchMobie, setIsSearchMobie] = useState(false);
+    const quickMobileLinks = useMemo(
+        () => [
+            { to: "/cart", label: "Giỏ hàng" },
+            { to: "/products", label: "Sản phẩm" },
+            { to: "/news", label: "Tin tức" },
+        ],
+        []
+    );
 
     const avatarSrc = currentUser
         ? currentUser?.avatar?.startsWith("/uploads")
@@ -208,9 +213,78 @@ const HeaderBar = () => {
     return (
         <div className={`relative w-full ${headerShell}`} data-aos="fade-down" data-aos-anchor-placement="top-bottom">
             <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-3 px-4 py-3 md:px-8">
+                {/* Mobile topbar (A2): menu + logo + actions */}
+                <div className="flex w-full items-center justify-between gap-2 lg:hidden">
+                    <CircleButton
+                        onClick={() => {
+                            setIsMobileMenuOpen(true);
+                            setMobileSearchOpen(false);
+                            setOpenMenu(null);
+                        }}
+                        className={"!flex border border-slate-200/70 bg-white/80 text-slate-700 shadow-none"}
+                        aria-label="Mở menu"
+                    >
+                        <RiMenuFill className="size-[20px] text-slate-700" />
+                    </CircleButton>
+
+                    <NavLink
+                        to="/"
+                        className="min-w-0 flex-1 rounded-xl px-2 py-1 text-center text-[13px] font-black tracking-[-0.03em] text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b]/25"
+                        aria-label="Về trang chủ"
+                    >
+                        VIỆT PHÁT
+                    </NavLink>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            className={`relative flex h-10 w-10 items-center justify-center rounded-[10px] border border-slate-200/70 bg-white/80 text-slate-700 shadow-none transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b]/25 ${
+                                openMenu === "notification" ? "bg-emerald-50 text-[#2f904b]" : ""
+                            }`}
+                            onClick={() => handleToggleMenu("notification")}
+                            aria-expanded={openMenu === "notification"}
+                            aria-label="Thông báo"
+                        >
+                            <FaRegBell className="size-[20px]" />
+                            <span
+                                className={`absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-bold text-white ring-2 ring-white ${
+                                    filterNotifi?.length ? "" : "hidden"
+                                }`}
+                            >
+                                {filterNotifi?.length > 9 ? "9+" : filterNotifi?.length}
+                            </span>
+                        </button>
+
+                        <NavLink
+                            to="/cart"
+                            className="relative flex h-10 w-10 items-center justify-center rounded-[10px] border border-slate-200/70 bg-white/80 text-slate-700 shadow-none transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b]/25"
+                            aria-label="Giỏ hàng"
+                        >
+                            <PiShoppingCartBold className="size-[20px]" />
+                            <span
+                                className={`absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#2f904b] px-1 text-[10px] font-bold text-white ring-2 ring-white ${
+                                    productCart?.length > 0 ? "" : "hidden"
+                                }`}
+                            >
+                                {productCart?.length > 99 ? "99+" : productCart?.length || 0}
+                            </span>
+                        </NavLink>
+
+                        <button
+                            type="button"
+                            onClick={() => handleToggleMenu("account")}
+                            aria-expanded={openMenu === "account"}
+                            aria-label="Tài khoản"
+                            className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-[10px] border border-slate-200/70 bg-white/80 shadow-none transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b]/25"
+                        >
+                            <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
+                        </button>
+                    </div>
+                </div>
+
                 <NavLink
                     to="/"
-                    className="inline-flex shrink-0 items-center gap-3 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b]/25"
+                    className="hidden shrink-0 items-center gap-3 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b]/25 lg:inline-flex"
                 >
                     <img src="/img/logo.png" alt="Thang máy Việt Phát" className="h-10 w-auto" />
                 </NavLink>
@@ -258,7 +332,11 @@ const HeaderBar = () => {
                     <div className="hidden sm:block">
                         <Search />
                     </div>
-                    <CircleButton onClick={() => setIsSearchMobie(true)} className={"sm:!hidden !flex"}>
+                    <CircleButton
+                        onClick={() => setMobileSearchOpen(true)}
+                        className={"sm:!hidden !hidden"}
+                        aria-label="Tìm kiếm"
+                    >
                         <FiSearch className="size-[20px] text-slate-700" />
                     </CircleButton>
 
@@ -439,7 +517,7 @@ const HeaderBar = () => {
                     <button
                         type="button"
                         className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-white/80 text-slate-700 shadow-sm transition hover:bg-white hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f904b]/25 lg:hidden"
-                        onClick={clickMenuMobie}
+                        onClick={() => setIsMobileMenuOpen(true)}
                         aria-label="Mở menu"
                     >
                         <RiMenuFill className="size-[20px]" />
@@ -447,20 +525,263 @@ const HeaderBar = () => {
                 </div>
             </div>
 
-            <div
-                className={`absolute inset-x-0 top-0 z-[200] flex min-h-[3.5rem] items-center justify-center bg-slate-950/96 px-4 backdrop-blur-md transition-transform duration-300 ease-out sm:min-h-[4rem] ${
-                    isSearchMobie ? "translate-y-0" : "-translate-y-full pointer-events-none"
-                }`}
-            >
-                <div className="relative w-full max-w-2xl">
-                    <Search className={"w-full"} />
+            {/* Mobile notification dropdown */}
+            {openMenu === "notification" ? (
+                <div className="notification-menu absolute right-4 top-[calc(100%+10px)] z-[1300] w-[min(calc(100vw-1.5rem),440px)] sm:hidden">
+                    <Notification onNavigate={() => setOpenMenu(null)} />
                 </div>
-                <Button
-                    className={"!absolute !right-2 !top-1/2 !-translate-y-1/2 !bg-transparent !px-2 !py-1 sm:!right-4"}
-                    onClick={() => setIsSearchMobie(false)}
+            ) : null}
+
+            {/* Mobile account dropdown (reuse existing content) */}
+            {openMenu === "account" ? (
+                <div className="account-menu absolute right-4 top-[calc(100%+10px)] z-[1300] w-[min(calc(100vw-1.5rem),320px)] sm:hidden">
+                    {/* reuse desktop dropdown wrapper styles */}
+                    <div className="vp-header-dropdown overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_24px_64px_rgba(15,23,42,0.14)]">
+                        {currentUser ? (
+                            <>
+                                <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-4">
+                                    <img
+                                        src={
+                                            currentUser?.avatar?.startsWith("/uploads")
+                                                ? `${import.meta.env.VITE_SERVER_URL}${currentUser.avatar}`
+                                                : currentUser.avatar
+                                        }
+                                        alt=""
+                                        className="size-12 shrink-0 rounded-xl object-cover ring-1 ring-slate-200"
+                                    />
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate text-[15px] font-bold text-slate-900">{currentUser?.name}</p>
+                                        <p className="mt-1 text-xs font-semibold text-slate-500">{currentUser?.email}</p>
+                                    </div>
+                                </div>
+                                <nav className="bg-white px-2 py-2">
+                                    <ul className="space-y-0.5">
+                                        <li>
+                                            <NavLink
+                                                to="/account/profile"
+                                                onClick={() => setOpenMenu(null)}
+                                                className="flex items-center justify-between gap-2 rounded-lg px-3 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-100"
+                                            >
+                                                <span className="flex items-center gap-2">
+                                                    <BsPerson className="size-4 text-slate-500" aria-hidden />
+                                                    Hồ sơ cá nhân
+                                                </span>
+                                                <IoChevronForward className="size-4 text-slate-300" aria-hidden />
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink
+                                                to="/account/order"
+                                                onClick={() => setOpenMenu(null)}
+                                                className="flex items-center justify-between gap-2 rounded-lg px-3 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-100"
+                                            >
+                                                <span className="flex items-center gap-2">
+                                                    <FiTruck className="size-4 text-slate-500" aria-hidden />
+                                                    Đơn hàng
+                                                </span>
+                                                <IoChevronForward className="size-4 text-slate-300" aria-hidden />
+                                            </NavLink>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                <div className="border-t border-slate-200 bg-slate-50/80 px-3 py-3">
+                                    <button
+                                        type="button"
+                                        onClick={hanleLogout}
+                                        className="flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-rose-50 hover:text-rose-600"
+                                    >
+                                        <FaArrowRightFromBracket className="size-4" aria-hidden />
+                                        Đăng xuất
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="bg-white p-4">
+                                <NavLink
+                                    to="/login"
+                                    onClick={() => setOpenMenu(null)}
+                                    className="flex w-full items-center justify-center rounded-lg bg-[#2f904b] py-3 text-sm font-bold text-white"
+                                >
+                                    Đăng nhập
+                                </NavLink>
+                                <NavLink
+                                    to="/register"
+                                    onClick={() => setOpenMenu(null)}
+                                    className="mt-2 flex w-full items-center justify-center rounded-lg border border-slate-200 bg-white py-3 text-sm font-bold text-slate-800"
+                                >
+                                    Đăng ký
+                                </NavLink>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ) : null}
+
+            {/* Mobile A2 Search Dock */}
+            <div className="fixed inset-x-0 bottom-0 z-[1200] px-4 pb-[max(12px,env(safe-area-inset-bottom))] lg:hidden">
+                <button
+                    type="button"
+                    onClick={() => {
+                        setMobileSearchOpen(true);
+                        setIsMobileMenuOpen(false);
+                        setOpenMenu(null);
+                    }}
+                    className="mx-auto flex w-full max-w-[520px] items-center gap-3 rounded-xl border border-slate-200/70 bg-white/90 px-4 py-3 text-left text-sm font-semibold text-slate-600 shadow-none backdrop-blur"
                 >
-                    <IoCloseSharp className="size-7 text-white sm:size-8" />
-                </Button>
+                    <span className="grid size-8 place-items-center rounded-[10px] border border-slate-200/70 bg-white text-slate-700">
+                        <FiSearch className="size-4" />
+                    </span>
+                    <span className="min-w-0 flex-1 truncate">Tìm sản phẩm, danh mục, tin tức…</span>
+                    <span className="text-xs font-bold text-slate-400">⌘K</span>
+                </button>
+            </div>
+
+            {/* Mobile Search Sheet */}
+            <div
+                className={`fixed inset-0 z-[1500] transition ${
+                    mobileSearchOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+                } lg:hidden`}
+                aria-hidden={!mobileSearchOpen}
+            >
+                <div
+                    className="absolute inset-0 bg-slate-950/40"
+                    onClick={() => setMobileSearchOpen(false)}
+                />
+                <div className="absolute inset-x-0 bottom-0 rounded-t-[14px] border border-slate-200/70 bg-white shadow-none">
+                    <div className="mx-auto w-full max-w-[680px] px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-4">
+                        <div className="flex items-center gap-2">
+                            <div className="flex-1">
+                                <label className="sr-only" htmlFor="mobile-search">
+                                    Tìm kiếm
+                                </label>
+                                <input
+                                    id="mobile-search"
+                                    value={mobileSearchQuery}
+                                    onChange={(e) => {
+                                        const v = e.target.value;
+                                        setMobileSearchQuery(v);
+                                        if (v.trim()) dispatch(querySite(v));
+                                    }}
+                                    placeholder="Nhập từ khóa…"
+                                    className="h-11 w-full rounded-xl border border-slate-200/70 bg-white px-4 text-sm font-semibold text-slate-900 outline-none focus:border-[#2f904b]/40 focus:ring-2 focus:ring-[#2f904b]/15"
+                                    autoFocus
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setMobileSearchOpen(false)}
+                                className="h-11 rounded-xl border border-slate-200/70 bg-white px-3 text-sm font-bold text-slate-700"
+                            >
+                                Đóng
+                            </button>
+                        </div>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                            {quickMobileLinks.map((it) => (
+                                <button
+                                    key={it.to}
+                                    type="button"
+                                    className="rounded-xl border border-slate-200/70 bg-white px-3 py-2 text-xs font-bold text-slate-700"
+                                    onClick={() => {
+                                        setMobileSearchOpen(false);
+                                        navigate(it.to);
+                                    }}
+                                >
+                                    {it.label}
+                                </button>
+                            ))}
+                            <button
+                                type="button"
+                                className="rounded-xl bg-[#2f904b] px-3 py-2 text-xs font-bold text-white"
+                                onClick={() => {
+                                    const q = mobileSearchQuery.trim();
+                                    if (!q) return;
+                                    dispatch(querySite(q));
+                                    setMobileSearchOpen(false);
+                                    navigate(`/products?q=${encodeURIComponent(q)}`);
+                                }}
+                            >
+                                Tìm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Menu Sheet */}
+            <div
+                className={`fixed inset-0 z-[1490] transition ${
+                    isMobileMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+                } lg:hidden`}
+                aria-hidden={!isMobileMenuOpen}
+            >
+                <div className="absolute inset-0 bg-slate-950/40" onClick={() => setIsMobileMenuOpen(false)} />
+                <div className="absolute inset-x-0 bottom-0 max-h-[86vh] overflow-hidden rounded-t-[14px] border border-slate-200/70 bg-white shadow-none">
+                    <div className="mx-auto w-full max-w-[680px]">
+                        <div className="flex items-center justify-between border-b border-slate-200/70 px-4 py-3">
+                            <div className="text-xs font-black tracking-[0.18em] text-slate-900">MENU</div>
+                            <button
+                                type="button"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="rounded-xl border border-slate-200/70 bg-white px-3 py-2 text-xs font-bold text-slate-700"
+                            >
+                                Đóng
+                            </button>
+                        </div>
+                        <div className="max-h-[calc(86vh-52px)] overflow-y-auto px-2 py-2">
+                            <ul className="space-y-1">
+                                {menuBar.map((item) => {
+                                    const key = item.text;
+                                    const hasSub = Array.isArray(item.subMenu) && item.subMenu.length > 0;
+                                    const isExpanded = !!mobileMenuExpanded[key];
+                                    const label = NAV_LABEL_VI[item.text] || item.text;
+                                    return (
+                                        <li key={key} className="rounded-xl border border-slate-200/70 bg-white">
+                                            <div className="flex items-center justify-between gap-2 px-3 py-3">
+                                                <NavLink
+                                                    to={navTo(item.path)}
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className="min-w-0 flex-1 truncate text-sm font-extrabold uppercase tracking-wide text-slate-900"
+                                                >
+                                                    {label}
+                                                </NavLink>
+                                                {hasSub ? (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setMobileMenuExpanded((prev) => ({
+                                                                ...prev,
+                                                                [key]: !prev[key],
+                                                            }))
+                                                        }
+                                                        className="rounded-lg border border-slate-200/70 bg-white px-2 py-1 text-xs font-bold text-slate-700"
+                                                        aria-expanded={isExpanded}
+                                                    >
+                                                        {isExpanded ? "−" : "+"}
+                                                    </button>
+                                                ) : null}
+                                            </div>
+                                            {hasSub && isExpanded ? (
+                                                <ul className="border-t border-slate-200/70 px-2 py-2">
+                                                    {item.subMenu.map((sub) => (
+                                                        <li key={sub.path}>
+                                                            <NavLink
+                                                                to={sub.path}
+                                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                                className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                                                            >
+                                                                {sub.text}
+                                                            </NavLink>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : null}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

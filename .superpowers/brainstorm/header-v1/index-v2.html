@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobile Header Concepts — v2 (Less rounded)</title>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --muted: rgba(255, 255, 255, 0.72);
+        --text: rgba(255, 255, 255, 0.92);
+        --line: rgba(148, 163, 184, 0.22);
+        --accent: #2f904b;
+        --shadow: 0 26px 80px rgba(2, 6, 23, 0.62);
+        --r-card: 14px;
+        --r-mock: 12px;
+        --r-screen: 14px;
+        --r-icon: 10px;
+        --r-input: 12px;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+        background: radial-gradient(1200px 600px at 20% -10%, rgba(47,144,75,0.26), transparent 55%),
+          radial-gradient(900px 500px at 90% 0%, rgba(59,130,246,0.20), transparent 55%),
+          var(--bg);
+        color: var(--text);
+      }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 22px 16px 44px; }
+      h1 { margin: 0; font-size: 20px; letter-spacing: -0.02em; }
+      .sub { margin: 8px 0 0; color: var(--muted); line-height: 1.5; font-size: 13px; }
+      .grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 18px; }
+      @media (min-width: 900px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: var(--r-card);
+        background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025));
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+      }
+      .card:hover { transform: translateY(-2px); border-color: rgba(47,144,75,0.55); }
+      .card[data-selected="true"] { border-color: rgba(47,144,75,0.95); background: rgba(47,144,75,0.10); }
+      .cardHead { display: flex; align-items: center; justify-content: space-between; padding: 14px 14px 10px; }
+      .badge { font-weight: 900; font-size: 11px; letter-spacing: 0.12em; color: rgba(255,255,255,0.92); }
+      .pill { font-size: 11px; color: rgba(255,255,255,0.78); border: 1px solid rgba(148,163,184,0.22); padding: 6px 10px; border-radius: 999px; }
+      .desc { padding: 0 14px 12px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+      .mock {
+        margin: 0 14px 14px;
+        border-radius: var(--r-mock);
+        border: 1px solid rgba(148,163,184,0.22);
+        background: rgba(2,6,23,0.55);
+        overflow: hidden;
+      }
+      .phone { width: 100%; max-width: 360px; margin: 0 auto; padding: 12px; }
+      .screen {
+        border-radius: var(--r-screen);
+        background: #ffffff;
+        color: #0f172a;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(2,6,23,0.08);
+      }
+      .topbar {
+        display: grid;
+        grid-template-columns: 40px 1fr 40px;
+        align-items: center;
+        padding: 10px 10px;
+        border-bottom: 1px solid rgba(15,23,42,0.08);
+      }
+      .icon {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--r-icon);
+        background: rgba(15,23,42,0.055);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        color: rgba(15,23,42,0.65);
+      }
+      .logo {
+        font-weight: 950;
+        letter-spacing: -0.04em;
+        text-align: center;
+        font-size: 13px;
+      }
+      .searchDock { padding: 10px; }
+      .search {
+        height: 42px;
+        border-radius: var(--r-input);
+        border: 1px solid rgba(15,23,42,0.10);
+        background: rgba(15,23,42,0.03);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 14px;
+        color: rgba(15,23,42,0.55);
+        font-weight: 800;
+        font-size: 13px;
+      }
+      .search .dot { width: 8px; height: 8px; border-radius: 3px; background: rgba(47,144,75,0.18); border: 1px solid rgba(47,144,75,0.35); }
+      .quick { display:flex; gap:8px; padding: 0 10px 12px; flex-wrap: wrap; }
+      .chip {
+        padding: 7px 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(15,23,42,0.08);
+        background: rgba(15,23,42,0.02);
+        font-size: 11px;
+        font-weight: 900;
+        color: rgba(15,23,42,0.65);
+      }
+      .note {
+        margin-top: 18px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px dashed rgba(148,163,184,0.34);
+        color: rgba(255,255,255,0.75);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .kbd {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 8px;
+        border: 1px solid rgba(148,163,184,0.35);
+        background: rgba(2,6,23,0.35);
+        color: rgba(255,255,255,0.82);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Header/Menu/Tìm kiếm (Mobile) — v2: ít bo góc hơn</h1>
+      <p class="sub">
+        Mình giữ logic 3 hướng bố cục, nhưng “hạ rounded” + tăng độ chững. Click 1 option để chọn.
+      </p>
+
+      <div class="grid">
+        <div class="card" data-choice="A2" onclick="selectCard(this)">
+          <div class="cardHead">
+            <div class="badge">A2 — Bottom Search Dock</div>
+            <div class="pill">1 tay • tốc độ</div>
+          </div>
+          <div class="desc">Header gọn (menu + logo + cart). Search như dock, mở search sheet (kết quả + gợi ý).</div>
+          <div class="mock">
+            <div class="phone">
+              <div class="screen">
+                <div class="topbar">
+                  <div class="icon">≡</div>
+                  <div class="logo">VIỆT PHÁT</div>
+                  <div class="icon">🛒</div>
+                </div>
+                <div class="searchDock">
+                  <div class="search"><span class="dot"></span> Tìm sản phẩm, danh mục…</div>
+                </div>
+                <div class="quick">
+                  <div class="chip">Danh mục</div><div class="chip">Khuyến mãi</div><div class="chip">Tin tức</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-choice="B2" onclick="selectCard(this)">
+          <div class="cardHead">
+            <div class="badge">B2 — Expandable Header</div>
+            <div class="pill">gọn • tập trung</div>
+          </div>
+          <div class="desc">Header 2 tầng (tầng search có thể thu gọn theo context/scroll).</div>
+          <div class="mock">
+            <div class="phone">
+              <div class="screen">
+                <div class="topbar">
+                  <div class="icon">🔔</div>
+                  <div class="logo">VIỆT PHÁT</div>
+                  <div class="icon">👤</div>
+                </div>
+                <div class="searchDock">
+                  <div class="search"><span class="dot"></span> Tìm nhanh…</div>
+                </div>
+                <div class="quick">
+                  <div class="chip">Sản phẩm</div><div class="chip">Dự án</div><div class="chip">Liên hệ</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-choice="C2" onclick="selectCard(this)">
+          <div class="cardHead">
+            <div class="badge">C2 — Full-screen Menu</div>
+            <div class="pill">khám phá</div>
+          </div>
+          <div class="desc">Menu full-screen (search trên cùng + danh mục nhanh), header tối giản.</div>
+          <div class="mock">
+            <div class="phone">
+              <div class="screen">
+                <div class="topbar">
+                  <div class="icon">≡</div>
+                  <div class="logo">VIỆT PHÁT</div>
+                  <div class="icon">🔎</div>
+                </div>
+                <div class="searchDock">
+                  <div class="search"><span class="dot"></span> Tìm trong menu…</div>
+                </div>
+                <div class="quick">
+                  <div class="chip">Thiết bị</div><div class="chip">Phụ kiện</div><div class="chip">Video</div><div class="chip">Tuyển dụng</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note" id="note">
+        <b>Trạng thái chọn:</b> chưa chọn. Reply trong chat: <span class="kbd">A2</span> / <span class="kbd">B2</span> / <span class="kbd">C2</span>
+      </div>
+    </div>
+
+    <script>
+      function selectCard(el) {
+        document.querySelectorAll(".card").forEach((c) => (c.dataset.selected = "false"));
+        el.dataset.selected = "true";
+        const choice = el.dataset.choice;
+        document.getElementById("note").innerHTML =
+          "<b>Trạng thái chọn:</b> bạn đang chọn <span class='kbd'>" +
+          choice +
+          "</span>. Reply trong chat: <span class='kbd'>" +
+          choice +
+          "</span> (thêm 1 câu ưu tiên nếu có).";
+      }
+    </script>
+  </body>
+</html>
+
